@@ -41,12 +41,12 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 echo 'Confirm `package.json` has the intended `name`, `version`, `description`, `license`, `exports`, `files`, `peerDependencies`, and `devDependencies`'
-echo 'You should probably BUMP the version right now'
+echo "You should probably BUMP the version right now"
 read -r dummy
 
 published_version="$(node -p "require('./package.json').version")"
 release_name="v$published_version"
-echo "Running semi-auto checklist for publishing $release_name"
+echo ">>>>>>>> Running semi-auto checklist for publishing $release_name"
 
 if git rev-parse -q --verify "refs/tags/$release_name" >/dev/null; then
     echo "Git tag $release_name already exists."
@@ -58,11 +58,11 @@ npm install
 npm pack --dry-run
 set +x
 
-echo "Does the list of files make sense?"
-echo "The tarball should include only the package entrypoint, package metadata, README, license, and two wrapper files."
+echo ">>>>>>>> Does the list of files make sense?"
+echo ">>>>>>>> The tarball should include only the package entrypoint, package metadata, README, license, and two wrapper files."
 read -r dummy
 
-echo "Make sure http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html still works"
+echo ">>>>>>>> Make sure http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html still works"
 if [ ! -d "utils/express-static-server/node_modules" ]; then
     set -x
     pushd "utils/express-static-server"
@@ -72,12 +72,12 @@ if [ ! -d "utils/express-static-server/node_modules" ]; then
 fi
 node utils/express-static-server/static-server.js 6153 &
 static_server_pid="$!"
-echo "Press Enter after checking the self-host example in a browser."
+echo ">>>>>>>> Press Enter after checking the self-host example in a browser."
 read -r dummy
 cleanup
 static_server_pid=""
 
-echo "Make sure the local NPM example still builds"
+echo ">>>>>>>> Make sure the local NPM example still builds"
 set -x
 pushd "www/examples/basic/maplibreGlThree-npm-example"
 npm install
@@ -85,17 +85,16 @@ npm run build
 popd
 set +x
 
-echo "Creating package tarball"
+echo ">>>>>>>> Creating package tarball"
 set -x
 tarball_name="$(npm pack | tail -n 1)"
 set +x
 
-echo "Smoke test the packed tarball in a fresh copy of the NPM example"
+echo ">>>>>>>> Smoke test the packed tarball in a fresh copy of the NPM example"
 tmpdir="$(mktemp -d)"
 set -x
 copy_npm_example "$tmpdir"
 cp "$tarball_name" "$tmpdir/$tarball_name"
-rm "$tarball_name"
 pushd "$tmpdir"
 npm pkg set "dependencies.maplibre-gl-three=file:./$tarball_name"
 npm install
@@ -103,8 +102,8 @@ npm run build
 npm start &
 npm_start_pid="$!"
 set +x
-echo "Press any key after checking the packed tarball smoke test in the opened browser tab."
-read -r -n 1 -s dummy
+echo "Press ENTER checking the packed tarball smoke test in the opened browser tab."
+read -r dummy
 echo ""
 cleanup
 npm_start_pid=""
@@ -112,16 +111,16 @@ set -x
 popd
 set +x
 
-echo "Confirm maplibreGlThree-cdn-example/index.html has the newest $published_version before publishing."
+echo ">>>>>>>> Confirm maplibreGlThree-cdn-example/index.html has the newest $published_version before publishing."
 read -r dummy
 
-echo "Last confirmations..."
+echo ">>>>>>>> Last confirmations..."
 set -x
 npm whoami
 npm publish --dry-run
 set +x
 
-echo "Dry run complete. Publish for real? Type 'publish' to continue:"
+echo ">>>>>>>> Dry run complete. Publish for real? Type 'publish' to continue:"
 read -r answer
 if [ "$answer" != "publish" ]; then
     echo "Publishing cancelled."
@@ -129,11 +128,11 @@ if [ "$answer" != "publish" ]; then
 fi
 
 set -x
-npm publish
+npm publish "$tarball_name"
 set +x
 
 
-echo "Stage changed files, commit $release_name, and create tag $release_name"
+echo ">>>>>>>> Stage changed files, commit $release_name, and create tag $release_name"
 set -x
 git add -A
 if git diff --cached --quiet; then
@@ -146,7 +145,7 @@ git push master
 git push "$release_name"
 set +x
 
-echo "Verify published package from the registry in a fresh copy of the NPM example"
+echo ">>>>>>>> Verify published package from the registry in a fresh copy of the NPM example"
 published_tmpdir="$(mktemp -d)"
 set -x
 copy_npm_example "$published_tmpdir"
@@ -157,8 +156,8 @@ npm run build
 npm start &
 npm_start_pid="$!"
 set +x
-echo "Press any key after checking the published package smoke test in the opened browser tab."
-read -r -n 1 -s dummy
+echo ">>>>>>>> Press any key after checking the published package smoke test in the opened browser tab."
+read -r dummy
 echo ""
 cleanup
 npm_start_pid=""
@@ -166,4 +165,4 @@ set -x
 popd
 set +x
 
-echo "Published and smoke-tested successfully."
+echo ">>>>>>>> Published and smoke-tested successfully."
