@@ -8,6 +8,18 @@
 	<link rel='stylesheet' href="/dependencies/maplibre/maplibre-gl-5.7.3.css" />
     <script src="/dependencies/maplibre/maplibre-gl-5.7.3.js"></script>
     <script src="/dependencies/proj4/proj4.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "/dependencies/three@0.183.0/build/three.module.js",
+            "three/examples/jsm/": "/dependencies/three@0.183.0/examples/jsm/",
+            "3d-tiles-renderer": "/dependencies/3d-tiles-renderer@0.4.21/build/index.three.js",
+            "maplibre-gl": "/maplibre-gl-wrapper.js",
+            "proj4": "/proj4-wrapper.js",
+            "maplibre-gl-three": "/maplibre-gl-three.js"
+        }
+    }
+    </script>
     <style>
         body {
             margin: 0;
@@ -32,26 +44,6 @@
 <body>
     <div id="map"></div>
     <div id="3d-tiles"></div>
-    <!-- <script type="importmap">
-    {
-        "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.183.0/build/three.module.js",
-        "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.183.0/examples/jsm/",
-        "3d-tiles-renderer": "https://cdn.jsdelivr.net/npm/3d-tiles-renderer@0.4.21/build/index.three.js"
-        }
-    }
-    </script> -->
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "/dependencies/three@0.183.0/build/three.module.js",
-            "three/examples/jsm/": "/dependencies/three@0.183.0/examples/jsm/",
-            "3d-tiles-renderer": "/dependencies/3d-tiles-renderer@0.4.21/build/index.three.js",
-            "maplibre-gl-three": "/maplibre-gl-three.js"
-        }
-    }
-    </script>
-    <!-- <script src="/threejs.js" type="module"></script> -->
     <script src="washington.js" type="module"></script>
 </body>
 

@@ -3,6 +3,8 @@ import { TilesRenderer } from "3d-tiles-renderer";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
+import maplibregl from 'maplibre-gl';
+import proj4 from 'proj4';
 
 proj4.defs("EPSG:4978", "+proj=geocent +datum=WGS84 +units=m +no_defs");
 

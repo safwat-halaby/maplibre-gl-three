@@ -1,0 +1,21 @@
+{
+  "name": "maplibre-gl-three-npm-minimal-example",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "webpack --mode=production",
+    "start": "webpack serve --mode=development --open"
+  },
+  "dependencies": {
+    "maplibre-gl": "^5.7.3",
+    "maplibre-gl-three": "file:../../.."
+  },
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.103.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  }
+}
