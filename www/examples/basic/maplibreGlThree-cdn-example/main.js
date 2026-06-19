@@ -1,9 +1,6 @@
 import maplibregl from 'maplibre-gl';
 import { ThreeDManager } from 'maplibre-gl-three';
 
-import 'maplibre-gl/dist/maplibre-gl.css';
-import './styles.css';
-
 const map = new maplibregl.Map({
     container: 'map',
     zoom: 16,

@@ -1,9 +1,6 @@
 import maplibregl from 'maplibre-gl';
 import { ThreeDManager } from 'maplibre-gl-three';
 
-import 'maplibre-gl/dist/maplibre-gl.css';
-import './styles.css';
-
 const map = new maplibregl.Map({
     container: 'map',
     zoom: 16,
@@ -34,7 +31,10 @@ const map = new maplibregl.Map({
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
 
 map.on('load', () => {
-    const threeDManager = new ThreeDManager();
+    const threeDManager = new ThreeDManager({
+        dracoPath: "/dependencies/three@0.183.0/examples/jsm/libs/draco/",
+        ktx2Path: "/dependencies/three@0.183.0/examples/jsm/libs/basis/"
+    });
     const agiHqTiles = threeDManager.load3dTiles({
         tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
         layerId: 'agi-hq-3d-tiles',

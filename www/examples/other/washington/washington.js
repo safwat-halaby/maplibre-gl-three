@@ -1,4 +1,5 @@
 import {ThreeDManager} from 'maplibre-gl-three';
+/* This example requires access to Cesium Ion. Modify tilesetUrl accordingly to make it run for you. */
 
 const map = new maplibregl.Map({
     container: 'map',

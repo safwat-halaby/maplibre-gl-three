@@ -1,6 +1,10 @@
-- getCenter
-- consistency between codebases
+**NEXT:**
+
 - verify npm publish stuff
+- getCenter
+- height offset
+- callbacks for plate caree
+- fill readme todos
 
 ## Todos
 
@@ -13,8 +17,6 @@
 **Should:**
 
 * prevent the anchor from leaving the 3d tile
-* altOffset
-* use npm dependencies rather than lazy loading draco, if possible
 
 **Could :**
 

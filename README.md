@@ -21,8 +21,7 @@ A full NPM/Webpack example can be found at [www/examples/basic/maplibreGlThree-n
 ```sh
 cd www/examples/basic/maplibre-gl-three-npm-example
 npm install
-npm run build
-npm run start
+npm start
 ```
 
 **Option 2: Direct browser import:**
@@ -81,6 +80,14 @@ threeDManager.destroy(); // will implicitly call destroy() on all assets not yet
 - `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://unpkg.com/three@0.183.0/examples/jsm/libs/draco/`. If you'd like to self-host this folder, it is included in `www/dependencies/three@0.183.0/examples/jsm/libs/draco/`
 - `ktx2Path`: The path to the ktx2 loader. Defaults to `https://unpkg.com/three@0.183.0/examples/jsm/libs/basis/`. If you'd like to self-host this folder, it is included in `https://unpkg.com/three@0.183.0/examples/jsm/libs/basis/`.
 
+## Interesting use cases
+
+TODO
+
+## Uncommon use cases
+
+TODO
+
 ## Development
 
 The project is just glue code, so to keep it simple there is currently no compilation/packing/minifcation step. The source code which is at `src/library` is what is ultimately published.
@@ -91,4 +98,4 @@ Alternatively, run `node-static-server.sh` which serves the direct browser examp
 
 ## Known issues / Notes
 - Tiles go wild if camera moves away far enough.
-- Does not yet work with the globe projection
+- Does not yet work with the globe projection.

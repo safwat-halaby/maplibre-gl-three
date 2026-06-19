@@ -11,9 +11,9 @@
     <script type="importmap">
     {
         "imports": {
-            "three": "/dependencies/three@0.183.0/build/three.module.js",
-            "three/examples/jsm/": "/dependencies/three@0.183.0/examples/jsm/",
-            "3d-tiles-renderer": "/dependencies/3d-tiles-renderer@0.4.21/build/index.three.js",
+            "three": "https://cdn.jsdelivr.net/npm/three@0.183.0/build/three.module.js",
+            "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.183.0/examples/jsm/",
+            "3d-tiles-renderer": "https://cdn.jsdelivr.net/npm/3d-tiles-renderer@0.4.21/build/index.three.js",
             "maplibre-gl": "/maplibre-gl-wrapper.js",
             "proj4": "/proj4-wrapper.js",
             "maplibre-gl-three": "/maplibre-gl-three.js"
@@ -21,22 +21,14 @@
     }
     </script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: black;
-        }
         html,
         body,
         #map {
             height: 100%;
-             /* z-index: 30; */
+            margin: 0;
         }
-        .maplibregl-canvas {
-            z-index: 3;
-        }
-        .maplibregl-ctrl-top-right {
-            z-index: 4;
+        body {
+            background: #111;
         }
     </style>
 </head>
@@ -44,7 +36,7 @@
 <body>
     <div id="map"></div>
     <div id="3d-tiles"></div>
-    <script src="washington.js" type="module"></script>
+    <script src="main.js" type="module"></script>
 </body>
 
 </html>
