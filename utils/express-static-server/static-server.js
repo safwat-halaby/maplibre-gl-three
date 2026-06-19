@@ -6,7 +6,7 @@ if (!process.argv[2]) {
 const PORT = parseInt(process.argv[2]);
 const app = express();
 app.use(express.static('www'));
-app.use(express.static('src'));
+app.use(express.static('src/library'));
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
 });
