@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Washington</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico">
+	<link rel='stylesheet' href="/dependencies/maplibre/maplibre-gl-5.7.3.css" />
+    <script src="/dependencies/maplibre/maplibre-gl-5.7.3.js"></script>
+    <script src="/dependencies/proj4/proj4.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "/dependencies/three@0.183.0/build/three.module.js",
+            "three/examples/jsm/": "/dependencies/three@0.183.0/examples/jsm/",
+            "3d-tiles-renderer": "/dependencies/3d-tiles-renderer@0.4.21/build/index.three.js",
+            "maplibre-gl": "/maplibre-gl-wrapper.js",
+            "proj4": "/proj4-wrapper.js",
+            "maplibre-gl-three": "/maplibre-gl-three.js"
+        }
+    }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+        }
+        html,
+        body,
+        #map {
+            height: 100%;
+             /* z-index: 30; */
+        }
+        .maplibregl-canvas {
+            z-index: 3;
+        }
+        .maplibregl-ctrl-top-right {
+            z-index: 4;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="3d-tiles"></div>
+    <script src="washington.js" type="module"></script>
+</body>
+
+</html>

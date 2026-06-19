@@ -10,55 +10,44 @@ Repo is still under construction. The project is in its infancy doesn't really w
 
 ## Installation
 
-**NPM import option**:
+**Option 1: NPM install**:
 
 ```sh
 npm install maplibre-gl-three maplibre-gl three 3d-tiles-renderer proj4
 ``` 
 
-**Option 2: Direct browser import with bundled dependencies:**
+A full NPM/Webpack example can be found at [www/examples/basic/maplibreGlThree-npm-example](www/examples/basic/maplibreGlThree-npm-example). Usage:
 
-```html
-<link rel="stylesheet" href="/dependencies/maplibre/maplibre-gl-5.7.3.css">
-<script src="/dependencies/maplibre/maplibre-gl-5.7.3.js"></script>
-<script src="/dependencies/proj4/proj4.js"></script>
-<script type="importmap">
-{
-    "imports": {
-        "three": "/dependencies/three@0.183.0/build/three.module.js",
-        "three/examples/jsm/": "/dependencies/three@0.183.0/examples/jsm/",
-        "3d-tiles-renderer": "/dependencies/3d-tiles-renderer@0.4.21/build/index.three.js",
-        "maplibre-gl": "/maplibre-gl-wrapper.js",
-        "proj4": "/proj4-wrapper.js",
-        "maplibre-gl-three": "/maplibre-gl-three.js"
-    }
-}
-</script>
+```sh
+cd www/examples/basic/maplibre-gl-three-npm-example
+npm install
+npm run build
+npm run start
 ```
 
-**Option 3: Direct browser import with CDN dependencies:**
+**Option 2: Direct browser import:**
 
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.7.3/dist/maplibre-gl.css">
-<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.7.3/dist/maplibre-gl.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/proj4@2.15.0/dist/proj4.js"></script>
-<script type="importmap">
-{
-    "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.183.0/build/three.module.js",
-        "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.183.0/examples/jsm/",
-        "3d-tiles-renderer": "https://cdn.jsdelivr.net/npm/3d-tiles-renderer@0.4.21/build/index.three.js",
-        "maplibre-gl": "/maplibre-gl-wrapper.js",
-        "proj4": "/proj4-wrapper.js",
-        "maplibre-gl-three": "/maplibre-gl-three.js"
-    }
-}
-</script>
+See [www/examples/basic/maplibreGlThree-bundle-example/index.html](www/examples/basic/maplibreGlThree-bundle-example/index.html) for a self-hosting example and [www/examples/basic/maplibreGlThree-npm-example/index.html](www/examples/basic/maplibreGlThree-cdn-example/index.html) for a CDN example. 
+
+To run these examples locally, run a local static file server with:
+
+```sh
+cd utils/express-static-server
+npm install
+node static-server.js 6153
 ```
+
+*(...Or by running `node-static-server.sh` or any other local web server which serves [www/depedencies/](www/depedencies/) and [src/library/](src/library/))*
+
+Then open one of these files:
+- self-hosted dependencies option: `http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html` 
+- CDN option: `http://localhost:6153/examples/basic/maplibreGlThree-cdn-example/index.html` 
 
 ## Usage
 
-The following code snippets work as-is if you used the NPM installation method. If using direct browser imports, make sure you include your scripts as modules e.g. `<script src="script.js" type="module"></script>`. For a complete hello-world demo project, see `www/examples/hello-world`.
+The following code snippets work as-is if you use the NPM installation method. If using direct browser imports, make sure you include your scripts as modules e.g. `<script src="script.js" type="module"></script>`. 
+
+See below for full hello-world example projects.
 
 ```js
 import {ThreeDManager} from 'maplibre-gl-three';
@@ -92,32 +81,13 @@ threeDManager.destroy(); // will implicitly call destroy() on all assets not yet
 - `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://unpkg.com/three@0.183.0/examples/jsm/libs/draco/`. If you'd like to self-host this folder, it is included in `www/dependencies/three@0.183.0/examples/jsm/libs/draco/`
 - `ktx2Path`: The path to the ktx2 loader. Defaults to `https://unpkg.com/three@0.183.0/examples/jsm/libs/basis/`. If you'd like to self-host this folder, it is included in `https://unpkg.com/three@0.183.0/examples/jsm/libs/basis/`.
 
-## Project examples
-
-Direct import-map example:
-
-```sh
-cd utils/express-static-server
-npm install
-node static-server.js 6153
-```
-
-*(...Or run `node-static-server.sh`.)*
-
-Then open `http://localhost:6153/examples/washington/washington.html`.
-
-NPM/Webpack example:
-
-```sh
-cd www/examples/npm-minimal
-npm install
-npm run build
-npm run start
-```
-
 ## Development
 
-in the `npm-minimal` example, point to the local files rather than npm: `"maplibre-gl-three": "file:../../.."`. This allows local changes to `src/` to be reflected in the example immediately. Alternatively, run `node-static-server.sh` which serves the direct browser example.
+The project is just glue code, so to keep it simple there is currently no compilation/packing/minifcation step. The source code which is at `src/library` is what is ultimately published.
+
+You can develop locally by pointing `maplibreGlThree-npm-example` to the local files rather than npm: `"maplibre-gl-three": "file:../../.."`.
+
+Alternatively, run `node-static-server.sh` which serves the direct browser example. Modify the source code and refresh the page. No build step.
 
 ## Known issues / Notes
 - Tiles go wild if camera moves away far enough.
