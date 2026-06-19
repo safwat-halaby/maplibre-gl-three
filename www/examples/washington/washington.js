@@ -1,4 +1,4 @@
-import {loadThreeJS} from 'maplibre-gl-three';
+import {ThreeDManager} from 'maplibre-gl-three';
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -21,7 +21,13 @@ map.addControl(
 );
 
 map.on('load', async () => {
-    loadThreeJS(map, "/datasets/local_only/cache/cesium-ion-washington/us-east-1/asset_depot/57590/Vricon/WashingtonState/v1/tileset.json", 0);
-    // loadThreeJS(map, "https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json", -300);
+    const threeDManager = new ThreeDManager({
+        dracoPath: "/dependencies/three@0.183.0/examples/jsm/libs/draco/",
+        ktx2Path: "/dependencies/three@0.183.0/examples/jsm/libs/basis/"
+    });
+    const washingtonTiles = threeDManager.load3dTiles({
+        tilesetUrl: "/datasets/local_only/cache/cesium-ion-washington/us-east-1/asset_depot/57590/Vricon/WashingtonState/v1/tileset.json",
+        layerId: "washington-3d-tiles"
+    });
+    map.addLayer(washingtonTiles.getLayer(), "washington-lines");
 });
-

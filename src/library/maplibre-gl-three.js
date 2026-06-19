@@ -181,121 +181,228 @@ function getPlateCarreeMeterScales([lng, lat]) {
     };
 }
 
-/**
- * Load 3D model
- * @param map maplibre map
- * @param {string} url Model URL
- */
-async function loadThreeJS(map, url) {
-    let scene,camera,renderer,mapInstance,tiles,tilesCamera;
-    let matrixOriginToAnchor = originToAnchor([0, 0, 0]);
-    function initTiles(url, sceneInst, cameraInst, rendererInst) {
+const DEFAULT_DRACO_PATH = "https://unpkg.com/three@0.183.0/examples/jsm/libs/draco/";
+const DEFAULT_KTX2_PATH = "https://unpkg.com/three@0.183.0/examples/jsm/libs/basis/";
+
+class ThreeDManager {
+    constructor({ debugMode = false, dracoPath = DEFAULT_DRACO_PATH, ktx2Path = DEFAULT_KTX2_PATH } = {}) {
+        this.debugMode = debugMode;
+        this.dracoPath = dracoPath;
+        this.ktx2Path = ktx2Path;
+
+        this.activeTiles = null;
+    }
+
+    load3dTiles({ tilesetUrl, layerId = "3d-tiles" } = {}) {
+        if (this.activeTiles && !this.activeTiles.destroyed) {
+            throw new Error("concurrent loading of more than 1 3dtiles is currently unsupported");
+        }
+
+        this.activeTiles = new ThreeDTilesAsset({
+            tilesetUrl,
+            layerId,
+            debugMode: this.debugMode,
+            dracoPath: this.dracoPath,
+            ktx2Path: this.ktx2Path,
+            onDestroy: (tiles) => {
+                if (this.activeTiles === tiles) {
+                    this.activeTiles = null;
+                }
+            },
+        });
+
+        return this.activeTiles;
+    }
+
+    destroy() {
+        this.activeTiles?.destroy();
+        this.activeTiles = null;
+    }
+}
+
+class ThreeDTilesAsset {
+    constructor({ tilesetUrl, layerId, debugMode, dracoPath, ktx2Path, onDestroy }) {
+        this.tilesetUrl = tilesetUrl;
+        this.layerId = layerId;
+        this.debugMode = debugMode;
+        this.dracoPath = dracoPath;
+        this.ktx2Path = ktx2Path;
+        this.onDestroy = onDestroy;
+
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.mapInstance = null;
+        this.tiles = null;
+        this.tilesCamera = null;
+        this.matrixOriginToAnchor = originToAnchor([0, 0, 0]);
+        this.throttleTimeout = null;
+        this.moveHandler = null;
+        this.loadTilesetHandler = null;
+        this.customLayer = null;
+        this.destroyed = false;
+    }
+
+    getLayer() {
+        if (!this.customLayer) {
+            this.customLayer = {
+                id: this.layerId,
+                type: "custom",
+                renderingMode: "3d",
+                onAdd: (mapArg, gl) => this.onAdd(mapArg, gl),
+                render: (gl, args) => this.render(gl, args),
+                onRemove: () => this.onRemove(),
+            };
+        }
+
+        return this.customLayer;
+    }
+
+    onAdd(mapArg, gl) {
+        if (this.destroyed) return;
+
+        this.camera = new THREE.PerspectiveCamera();
+        this.scene = new THREE.Scene();
+        if (this.debugMode) {
+            markOriginPointForDebugging(this.scene);
+        }
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 3);
+        this.scene.add(ambientLight);
+
+        this.mapInstance = mapArg;
+        const canvas = mapArg.getCanvas();
+        this.renderer = new THREE.WebGLRenderer({
+            canvas,
+            context: gl,
+            antialias: true,
+        });
+        this.renderer.autoClear = false;
+
+        this.tilesCamera = new THREE.PerspectiveCamera();
+        this.initTiles();
+    }
+
+    onRemove() {
+        this.clearCallbacksAndTimeouts();
+    }
+
+    destroy() {
+        if (this.destroyed) return;
+
+        const mapInstance = this.mapInstance;
+        if (mapInstance && this.layerId && mapInstance.getLayer?.(this.layerId)) {
+            mapInstance.removeLayer(this.layerId); // will call onRemove which will call clearCallbacksAndTimeouts
+        } else {
+            this.clearCallbacksAndTimeouts();
+        }
+
+        if (this.tiles) {
+            this.loadTilesetHandler && this.tiles.removeEventListener("load-tileset", this.loadTilesetHandler);
+            this.scene?.remove(this.tiles.group);
+            this.tiles.dispose?.();
+        }
+
+        this.tiles = null;
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.tilesCamera = null;
+        this.customLayer = null;
+        this.destroyed = true;
+        this.onDestroy?.(this);
+    }
+
+    clearCallbacksAndTimeouts() {
+        if (this.moveHandler && this.mapInstance) {
+            this.mapInstance.off("move", this.moveHandler);
+        }
+        if (this.throttleTimeout !== null) {
+            clearTimeout(this.throttleTimeout);
+            this.throttleTimeout = null;
+        }
+        this.moveHandler = null;
+        this.mapInstance = null;
+    }
+
+    initTiles() {
         const gltfLoader = new GLTFLoader();
         const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath("/dependencies/three@0.183.0/examples/jsm/libs/draco/");
+        dracoLoader.setDecoderPath(this.dracoPath);
         gltfLoader.setDRACOLoader(dracoLoader);
 
         const ktx2Loader = new KTX2Loader();
-        ktx2Loader.setTranscoderPath("/dependencies/three@0.183.0/examples/jsm/libs/basis/");
-        ktx2Loader.detectSupport(rendererInst);
+        ktx2Loader.setTranscoderPath(this.ktx2Path);
+        ktx2Loader.detectSupport(this.renderer);
         gltfLoader.setKTX2Loader(ktx2Loader);
 
-        tiles = new TilesRenderer(url);
-        tiles.group.name = "tiles";
-        sceneInst.add(tiles.group);
+        this.tiles = new TilesRenderer(this.tilesetUrl);
+        this.tiles.group.name = "tiles";
+        this.scene.add(this.tiles.group);
 
-        tiles.setCamera(cameraInst);
-        tiles.setResolutionFromRenderer(cameraInst, rendererInst);
+        this.tiles.setCamera(this.tilesCamera);
+        this.tiles.setResolutionFromRenderer(this.tilesCamera, this.renderer);
+        this.tiles.manager.addHandler(/\.(gltf|glb)$/g, gltfLoader);
 
-        tiles.manager.addHandler(/\.(gltf|glb)$/g, gltfLoader);
         let loadedTileSetHandled = false;
-        function updateAnchorPoint(anchor4326) {
+        const updateAnchorPoint = (anchor4326) => {
             const newMatrices = calculateAnchorMatrices(anchor4326);
-            matrixOriginToAnchor = newMatrices.matrixOriginToAnchor;
-            tiles.group.matrix.copy(newMatrices.matrix_ecefAnchorToOrigin);
-            tiles.group.matrixAutoUpdate = false;
-            tiles.group.updateMatrixWorld(true);
-        }
+            this.matrixOriginToAnchor = newMatrices.matrixOriginToAnchor;
+            this.tiles.group.matrix.copy(newMatrices.matrix_ecefAnchorToOrigin);
+            this.tiles.group.matrixAutoUpdate = false;
+            this.tiles.group.updateMatrixWorld(true);
+        };
+
+        const handleAnchorPointWebMercator = () => {
+            const { lng, lat } = this.mapInstance.getCenter();
+            updateAnchorPoint([lng, lat, 0]);
+        };
+
+        const handleAnchorPoint = () => this.throttle(handleAnchorPointWebMercator);
         const loadTileSet = () => {
             if (loadedTileSetHandled) {
-                tiles?.removeEventListener("load-tileset", loadTileSet);
+                this.tiles?.removeEventListener("load-tileset", loadTileSet);
                 return;
             }
-            // const sphere = new THREE.Sphere();
-            // tiles.getBoundingSphere(sphere);
-            // const center = sphere.center.clone();
+
             loadedTileSetHandled = true;
-            function handleAnchorPointWebMercator() {
-                const {lng, lat} = map.getCenter();
-                updateAnchorPoint([lng, lat, 0]);
-            }
-            const handleAnchorPoint = () => throttle(handleAnchorPointWebMercator);
-            map.on('move', () => {
-                handleAnchorPoint();
-            })
+            this.moveHandler = () => handleAnchorPoint();
+            this.mapInstance.on("move", this.moveHandler);
             handleAnchorPoint();
         };
-        tiles.addEventListener("load-tileset", loadTileSet);
 
-        // Update matrix
-        
+        this.loadTilesetHandler = loadTileSet;
+        this.tiles.addEventListener("load-tileset", this.loadTilesetHandler);
     }
 
-    let throttleTimeout = null;
-    function throttle(cb) {
-        if (throttleTimeout !== null) return;
-        throttleTimeout = setTimeout(() => {
-            throttleTimeout = null;
+    throttle(cb) {
+        if (this.throttleTimeout !== null) return;
+        this.throttleTimeout = setTimeout(() => {
+            this.throttleTimeout = null;
             cb();
         }, 60);
     }
 
-    const customLayer = {
-        id: "3d-tiles",
-        type: "custom" ,
-        renderingMode: "3d" ,
-        onAdd(mapArg, gl) {
-            camera = new THREE.PerspectiveCamera() ;
-            scene = new THREE.Scene();
-            markOriginPointForDebugging(scene);
+    render(_gl, args) {
+        if (this.destroyed) return;
+        if (!this.camera || !this.renderer || !this.scene || !this.tilesCamera) return;
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 3);
-            scene.add(ambientLight);
+        this.camera.projectionMatrix.fromArray(args.defaultProjectionData.mainMatrix);
+        this.camera.projectionMatrix.multiply(this.matrixOriginToAnchor);
 
-            mapInstance = mapArg;
-            const canvas = mapArg.getCanvas();
-            renderer = new THREE.WebGLRenderer({
-                canvas,
-                context: gl,
-                antialias: true,
-            });
-            renderer.autoClear = false;
+        const P = new THREE.Matrix4().fromArray(args.projectionMatrix);
+        const invP = P.clone().invert();
+        const V = new THREE.Matrix4().multiplyMatrices(invP, this.camera.projectionMatrix);
 
-            tilesCamera = new THREE.PerspectiveCamera();
+        this.tilesCamera.projectionMatrix.copy(P);
+        this.tilesCamera.matrixWorldInverse.copy(V);
+        this.tilesCamera.matrixWorld.copy(V).invert();
 
-            initTiles(url, scene, tilesCamera, renderer)
-        },
-        render(_gl, args) {
-            // Update camera matrix and render
-            if (!camera || !renderer || !scene || !tilesCamera) return;
-            camera.projectionMatrix.fromArray(args.defaultProjectionData.mainMatrix);
-            camera.projectionMatrix.multiply(matrixOriginToAnchor);
+        this.renderer.resetState();
+        this.renderer.render(this.scene, this.camera);
+        if (this.tiles) this.tiles.update();
+        this.mapInstance?.triggerRepaint();
+    }
+}
 
-            const P = new THREE.Matrix4().fromArray(args.projectionMatrix);
-            const invP = P.clone().invert();
-            const V = new THREE.Matrix4().multiplyMatrices(invP, camera.projectionMatrix);
-
-            tilesCamera.projectionMatrix.copy(P);
-            tilesCamera.matrixWorldInverse.copy(V);
-            tilesCamera.matrixWorld.copy(V).invert();
-
-            renderer.resetState();
-            renderer.render(scene, camera);
-            if (tiles) tiles.update();
-            mapInstance?.triggerRepaint();
-        },
-    };
-    map.addLayer(customLayer, "washington-lines");
-};
-
-export {loadThreeJS};
+export { ThreeDManager };
