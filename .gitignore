@@ -1,5 +1,4 @@
 node_modules/
 dist/
 local_only/
-throaway/
 *.tgz

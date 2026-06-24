@@ -6,7 +6,7 @@ Glue code which brings 3dTiles to MapLibre using 3JS.
 
 Repo is still under construction. The project is in its infancy doesn't really work yet.
 
-**Pull request policy:** As of now, no pull requests are accepted. The situation will likely change once the repository structure is stable.
+As of now, no pull requests are accepted. The situation will likely change once the repository structure is stable.
 
 ## Installation
 
@@ -16,7 +16,7 @@ Repo is still under construction. The project is in its infancy doesn't really w
 npm install maplibre-gl-three maplibre-gl three 3d-tiles-renderer proj4
 ``` 
 
-A full NPM/Webpack example can be found at [www/examples/basic/maplibreGlThree-npm-example](www/examples/basic/maplibreGlThree-npm-example). Usage:
+A full NPM/Webpack example can be found at [www/examples/basic/maplibreGlThree-npm-example](www/examples/basic/maplibreGlThree-npm-example), you can try it out with: 
 
 ```sh
 cd www/examples/basic/maplibre-gl-three-npm-example
@@ -28,7 +28,7 @@ npm start
 
 See [www/examples/basic/maplibreGlThree-bundle-example/index.html](www/examples/basic/maplibreGlThree-bundle-example/index.html) for a self-hosting example and [www/examples/basic/maplibreGlThree-npm-example/index.html](www/examples/basic/maplibreGlThree-cdn-example/index.html) for a CDN example. 
 
-To run these examples locally, run a local static file server with:
+To run these examples, locally serve the static files with:
 
 ```sh
 cd utils/express-static-server
@@ -38,15 +38,11 @@ node static-server.js 6153
 
 *(...Or by running `node-static-server.sh` or any other local web server which serves [www/depedencies/](www/depedencies/) and [src/library/](src/library/))*
 
-Then open one of these files:
+...then open one of these urls in a browser:
 - self-hosted dependencies option: `http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html` 
 - CDN option: `http://localhost:6153/examples/basic/maplibreGlThree-cdn-example/index.html` 
 
-## Usage
-
-The following code snippets work as-is if you use the NPM installation method. If using direct browser imports, make sure you include your scripts as modules e.g. `<script src="script.js" type="module"></script>`. 
-
-See below for full hello-world example projects.
+## Basic usage example
 
 ```js
 import {ThreeDManager} from 'maplibre-gl-three';
@@ -75,6 +71,8 @@ Teardown:
 threeDManager.destroy(); // will implicitly call destroy() on all assets not yet destroyed.
 ```
 
+Consult the examples described in the Installation section if you're not sure where this code goes. The above code snippets work as-is if you use the NPM installation method. If using direct browser imports, make sure you include your scripts as modules e.g. `<script src="script.js" type="module"></script>`. 
+
 **ThreeDManager optional constructor options**:
 - `debugMode`: If true, will render the 3JS anchor point for debugging purposes
 - `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://unpkg.com/three@0.183.0/examples/jsm/libs/draco/`. If you'd like to self-host this folder, it is included in `www/dependencies/three@0.183.0/examples/jsm/libs/draco/`
@@ -82,11 +80,11 @@ threeDManager.destroy(); // will implicitly call destroy() on all assets not yet
 
 ## Interesting use cases
 
-TODO
+If you have a height map of the same area, you can use the transparent terrain trick. TODO describe this further.
 
-## Uncommon use cases
+## Exotic use cases
 
-TODO
+TODO describe plate caree projections.
 
 ## Development
 
