@@ -23,8 +23,8 @@ map.addControl(
 
 map.on('load', async () => {
     const threeDManager = new ThreeDManager({
-        dracoPath: "/dependencies/three@0.183.0/examples/jsm/libs/draco/",
-        ktx2Path: "/dependencies/three@0.183.0/examples/jsm/libs/basis/"
+        dracoPath: "/dependencies/three@0.183.2/examples/jsm/libs/draco/",
+        ktx2Path: "/dependencies/three@0.183.2/examples/jsm/libs/basis/",
     });
     const washingtonTiles = threeDManager.load3dTiles({
         tilesetUrl: "/datasets/local_only/cache/cesium-ion-washington/us-east-1/asset_depot/57590/Vricon/WashingtonState/v1/tileset.json",

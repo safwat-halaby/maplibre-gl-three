@@ -5,18 +5,19 @@
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/svg+xml" href="/favicon.ico">
-	<link rel='stylesheet' href="/dependencies/maplibre/maplibre-gl-5.7.3.css" />
-    <script src="/dependencies/maplibre/maplibre-gl-5.7.3.js"></script>
-    <script src="/dependencies/proj4/proj4.js"></script>
+	<link rel='stylesheet' href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
+    <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/proj4@2.20.9/dist/proj4.js"></script>
     <script type="importmap">
     {
         "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.183.0/build/three.module.js",
-            "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.183.0/examples/jsm/",
-            "3d-tiles-renderer": "https://cdn.jsdelivr.net/npm/3d-tiles-renderer@0.4.21/build/index.three.js",
-            "maplibre-gl": "/maplibre-gl-wrapper.js",
-            "proj4": "/proj4-wrapper.js",
-            "maplibre-gl-three": "/maplibre-gl-three.js"
+            "three": "https://cdn.jsdelivr.net/npm/three@0.183.2/build/three.module.js",
+            "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/",
+            "3d-tiles-renderer": "https://cdn.jsdelivr.net/npm/3d-tiles-renderer@0.4.28/build/index.three.js",
+            "maplibre-gl": "/library/maplibre-gl-wrapper.js",
+            "proj4": "/library/proj4-wrapper.js",
+            "maplibre-gl-three": "/library/maplibre-gl-three.js"
         }
     }
     </script>
@@ -36,7 +37,7 @@
 <body>
     <div id="map"></div>
     <div id="3d-tiles"></div>
-    <script src="main.js" type="module"></script>
+    <script src="script.js" type="module"></script>
 </body>
 
 </html>

@@ -22,14 +22,22 @@
     }
     </script>
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+        }
         html,
         body,
         #map {
             height: 100%;
-            margin: 0;
+             /* z-index: 30; */
         }
-        body {
-            background: #111;
+        .maplibregl-canvas {
+            z-index: 3;
+        }
+        .maplibregl-ctrl-top-right {
+            z-index: 4;
         }
     </style>
 </head>

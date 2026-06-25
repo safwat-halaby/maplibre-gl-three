@@ -6,7 +6,6 @@ import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
 import maplibregl from 'maplibre-gl';
 import proj4 from 'proj4';
 
-proj4.defs("EPSG:4978", "+proj=geocent +datum=WGS84 +units=m +no_defs");
 
 /** 
  * Important terminology and notes:
@@ -50,6 +49,9 @@ proj4.defs("EPSG:4978", "+proj=geocent +datum=WGS84 +units=m +no_defs");
  *   To avoid this and to achieve a perfect square, web mercator is capped at about -85.05 to +85.05 latitude.
  * - Not to be confused with the VERY similar but more geodetically faithful EPSG:3395 mercator, used for maritime navigation among other things.
  */
+proj4.defs("EPSG:4978", "+proj=geocent +datum=WGS84 +units=m +no_defs");
+const DEFAULT_DRACO_PATH = "https://unpkg.com/three@0.183.2/examples/jsm/libs/draco/";
+const DEFAULT_KTX2_PATH = "https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/";
 
 
 function markOriginPointForDebugging(sceneInst, size = 400) {
@@ -182,10 +184,6 @@ function getPlateCarreeMeterScales([lng, lat]) {
         scaleUp: scaleEast, // just a convention
     };
 }
-
-const DEFAULT_DRACO_PATH = "https://unpkg.com/three@0.183.0/examples/jsm/libs/draco/";
-const DEFAULT_KTX2_PATH = "https://unpkg.com/three@0.183.0/examples/jsm/libs/basis/";
-
 class ThreeDManager {
     constructor({ debugMode = false, dracoPath = DEFAULT_DRACO_PATH, ktx2Path = DEFAULT_KTX2_PATH } = {}) {
         this.debugMode = debugMode;
