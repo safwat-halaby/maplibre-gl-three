@@ -4,7 +4,7 @@ Glue code which brings [ThreeJS](https://threejs.org/) capabilities into [Maplib
 
 ## Project status
 
-Repo is still under construction. The project is in its infancy doesn't really work yet.
+Repo is still under construction. The project is in its infancy.
 
 As of now, no pull requests are accepted. The situation will likely change once the repository structure is stable.
 
@@ -31,6 +31,14 @@ const map = new maplibregl.Map(/* Your typical Maplibre initialization here*/);
 map.addLayer(agiHqTiles.getLayer());
 ```
 
+The repo contains a minimal [NPM-based example project](www/examples/basic/maplibreGlThree-npm-example) running the code abov. You can try it out with: 
+
+```sh
+cd www/examples/basic/maplibre-gl-three-npm-example
+npm install
+npm start
+```
+
 **Swapping to new tiles:**
 
 ```js
@@ -45,13 +53,6 @@ map.addLayer(tiles2.getLayer());
 threeDManager.destroy(); // will implicitly call destroy() on all assets not yet destroyed.
 ```
 
-The repo contains a minimal [NPM-based](www/examples/basic/maplibreGlThree-npm-example) project. You can try it out with: 
-
-```sh
-cd www/examples/basic/maplibre-gl-three-npm-example
-npm install
-npm start
-```
 
 ## CDNs and direct browser import
 
@@ -63,25 +64,20 @@ npm install
 node static-server.js 6153
 ```
 
-*(...Or by running `node-static-server.sh` or any other local web server which serves [www/depedencies/](www/depedencies/) to `/dependencies` and [src/library/](src/library/)) to `/library`*
+*(Or by running `node-static-server.sh` or any other local web server which serves [www/examples/](www/examples/) at `/examples`)*
 
 Then browse to http://localhost:6153/examples/basic/maplibreGlThree-cdn-example/index.html
 
-If you prefer to self-host all the dependencies, generate the `www/dependencies` folder with:
+If you prefer to self-host all the dependencies, generate the `www/dependencies` by running `npm install`, then start a local server as above and browse to http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html 
 
-```sh
-npm install
-node utils/update_dependencies.js
-```
-
-Then serve it as above and browse to http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html
+*(You can also run `node-static-server.sh` or any other local web server which serves [www/dependencies/](www/dependencies/) at `/dependencies` and [src/library/](src/library/) at `/library`)*
 
 ## Configuration
 
 **ThreeDManager optional constructor options**:
-- `debugMode`: If true, will render the 3JS anchor point for debugging purposes
-- `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://unpkg.com/three@0.183.0/examples/jsm/libs/draco/`. If you'd like to self-host this folder, it is included in `www/dependencies/three@0.183.0/examples/jsm/libs/draco/`
-- `ktx2Path`: The path to the ktx2 loader. Defaults to `https://unpkg.com/three@0.183.0/examples/jsm/libs/basis/`. If you'd like to self-host this folder, it is included in `https://unpkg.com/three@0.183.0/examples/jsm/libs/basis/`.
+- `debugMode`: If true, will render the 3JS anchor point for debugging purposes.
+- `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/draco/`.
+- `ktx2Path`: The path to the ktx2 loader. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/`.
 
 ## Interesting use cases
 
