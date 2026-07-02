@@ -79,6 +79,7 @@ If you prefer to self-host all the dependencies, generate the `www/dependencies`
 - `debugMode`: If true, will render the 3JS anchor point for debugging purposes.
 - `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/draco/`.
 - `ktx2Path`: The path to the ktx2 loader. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/`.
+- Additionally, `handleAnchorPoint(mapInstance)` and `getTransformParameters(anchor4326)` are advanced callbacks for overriding the calculation of the anchor point and the internal transform parameters, respectively. In the future the usage of these callbacks may be better documented. In the meantime see [www/examples/other/plate-caree/](www/examples/other/plate-caree/) for a usage example of the plate-caree projection. 
 
 **load3dTiles optional options**:
 - `offset`: Optional `{ east, up, south }` translation applied to the 3d tiles in meters.
@@ -89,7 +90,7 @@ If you have a height map of the same area, you can use the transparent terrain t
 
 ## Exotic use cases
 
-TODO describe plate caree projections.
+- Use Maplibre+ThreeJS with "unprojected" / Plate Carree background tiles [www/examples/other/plate-caree/](www/examples/other/plate-caree/). Some more documentation may be provided in the future.
 
 ## Development
 

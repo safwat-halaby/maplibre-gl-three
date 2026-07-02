@@ -70,7 +70,7 @@ function markOriginPointForDebugging(sceneInst, size = 400) {
 
 
 
-function calculateAnchorMatrices(anchor4326, offset) {
+function calculateAnchorMatrices(anchor4326, offset, getTransformParameters) {
     // Translate the EcefAnchor to sit on 0,0,0
     // In some sense we have moved the entire 3dtiles model from the earth's shell into earth's core and the anchor is now on 0,0,0 in the ecef world.
     const matrix_translateEcefAnchorToOrigin = translateEcefAnchorToOrigin(anchor4326);
@@ -88,7 +88,7 @@ function calculateAnchorMatrices(anchor4326, offset) {
         matrix_ecefAnchorToOrigin = new THREE.Matrix4().multiplyMatrices(new THREE.Matrix4().makeTranslation(offset.east, offset.up, offset.south), matrix_ecefAnchorToOrigin_beforeOffset);
     }
     // Make the threeJS origin (0,0,0) (which is now also the ecefAnchor) sit on the geographical anchor4326 point in the web mercator world.
-    const matrixOriginToAnchor = originToAnchor(anchor4326);
+    const matrixOriginToAnchor = originToAnchor(anchor4326, getTransformParameters);
     return {matrix_ecefAnchorToOrigin, matrixOriginToAnchor};
 }
 
@@ -135,8 +135,8 @@ function rotateEcefUpTo3jsUp(anchor4326) {
 }
 
 /** See calculateAnchorMatrices for a description. */
-function originToAnchor(anchor4326) {
-    const modelTransform = getWebMercatorTransformParameters(anchor4326);
+function originToAnchor(anchor4326, getTransformParameters) {
+    const modelTransform = getTransformParameters(anchor4326);
     const axisX = new THREE.Vector3(1, 0, 0);
     const axisY = new THREE.Vector3(0, 1, 0);
     const axisZ = new THREE.Vector3(0, 0, 1);
@@ -152,6 +152,11 @@ function originToAnchor(anchor4326) {
         .multiply(rotationZ);
 }
 
+
+function handleWebMercatorAnchorPoint(mapInstance) {
+    const { lng, lat } = mapInstance.getCenter();
+    return [lng, lat, 0];
+}
 
 function getWebMercatorTransformParameters(anchor4326) {
     const webMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat([anchor4326[0], anchor4326[1]], anchor4326[2]);
@@ -169,34 +174,19 @@ function getWebMercatorTransformParameters(anchor4326) {
     };
 }
 
-function getPlateCarreeMeterScales([lng, lat]) {
-    const a = 6378137.0;
-    const e2 = 6.69437999014e-3;
-    const latRad = THREE.MathUtils.degToRad(lat);
-    const sinLat = Math.sin(latRad);
-    const cosLat = Math.cos(latRad);
-    const w = Math.sqrt(1 - e2 * sinLat * sinLat);
-    const n = a / w;
-    const m = (a * (1 - e2)) / (w * w * w);
-    const metersPerDegreeLng = THREE.MathUtils.degToRad(1) * n * cosLat;
-    const metersPerDegreeLat = THREE.MathUtils.degToRad(1) * m;
-
-    // maplibre MercatorCoordinate lives in a 0 to 1 space.
-    // Todo elaborate this consideration more.
-    const scaleEast = 1 / metersPerDegreeLng / 360;
-    const scaleSouth = 1 / metersPerDegreeLat / 360;
-
-    return {
-        scaleEast,
-        scaleSouth,
-        scaleUp: scaleEast, // just a convention
-    };
-}
 class ThreeDManager {
-    constructor({ debugMode = false, dracoPath = DEFAULT_DRACO_PATH, ktx2Path = DEFAULT_KTX2_PATH } = {}) {
+    constructor({
+        debugMode = false,
+        dracoPath = DEFAULT_DRACO_PATH,
+        ktx2Path = DEFAULT_KTX2_PATH,
+        handleAnchorPoint = handleWebMercatorAnchorPoint,
+        getTransformParameters = getWebMercatorTransformParameters,
+    } = {}) {
         this.debugMode = debugMode;
         this.dracoPath = dracoPath;
         this.ktx2Path = ktx2Path;
+        this.handleAnchorPoint = handleAnchorPoint;
+        this.getTransformParameters = getTransformParameters;
 
         this.activeTiles = null;
     }
@@ -207,6 +197,7 @@ class ThreeDManager {
         }
 
         this.activeTiles = new ThreeDTilesAsset({
+            manager: this,
             tilesetUrl,
             layerId,
             offset,
@@ -230,7 +221,8 @@ class ThreeDManager {
 }
 
 class ThreeDTilesAsset {
-    constructor({ tilesetUrl, layerId, offset, debugMode, dracoPath, ktx2Path, onDestroy }) {
+    constructor({ manager, tilesetUrl, layerId, offset, debugMode, dracoPath, ktx2Path, onDestroy }) {
+        this.manager = manager;
         this.tilesetUrl = tilesetUrl;
         this.layerId = layerId;
         this.offset = offset;
@@ -245,7 +237,7 @@ class ThreeDTilesAsset {
         this.mapInstance = null;
         this.tiles = null;
         this.tilesCamera = null;
-        this.matrixOriginToAnchor = originToAnchor([0, 0, 0]);
+        this.matrixOriginToAnchor = originToAnchor([0, 0, 0], this.manager.getTransformParameters);
         this.throttleTimeout = null;
         this.moveHandler = null;
         this.loadTilesetHandler = null;
@@ -356,19 +348,17 @@ class ThreeDTilesAsset {
 
         let loadedTileSetHandled = false;
         const updateAnchorPoint = (anchor4326) => {
-            const newMatrices = calculateAnchorMatrices(anchor4326, this.offset);
+            const newMatrices = calculateAnchorMatrices(anchor4326, this.offset, this.manager.getTransformParameters);
             this.matrixOriginToAnchor = newMatrices.matrixOriginToAnchor;
             this.tiles.group.matrix.copy(newMatrices.matrix_ecefAnchorToOrigin);
             this.tiles.group.matrixAutoUpdate = false;
             this.tiles.group.updateMatrixWorld(true);
         };
 
-        const handleAnchorPointWebMercator = () => {
-            const { lng, lat } = this.mapInstance.getCenter();
-            updateAnchorPoint([lng, lat, 0]);
-        };
-
-        const handleAnchorPoint = () => this.throttle(handleAnchorPointWebMercator);
+        const handleAnchorPoint = () => this.throttle(() => {
+            const anchor4326 = this.manager.handleAnchorPoint(this.mapInstance);
+            updateAnchorPoint(anchor4326);
+        });
         const loadTileSet = () => {
             if (loadedTileSetHandled) {
                 this.tiles?.removeEventListener("load-tileset", loadTileSet);

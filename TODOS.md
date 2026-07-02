@@ -1,10 +1,11 @@
+
+
 **NEXT:**
 
 - verify npm publish stuff
-- getCenter
-- height offset
+- clarify natural earth source in README.
+- tiles getCenter
 - callbacks for plate caree
-- fill readme todos
 
 ## Todos
 
