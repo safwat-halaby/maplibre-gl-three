@@ -70,7 +70,7 @@ function markOriginPointForDebugging(sceneInst, size = 400) {
 
 
 
-function calculateAnchorMatrices(anchor4326) {
+function calculateAnchorMatrices(anchor4326, offset) {
     // Translate the EcefAnchor to sit on 0,0,0
     // In some sense we have moved the entire 3dtiles model from the earth's shell into earth's core and the anchor is now on 0,0,0 in the ecef world.
     const matrix_translateEcefAnchorToOrigin = translateEcefAnchorToOrigin(anchor4326);
@@ -78,7 +78,15 @@ function calculateAnchorMatrices(anchor4326) {
     // We have now aligned 3js with ECEF. 0,0,0 is the anchor point. (0,1,0) is up, (1,0,0) is east, (0,0,1) is south.
     // In some sense we have made the up side of the 3d tiles model point to the north pole (it is sitting at earth's core)
     const matrix_rotateEcefTo3JS = rotateEcefUpTo3jsUp(anchor4326);
-    const matrix_ecefAnchorToOrigin = new THREE.Matrix4().multiplyMatrices(matrix_rotateEcefTo3JS, matrix_translateEcefAnchorToOrigin);
+    // TODO this moved it sideways:
+    const matrix_ecefAnchorToOrigin_beforeOffset = new THREE.Matrix4().multiplyMatrices(matrix_rotateEcefTo3JS, matrix_translateEcefAnchorToOrigin);
+    let matrix_ecefAnchorToOrigin;
+    if (!offset) {
+        matrix_ecefAnchorToOrigin = matrix_ecefAnchorToOrigin_beforeOffset;
+    }
+    else {
+        matrix_ecefAnchorToOrigin = new THREE.Matrix4().multiplyMatrices(new THREE.Matrix4().makeTranslation(offset.east, offset.up, offset.south), matrix_ecefAnchorToOrigin_beforeOffset);
+    }
     // Make the threeJS origin (0,0,0) (which is now also the ecefAnchor) sit on the geographical anchor4326 point in the web mercator world.
     const matrixOriginToAnchor = originToAnchor(anchor4326);
     return {matrix_ecefAnchorToOrigin, matrixOriginToAnchor};
@@ -193,7 +201,7 @@ class ThreeDManager {
         this.activeTiles = null;
     }
 
-    load3dTiles({ tilesetUrl, layerId = "3d-tiles" } = {}) {
+    load3dTiles({ tilesetUrl, layerId = "3d-tiles", offset } = {}) {
         if (this.activeTiles && !this.activeTiles.destroyed) {
             throw new Error("concurrent loading of more than 1 3dtiles is currently unsupported");
         }
@@ -201,6 +209,7 @@ class ThreeDManager {
         this.activeTiles = new ThreeDTilesAsset({
             tilesetUrl,
             layerId,
+            offset,
             debugMode: this.debugMode,
             dracoPath: this.dracoPath,
             ktx2Path: this.ktx2Path,
@@ -221,9 +230,10 @@ class ThreeDManager {
 }
 
 class ThreeDTilesAsset {
-    constructor({ tilesetUrl, layerId, debugMode, dracoPath, ktx2Path, onDestroy }) {
+    constructor({ tilesetUrl, layerId, offset, debugMode, dracoPath, ktx2Path, onDestroy }) {
         this.tilesetUrl = tilesetUrl;
         this.layerId = layerId;
+        this.offset = offset;
         this.debugMode = debugMode;
         this.dracoPath = dracoPath;
         this.ktx2Path = ktx2Path;
@@ -346,7 +356,7 @@ class ThreeDTilesAsset {
 
         let loadedTileSetHandled = false;
         const updateAnchorPoint = (anchor4326) => {
-            const newMatrices = calculateAnchorMatrices(anchor4326);
+            const newMatrices = calculateAnchorMatrices(anchor4326, this.offset);
             this.matrixOriginToAnchor = newMatrices.matrixOriginToAnchor;
             this.tiles.group.matrix.copy(newMatrices.matrix_ecefAnchorToOrigin);
             this.tiles.group.matrixAutoUpdate = false;

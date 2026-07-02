@@ -25,8 +25,9 @@ import maplibregl from 'maplibre-gl';
 const threeDManager = new ThreeDManager();
 const agiHqTiles = threeDManager.load3dTiles({
     tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
-    layerId: 'agiHqTiles'
-    });
+    layerId: 'agiHqTiles',
+    offset: { east: 0, up: -300, south: 0 },
+});
 const map = new maplibregl.Map(/* Your typical Maplibre initialization here*/);
 map.addLayer(agiHqTiles.getLayer());
 ```
@@ -78,6 +79,9 @@ If you prefer to self-host all the dependencies, generate the `www/dependencies`
 - `debugMode`: If true, will render the 3JS anchor point for debugging purposes.
 - `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/draco/`.
 - `ktx2Path`: The path to the ktx2 loader. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/`.
+
+**load3dTiles optional options**:
+- `offset`: Optional `{ east, up, south }` translation applied in the local 3JS frame before anchoring.
 
 ## Interesting use cases
 

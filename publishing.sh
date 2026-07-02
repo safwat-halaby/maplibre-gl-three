@@ -11,7 +11,7 @@ copy_npm_example() {
     cp "$example_dir/package.json" "$target_dir/package.json"
     cp "$example_dir/webpack.config.js" "$target_dir/webpack.config.js"
     cp "$example_dir/index.html" "$target_dir/index.html"
-    cp "$example_dir/src/main.js" "$target_dir/src/main.js"
+    cp "$example_dir/src/script.js" "$target_dir/src/script.js"
     cp "$example_dir/src/styles.css" "$target_dir/src/styles.css"
 }
 

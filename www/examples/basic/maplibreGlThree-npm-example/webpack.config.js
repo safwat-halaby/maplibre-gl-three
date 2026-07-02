@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default {
-    entry: './src/main.js',
+    entry: './src/script.js',
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
