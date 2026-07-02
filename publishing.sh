@@ -12,6 +12,7 @@ copy_npm_example() {
     cp "$example_dir/webpack.config.js" "$target_dir/webpack.config.js"
     cp "$example_dir/index.html" "$target_dir/index.html"
     cp "$example_dir/src/script.js" "$target_dir/src/script.js"
+    cp "$example_dir/src/style.json" "$target_dir/src/style.json"
     cp "$example_dir/src/styles.css" "$target_dir/src/styles.css"
 }
 
@@ -98,7 +99,6 @@ cp "$tarball_name" "$tmpdir/$tarball_name"
 pushd "$tmpdir"
 npm pkg set "dependencies.maplibre-gl-three=file:./$tarball_name"
 npm install
-npm run build
 npm start &
 npm_start_pid="$!"
 set +x

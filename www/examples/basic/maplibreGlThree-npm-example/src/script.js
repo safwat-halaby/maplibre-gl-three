@@ -3,6 +3,7 @@ import { ThreeDManager } from 'maplibre-gl-three';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './styles.css';
+import style from './style.json';
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -11,7 +12,7 @@ const map = new maplibregl.Map({
     pitch: 55,
     bearing: -20,
     maxPitch: 85,
-    style: './style.json',
+    style,
 });
 
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
