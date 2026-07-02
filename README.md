@@ -81,7 +81,7 @@ If you prefer to self-host all the dependencies, generate the `www/dependencies`
 - `ktx2Path`: The path to the ktx2 loader. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/`.
 
 **load3dTiles optional options**:
-- `offset`: Optional `{ east, up, south }` translation applied in the local 3JS frame before anchoring.
+- `offset`: Optional `{ east, up, south }` translation applied to the 3d tiles in meters.
 
 ## Interesting use cases
 
