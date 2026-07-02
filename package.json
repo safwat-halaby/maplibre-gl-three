@@ -1,6 +1,6 @@
 {
   "name": "maplibre-gl-three",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Glue code that brings Three.js 3D Tiles into MapLibre GL JS.",
   "type": "module",
   "main": "./src/library/maplibre-gl-three.js",
