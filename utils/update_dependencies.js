@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-/* This will copy all assets from node_modules into www/dependencies.
+/* This will copy some assets from node_modules into www/dependencies.
 It will also update hardcoded dependency paths to point to the proper resources across the project.
+This script is only relevant for the self hosting use case.
 */
 import { mkdir, copyFile, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -12,15 +13,17 @@ const relativeNodeModulesRoot = 'node_modules';
 const nodeModulesRoot = path.join(repoRoot, relativeNodeModulesRoot);
 const relativeDestinationRoot = 'www/dependencies';
 const destinationRoot = path.join(repoRoot, relativeDestinationRoot);
-const EXAMPLE_FILES_TO_UPDATE = [
+const FILES_TO_UPDATE_ALL = [
 	'www/examples/basic/maplibreGlThree-cdn-example/index.html',
 	'www/examples/basic/maplibreGlThree-selfhost-example/index.html',
-	'www/examples/basic/maplibreGlThree-selfhost-example/script.js',
 	'www/examples/other/washington/index.html',
-	'www/examples/other/washington/script.js'
 ];
-const SOURCE_FILES_TO_UPDATE = [
-	'src/library/maplibre-gl-three.js'
+// threeJS lazy loads some stuff and those URLs are hardcoded in a few places.
+const FILES_TO_UPDATE_THREEJS = [
+	'src/library/maplibre-gl-three.js',
+	'www/examples/basic/maplibreGlThree-selfhost-example/script.js',
+	'www/examples/other/washington/script.js',
+	'README.md'
 ];
 
 
@@ -153,7 +156,7 @@ async function updateFile(relativePath, callback) {
 }
 
 async function updateExampleHtmlVersions(versions) {
-	for (const relativePath of EXAMPLE_FILES_TO_UPDATE) {
+	for (const relativePath of FILES_TO_UPDATE_ALL) {
 		updateFile(relativePath, (text) => {
 			text = replaceVersionPin(text, 'maplibre-gl', versions['maplibre-gl']);
 			text = replaceVersionPin(text, 'three', versions['three']);
@@ -166,7 +169,7 @@ async function updateExampleHtmlVersions(versions) {
 }
 
 async function updateSourceFiles(versions) {
-	for (const relativePath of SOURCE_FILES_TO_UPDATE) {
+	for (const relativePath of FILES_TO_UPDATE_THREEJS) {
 		updateFile(relativePath, (text) => {
 			text = replaceVersionPin(text, 'three', versions['three']);
 			return text;
