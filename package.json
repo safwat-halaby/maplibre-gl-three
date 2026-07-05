@@ -2,9 +2,28 @@
   "name": "maplibre-gl-three",
   "version": "0.0.1",
   "description": "Glue code that brings Three.js 3D Tiles into MapLibre GL JS.",
+  "scripts": {
+    "pack:dry-run": "npm pack --dry-run"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/safwat-halaby/maplibre-gl-three",
+  "bugs": {
+    "url": "https://github.com/safwat-halaby/maplibre-gl-three/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/safwat-halaby/maplibre-gl-three.git"
+  },
+  "keywords": [
+    "maplibre",
+    "three",
+    "3d-tiles",
+    "webgl"
+  ],
+  "author": "safwat-halaby",
   "type": "module",
-  "main": "./src/library/maplibre-gl-three.js",
   "module": "./src/library/maplibre-gl-three.js",
+  "main": "./src/library/maplibre-gl-three.js",
   "exports": {
     ".": "./src/library/maplibre-gl-three.js",
     "./maplibre-gl-wrapper.js": "./src/library/maplibre-gl-wrapper.js",
@@ -14,16 +33,6 @@
     "src/library/*.js",
     "README.md"
   ],
-  "scripts": {
-    "pack:dry-run": "npm pack --dry-run"
-  },
-  "keywords": [
-    "maplibre",
-    "three",
-    "3d-tiles",
-    "webgl"
-  ],
-  "license": "MIT",
   "dependencies": {
     "proj4": "^2.15.0"
   },

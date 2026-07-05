@@ -26,8 +26,8 @@ const FILES_TO_UPDATE_THREEJS = [
 	'README.md'
 ];
 
-
-const LIBRARIES = {
+// Dependencies and which files the cdn/selfhost versions need from each
+const DEPENDENCIES = {
 	'maplibre-gl': ['dist/maplibre-gl.js', 'dist/maplibre-gl.css'],
 	proj4: ['dist/proj4.js', 'dist/proj4-src.js'],
 	three: [
@@ -57,16 +57,25 @@ const LIBRARIES = {
 };
 
 async function getPackageVersion(packageName) {
-	const packageJsonPath = path.join(nodeModulesRoot, packageName, 'package.json');
+	const packageJsonPath =path.join(nodeModulesRoot, packageName, 'package.json');
 	const contents = await readFile(packageJsonPath, 'utf8');
 	const packageJson = JSON.parse(contents);
-
 	if (!packageJson.version) {
 		throw new Error(`Missing version in ${packageJsonPath}`);
 	}
-
 	return packageJson.version;
 }
+
+async function getOwnVersion() {
+	const packageJsonPath = path.join(repoRoot, 'package.json')
+	const contents = await readFile(packageJsonPath, 'utf8');
+	const packageJson = JSON.parse(contents);
+	if (!packageJson.version) {
+		throw new Error(`Missing version in ${packageJsonPath}`);
+	}
+	return packageJson.version;
+}
+
 
 async function fileExists(filePath) {
 	try {
@@ -162,7 +171,7 @@ async function updateExampleHtmlVersions(versions) {
 			text = replaceVersionPin(text, 'three', versions['three']);
 			text = replaceVersionPin(text, '3d-tiles-renderer', versions['3d-tiles-renderer']);
 			text = replaceVersionPin(text, 'proj4', versions['proj4']);
-			text = replaceVersionPin(text, versions['maplibre-gl']);
+			text = replaceVersionPin(text, 'maplibre-gl-three', versions['maplibre-gl-three']);
 			return text;
 		});
 	}
@@ -179,10 +188,10 @@ async function updateSourceFiles(versions) {
 
 async function main() {
 	const versions = {};
-
+	versions['maplibre-gl-three'] = await getOwnVersion();
 	await resetDestinationRoot();
 
-	for (const [packageName, files] of Object.entries(LIBRARIES)) {
+	for (const [packageName, files] of Object.entries(DEPENDENCIES)) {
 		versions[packageName] = await getPackageVersion(packageName);
 		await copyLibraryFiles(packageName, versions[packageName], files);
 	}
