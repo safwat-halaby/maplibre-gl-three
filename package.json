@@ -1,7 +1,7 @@
 {
   "name": "maplibre-gl-three",
   "version": "0.0.1",
-  "description": "Glue code that brings Three.js 3D Tiles into MapLibre GL JS.",
+  "description": "Brings Three.js capabilities into MapLibre GL JS.",
   "scripts": {
     "pack:dry-run": "npm pack --dry-run"
   },
