@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "maplibre-gl": "^5.7.3",
-    "maplibre-gl-three": "0.0.2"
+    "maplibre-gl-three": "0.0.4"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",
