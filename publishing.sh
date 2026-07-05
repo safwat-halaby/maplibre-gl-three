@@ -3,10 +3,10 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+example_dir="www/examples/basic/maplibreGlThree-npm-example"
+
 copy_npm_example() {
     local target_dir="$1"
-    local example_dir="www/examples/basic/maplibreGlThree-npm-example"
-
     mkdir -p "$target_dir/src"
     cp "$example_dir/package.json" "$target_dir/package.json"
     cp "$example_dir/webpack.config.js" "$target_dir/webpack.config.js"
@@ -14,6 +14,10 @@ copy_npm_example() {
     cp "$example_dir/src/script.js" "$target_dir/src/script.js"
     cp "$example_dir/src/style.json" "$target_dir/src/style.json"
     cp "$example_dir/src/styles.css" "$target_dir/src/styles.css"
+}
+
+pause_for_enter() {
+    read -r dummy </dev/tty
 }
 
 static_server_pid=""
@@ -43,7 +47,7 @@ fi
 
 echo 'Confirm `package.json` has the intended `name`, `version`, `description`, `license`, `exports`, `files`, `peerDependencies`, and `devDependencies`'
 echo "You should probably BUMP the version right now"
-read -r dummy
+pause_for_enter
 
 published_version="$(node -p "require('./package.json').version")"
 release_name="v$published_version"
@@ -61,37 +65,22 @@ set +x
 
 echo ">>>>>>>> Does the list of files make sense?"
 echo ">>>>>>>> The tarball should include only the package entrypoint, package metadata, README, license, and two wrapper files."
-read -r dummy
+pause_for_enter
 
-echo ">>>>>>>> Make sure http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html still works"
-if [ ! -d "utils/express-static-server/node_modules" ]; then
-    set -x
-    pushd "utils/express-static-server"
-    npm install
-    popd
-    set +x
-fi
-node utils/express-static-server/static-server.js 6153 &
+echo ">>>>>>>> Smoke test the localhost example"
+./node-static-server.sh </dev/null &
 static_server_pid="$!"
 echo ">>>>>>>> Press Enter after checking the self-host example in a browser."
-read -r dummy
+pause_for_enter
 cleanup
 static_server_pid=""
-
-echo ">>>>>>>> Make sure the local NPM example still builds"
-set -x
-pushd "www/examples/basic/maplibreGlThree-npm-example"
-npm install
-npm run build
-popd
-set +x
 
 echo ">>>>>>>> Creating package tarball"
 set -x
 tarball_name="$(npm pack | tail -n 1)"
 set +x
 
-echo ">>>>>>>> Smoke test the packed tarball in a fresh copy of the NPM example"
+echo ">>>>>>>> Smoke test a copy of the NPM example against the newly packed tarball"
 tmpdir="$(mktemp -d)"
 set -x
 copy_npm_example "$tmpdir"
@@ -99,11 +88,11 @@ cp "$tarball_name" "$tmpdir/$tarball_name"
 pushd "$tmpdir"
 npm pkg set "dependencies.maplibre-gl-three=file:./$tarball_name"
 npm install
-npm start &
+npm start </dev/null &
 npm_start_pid="$!"
 set +x
 echo "Press ENTER checking the packed tarball smoke test in the opened browser tab."
-read -r dummy
+pause_for_enter
 echo ""
 cleanup
 npm_start_pid=""
@@ -111,8 +100,8 @@ set -x
 popd
 set +x
 
-echo ">>>>>>>> Confirm maplibreGlThree-cdn-example/index.html has the newest $published_version before publishing."
-read -r dummy
+echo ">>>>>>>> Make sure the CDN example has the newest $published_version before publishing."
+node utils/update_dependencies.js
 
 echo ">>>>>>>> Last confirmations..."
 set -x
@@ -145,24 +134,31 @@ git push master
 git push "$release_name"
 set +x
 
-echo ">>>>>>>> Verify published package from the registry in a fresh copy of the NPM example"
-published_tmpdir="$(mktemp -d)"
+echo ">>>>>>>> Smoke test NPM example with the freshly published version and update package.json of npm example"
 set -x
-copy_npm_example "$published_tmpdir"
-pushd "$published_tmpdir"
+pushd "$example_dir"
 npm pkg set "dependencies.maplibre-gl-three=$published_version"
 npm install
 npm run build
-npm start &
+npm start </dev/null &
 npm_start_pid="$!"
 set +x
-echo ">>>>>>>> Press any key after checking the published package smoke test in the opened browser tab."
-read -r dummy
+echo ">>>>>>>> Press ENTER after checking the published package smoke test in the opened browser tab."
+pause_for_enter
 echo ""
 cleanup
 npm_start_pid=""
 set -x
 popd
 set +x
+
+echo ">>>>>>>> Smoke test CDN example works with the freshly published version"
+./node-static-server.sh </dev/null &
+static_server_pid="$!"
+echo ">>>>>>>> Press Enter after checking the self-host example in a browser."
+pause_for_enter
+cleanup
+static_server_pid=""
+
 
 echo ">>>>>>>> Published and smoke-tested successfully."
