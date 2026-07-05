@@ -1,4 +1,6 @@
-Glue code which brings [ThreeJS](https://threejs.org/) capabilities into [Maplibre-gl-js](https://maplibre.org/). Currently focused on 3dTiles. internally uses [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
+Brings [ThreeJS](https://threejs.org/) capabilities into [Maplibre-gl-js](https://maplibre.org/). Currently focused on enabling [3DTiles](https://cesium.com/why-cesium/3d-tiles/) in MapLibre.
+
+internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
 **This project is not officially affiliated with MapLibre**
 
@@ -13,7 +15,7 @@ As of now, no pull requests are accepted. The situation will likely change once 
 **NPM install**:
 
 ```sh
-npm install maplibre-gl three maplibre-gl-three 3d-tiles-renderer
+npm install three 3d-tiles-renderer maplibre-gl maplibre-gl-three 
 ```
 
 **Load 3dTiles:**
@@ -28,17 +30,19 @@ const agiHqTiles = threeDManager.load3dTiles({
     layerId: 'agiHqTiles',
     offset: { east: 0, up: -300, south: 0 },
 });
-const map = new maplibregl.Map(/* Your typical Maplibre initialization here*/);
+const map = new maplibregl.Map(
+    container: 'YOUR-HTML-MAPLIBRE-CONTAINER',
+    zoom: 16,
+    center: [-75.596, 40.038],
+    pitch: 55,
+    bearing: -20,
+    maxPitch: 85,
+    style: 'YOUR-MAPLIBRE_STYLE'
+);
 map.addLayer(agiHqTiles.getLayer());
 ```
 
-The repo contains a minimal [NPM-based example project](www/examples/basic/maplibreGlThree-npm-example) running the code abov. You can try it out with: 
-
-```sh
-cd www/examples/basic/maplibre-gl-three-npm-example
-npm install
-npm start
-```
+The repository contains a minimal [NPM-based example project](www/examples/basic/maplibreGlThree-npm-example) running the code above.
 
 **Swapping to new tiles:**
 
@@ -54,27 +58,6 @@ map.addLayer(tiles2.getLayer());
 threeDManager.destroy(); // will implicitly call destroy() on all assets not yet destroyed.
 ```
 
-
-## CDNs and direct browser import
-
-You don't have to use a package manager. The repo contains an example of [direct dependency import from a CDN](www/examples/basic/maplibreGlThree-cdn-example). To run it locally:
-
-```sh
-cd utils/express-static-server
-npm install
-node static-server.js 6153
-```
-
-*(Or by running `node-static-server.sh` or any other local web server which serves [www/examples/](www/examples/) at `/examples`)*
-
-Then browse to http://localhost:6153/examples/basic/maplibreGlThree-cdn-example/index.html
-
-If you prefer to self-host all the dependencies, generate the `www/dependencies` by running `npm install`, then start a local server as above and browse to http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html 
-
-*(You can also run `node-static-server.sh` or any other local web server which serves [www/dependencies/](www/dependencies/) at `/dependencies` and [src/library/](src/library/) at `/library`)*
-
-## Configuration
-
 **ThreeDManager optional constructor options**:
 - `debugMode`: If true, will render the 3JS anchor point for debugging purposes.
 - `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/draco/`.
@@ -84,22 +67,34 @@ If you prefer to self-host all the dependencies, generate the `www/dependencies`
 **load3dTiles optional options**:
 - `offset`: Optional `{ east, up, south }` translation applied to the 3d tiles in meters.
 
-## Interesting use cases
 
-If you have a height map of the same area, you can use the transparent terrain trick. TODO describe this further.
+## CDNs and direct browser import
 
-## Exotic use cases
+You don't have to use a package manager. The repository contains an example for a [direct dependency import from a CDN](www/examples/basic/maplibreGlThree-cdn-example). If you prefer to host all the dependencies yourself, there's also [a self-hosting example](www/examples/basic/maplibreGlThree-selfhost-example). There's a convenience script to run these examples. See the next section.
 
-- Use Maplibre+ThreeJS with "unprojected" / Plate Carree background tiles [www/examples/other/plate-caree/](www/examples/other/plate-caree/). Some more documentation may be provided in the future.
+## Run the examples and demos
+
+You can locally the examples by running `node-static-server.sh` then browsing to `http://localhost:6153`. These include:
+
+- Non-npm Bundling options
+  - CDN
+  - Self-hosting
+- Interesting use cases
+  - TODO heightmap
+- Exotic use cases
+  - Use Maplibre+ThreeJS with "unprojected" / Plate Carree background tiles [www/examples/other/plate-caree/](www/examples/other/plate-caree/). Some more documentation may be provided in the future.
 
 ## Development
 
-The project is just glue code, so to keep it simple there is currently no compilation/packing/minifcation step. The source code which is at `src/library` is what is ultimately published.
+To keep it simple there is currently no compilation/packing/minifcation step. The source code which is at `src/library` is what is ultimately published. This will possibly change in the future to properly support TypeScript.
 
-You can develop locally by pointing `maplibreGlThree-npm-example` to the local files rather than npm. In `package.json` put this line in the dependencies: `"maplibre-gl-three": "file:../../.."`.
-
-Alternatively, run `node-static-server.sh` which serves the direct browser example. Modify the source code and refresh the page. No build step.
+You can develop locally by pointing `maplibreGlThree-npm-example` to the local files rather than npm. In `package.json` put this line in the dependencies: `"maplibre-gl-three": "file:../../.."`. Alternatively, you can run `node-static-server.sh` which serves the non-npm examples. Modify the source code and refresh the page. No build step.
 
 ## Known issues / Notes
+
 - Tiles go wild if camera moves away far enough.
 - Does not yet work with the globe projection.
+
+## TODOS
+
+See [TODOS.md](TODOS.md).
