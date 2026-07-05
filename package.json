@@ -1,6 +1,6 @@
 {
   "name": "maplibre-gl-three",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Brings Three.js capabilities into MapLibre GL JS.",
   "scripts": {
     "pack:dry-run": "npm pack --dry-run"
