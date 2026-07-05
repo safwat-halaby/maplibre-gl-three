@@ -124,7 +124,7 @@ if [ "$answer" != "publish" ]; then
 fi
 
 set -x
-# npm publish "$tarball_name"
+npm publish "$tarball_name"
 set +x
 
 
