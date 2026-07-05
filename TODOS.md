@@ -2,6 +2,7 @@
 
 **NEXT:**
 
+- Changelog
 - Typescript
 - Make the plate carree demo rely on CDN for simplicity
 - Maybe: Easier plate carree mode by including the callbacks in the library
