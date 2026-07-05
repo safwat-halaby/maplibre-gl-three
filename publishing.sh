@@ -127,19 +127,8 @@ set -x
 npm publish "$tarball_name"
 set +x
 
-
-echoBold "Stage changed files, commit $release_name, and create tag $release_name"
-set -x
-git add -A
-if git diff --cached --quiet; then
-    git commit --allow-empty -m "$release_name"
-else
-    git commit -m "$release_name"
-fi
-git tag "$release_name"
-git push origin master
-git push origin "$release_name"
-set +x
+echoBold "Sleeping for 10 seconds to let the packages propogate"
+sleep 10
 
 echoBold "Smoke test NPM example with the freshly published version and update package.json of npm example"
 set -x
@@ -157,6 +146,22 @@ npm_start_pid=""
 set -x
 popd
 set +x
+
+echoBold "Stage changed files, commit $release_name, and create tag $release_name"
+set -x
+git add -A
+if git diff --cached --quiet; then
+    git commit --allow-empty -m "$release_name"
+else
+    git commit -m "$release_name"
+fi
+git tag "$release_name"
+git push origin master
+git push origin "$release_name"
+set +x
+
+echoBold "Sleeping for 10 seconds to let the changes propogate"
+sleep 10
 
 echoBold "Smoke test CDN example works with the freshly published version"
 ./node-static-server.sh </dev/null &
