@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-/* This will copy some assets from node_modules into www/dependencies.
-It will also update hardcoded dependency paths to point to the proper resources across the project.
-This script is only relevant for the self hosting use case.
+/* This script does 3 things:
+- Copy some assets from node_modules into www/dependencies, enabling the self-host examples to work.
+- Update some hardcoded dependency paths in the self-host examples to point to the proper files.
+- Update the hardcoded path in maplibre-gl-three.ts
 */
 import { mkdir, copyFile, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -20,7 +21,7 @@ const FILES_TO_UPDATE_ALL = [
 ];
 // threeJS lazy loads some stuff and those URLs are hardcoded in a few places.
 const FILES_TO_UPDATE_THREEJS = [
-	'src/library/maplibre-gl-three.js',
+	'src/library/maplibre-gl-three.ts',
 	'www/examples/basic/maplibreGlThree-selfhost-example/script.js',
 	'www/examples/other/washington/script.js',
 	'README.md'
@@ -164,7 +165,7 @@ async function updateFile(relativePath, callback) {
 	}
 }
 
-async function updateExampleHtmlVersions(versions) {
+async function updateAllDependenciesInFiles(versions) {
 	for (const relativePath of FILES_TO_UPDATE_ALL) {
 		updateFile(relativePath, (text) => {
 			text = replaceVersionPin(text, 'maplibre-gl', versions['maplibre-gl']);
@@ -177,7 +178,7 @@ async function updateExampleHtmlVersions(versions) {
 	}
 }
 
-async function updateSourceFiles(versions) {
+async function updateThreeJsDependenciesInFiles(versions) {
 	for (const relativePath of FILES_TO_UPDATE_THREEJS) {
 		updateFile(relativePath, (text) => {
 			text = replaceVersionPin(text, 'three', versions['three']);
@@ -198,8 +199,8 @@ async function main() {
 	console.log('');
 	console.log('All dependency files have been copied.');
 	console.log('');
-	await updateExampleHtmlVersions(versions);
-	await updateSourceFiles(versions);
+	await updateAllDependenciesInFiles(versions);
+	await updateThreeJsDependenciesInFiles(versions);
 }
 
 main().catch((error) => {

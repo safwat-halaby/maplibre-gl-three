@@ -55,7 +55,7 @@ if $root_node_modules_missing || $www_dependencies_missing || $express_server_no
             if $root_node_modules_missing; then
                 echo "Copy cancelled."
             else
-                node utils/update_dependencies.js
+                npm run syncDeps
             fi 
         fi
         echo ""

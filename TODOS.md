@@ -4,9 +4,9 @@
 
 - Changelog
 - Typescript
-- Make the plate carree demo rely on CDN for simplicity
-- Maybe: Easier plate carree mode by including the callbacks in the library
+- Easier plate carree mode by including the callbacks in the library
 - Investigate publishing.sh not releasing port 8080 after terminating webpack serve, making the second serve fail
+- Use same CDN everywhere
 
 ## Todos
 

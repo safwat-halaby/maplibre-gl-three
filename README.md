@@ -60,10 +60,11 @@ threeDManager.destroy(); // will implicitly call destroy() on all assets not yet
 - `debugMode`: If true, will render the 3JS anchor point for debugging purposes.
 - `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/draco/`.
 - `ktx2Path`: The path to the ktx2 loader. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/`.
-- Additionally, `handleAnchorPoint(mapInstance)` and `getTransformParameters(anchor4326)` are advanced callbacks for overriding the calculation of the anchor point and the internal transform parameters, respectively. In the future the usage of these callbacks may be better documented. In the meantime see [www/examples/other/plate-caree/](www/examples/other/plate-caree/) for a usage example of the plate-caree projection. 
+- Additionally, `calculateAnchorPoint(mapInstance)` and `getTransformParameters(anchor4326)` are advanced callbacks for overriding the calculation of the anchor point and the internal transform parameters, respectively. In the future the usage of these callbacks may be better documented. In the meantime see [www/examples/other/plate-caree/](www/examples/other/plate-caree/) for a usage example of the plate-caree projection. 
 
 **load3dTiles optional options**:
 - `offset`: Optional `{ east, up, south }` translation applied to the 3d tiles in meters.
+- `preprocessUrl(url)`: Optional callback used to rewrite asset URLs before `3d-tiles-renderer` fetches them.
 
 
 ## CDNs and direct browser import
@@ -72,27 +73,50 @@ You don't have to use a package manager. The repository contains an example for 
 
 ## Run the examples and demos
 
-You can locally the examples by running `node-static-server.sh` then browsing to `http://localhost:6153`. These include:
+`www/examples/basic/maplibreGlThree-npm-example` has a basic npm project which uses this library as a dependency. Check its [README](www/examples/basic/maplibreGlThree-npm-example/README.md) for running instructions.
 
-- Non-npm Bundling options
-  - CDN
-  - Self-hosting
-- Interesting use cases
-  - TODO heightmap
-- Exotic use cases
-  - Use Maplibre+ThreeJS with "unprojected" / Plate Carree background tiles [www/examples/other/plate-caree/](www/examples/other/plate-caree/). Some more documentation may be provided in the future.
+To  run the rest of the non-npm examples:  
+
+```sh
+npm install
+npm updateDeps
+npm run build
+node-static-server.sh
+```
+
+...then browse to `http://localhost:6153`.
 
 ## Development
 
-To keep it simple there is currently no compilation/packing/minifcation step. The source code which is at `src/library` is what is ultimately published. This will possibly change in the future to properly support TypeScript.
+The TypeScript source code lives in `src/library`. To generate the library in the `dist/` folder:
 
-You can develop locally by pointing `maplibreGlThree-npm-example` to the local files rather than npm. In `package.json` put this line in the dependencies: `"maplibre-gl-three": "file:../../.."`. Alternatively, you can run `node-static-server.sh` which serves the non-npm examples. Modify the source code and refresh the page. No build step.
+```
+npm install
+npm updateDeps
+npm run build:watch
+```
+
+*...or `npm run build` for a one-time generation*
+
+For consequent runs, `npm run build:watch` is enough as long as dependencies are unmodified. 
+
+You probably also want run a basic browser frontend project in parallel, which uses your local version of the `dist/` folder as a dependency. There are 2 methods:
+
+1. Use [www/examples/basic/maplibreGlThree-npm-example](www/examples/basic/maplibreGlThree-npm-example/).
+  - Point that project to the local `dist` files rather than the npm registry by replacing the `maplibre-gl-three` dependency line with: `"maplibre-gl-three": "file:../../../.." ` in the project's `package.json`. 
+  - Then run that project according to [its readme](www/examples/basic/maplibreGlThree-npm-example/README.md).
+
+2. Use [maplibreGlthree-selfhost-example](www/examples/basic/maplibreGlThree-selfhost-example). Run `node-static-server.sh` and browse to `http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html`.
+
+In either case refresh your page after changing things in the library's source code.
 
 ## Known issues / Notes
 
 - Tiles go wild if camera moves away far enough.
-- Does not yet work with the globe projection.
+- Does not yet work with the globe projection. (why?)
 
-## TODOS
+## See also
 
-See [TODOS.md](TODOS.md).
+- [Changelog](CHANGELOG.md)
+- [License](LICENSE.txt)
+- [TODOS.md](TODOS.md).

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default {
-    entry: './src/script.js',
+    entry: './src/script.ts',
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
@@ -16,7 +16,15 @@ export default {
                 test: /\.css$/i,
                 use: ['style-loader', 'css-loader'],
             },
+            {
+                test: /\.ts$/i,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
         ],
+    },
+    resolve: {
+        extensions: ['.ts', '.js'],
     },
     devServer: {
         static: {

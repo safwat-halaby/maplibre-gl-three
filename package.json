@@ -3,7 +3,10 @@
   "version": "0.0.4",
   "description": "Brings Three.js capabilities into MapLibre GL JS.",
   "scripts": {
-    "pack:dry-run": "npm pack --dry-run"
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "pack:dry-run": "npm pack --dry-run",
+    "syncDeps": "node utils/sync_dependencies.js"
   },
   "license": "MIT",
   "homepage": "https://github.com/safwat-halaby/maplibre-gl-three",
@@ -22,15 +25,28 @@
   ],
   "author": "safwat-halaby",
   "type": "module",
-  "module": "./src/library/maplibre-gl-three.js",
-  "main": "./src/library/maplibre-gl-three.js",
+  "module": "./dist/maplibre-gl-three.js",
+  "main": "./dist/maplibre-gl-three.js",
+  "types": "./dist/maplibre-gl-three.d.ts",
   "exports": {
-    ".": "./src/library/maplibre-gl-three.js",
-    "./maplibre-gl-wrapper.js": "./src/library/maplibre-gl-wrapper.js",
-    "./proj4-wrapper.js": "./src/library/proj4-wrapper.js"
+    ".": {
+      "types": "./dist/maplibre-gl-three.d.ts",
+      "import": "./dist/maplibre-gl-three.js"
+    },
+    "./maplibre-gl-wrapper.js": {
+      "types": "./dist/maplibre-gl-wrapper.d.ts",
+      "import": "./dist/maplibre-gl-wrapper.js"
+    },
+    "./proj4-wrapper.js": {
+      "types": "./dist/proj4-wrapper.d.ts",
+      "import": "./dist/proj4-wrapper.js"
+    }
   },
   "files": [
-    "src/library/*.js",
+    "dist/*.js",
+    "dist/*.js.map",
+    "dist/*.d.ts",
+    "dist/*.d.ts.map",
     "README.md"
   ],
   "dependencies": {
@@ -43,8 +59,11 @@
   },
   "devDependencies": {
     "3d-tiles-renderer": "^0.4.21",
+    "@types/three": "^0.183.0",
     "maplibre-gl": "^5.7.3",
     "proj4": "^2.20.9",
-    "three": "^0.183.0"
+    "three": "^0.183.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
   }
 }

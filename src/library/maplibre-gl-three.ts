@@ -3,8 +3,85 @@ import { TilesRenderer } from "3d-tiles-renderer";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
-import maplibregl from 'maplibre-gl';
+import maplibregl, { type CustomLayerInterface, type CustomRenderMethodInput, type Map as MapLibreMap } from 'maplibre-gl';
 import proj4 from 'proj4';
+import {PlateCareeTools} from './plateCareeTools';
+export { PlateCareeTools };
+import type { LngLatAltitude, TransformParameters } from './interfaces';
+
+
+export type { LngLatAltitude, TransformParameters } from './interfaces';
+
+export interface ThreeDTilesOffset {
+    east: number;
+    up: number;
+    south: number;
+}
+
+export type calculateAnchorPoint = (mapInstance: MapLibreMap) => LngLatAltitude;
+export type GetTransformParameters = (anchor4326: LngLatAltitude) => TransformParameters;
+
+export interface ThreeDManagerOptions {
+    /**
+     * If true, renders the 3JS anchor point for debugging.
+     * @defaultValue false
+     */
+    debugMode?: boolean;
+    /**
+     * Path to the Draco loader to be lazy loaded.
+     * @defaultValue `https://unpkg.com/three@0.183.2/examples/jsm/libs/draco/`
+     */
+    dracoPath?: string;
+    /**
+     * Path to the KTX2 loader to be lazy loaded.
+     * @defaultValue `https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/`
+     */
+    ktx2Path?: string;
+    /**
+     * Advanced callback for overriding the calculation of the anchor point.
+     */
+    calculateAnchorPoint?: calculateAnchorPoint;
+    /**
+     * Advanced callback for overriding the internal transform parameters.
+     */
+    getTransformParameters?: GetTransformParameters;
+}
+
+export interface Load3dTilesOptions {
+    tilesetUrl: string;
+    layerId?: string;
+    /**
+     * Optional `{ east, up, south }` translation applied to the 3d tiles in meters.
+     */
+    offset?: ThreeDTilesOffset;
+    /**
+     * Optional callback used to transform URLs before 3d-tiles-renderer fetches them.
+     */
+    preprocessUrl?: (url: string) => string;
+}
+
+export interface ThreeDTilesAsset {
+    readonly destroyed: boolean;
+    getLayer(): CustomLayerInterface;
+    destroy(): void;
+}
+
+interface AnchorMatrices {
+    matrix_ecefAnchorToOrigin: THREE.Matrix4;
+    matrixOriginToAnchor: THREE.Matrix4;
+}
+
+interface ThreeDTilesAssetOptions {
+    manager: ThreeDManager;
+    tilesetUrl: string;
+    layerId: string;
+    offset: ThreeDTilesOffset | undefined;
+    preprocessUrl: ((url: string) => string) | undefined;
+    debugMode: boolean;
+    dracoPath: string;
+    ktx2Path: string;
+    onDestroy: (tiles: ThreeDTilesAsset) => void;
+}
 
 
 /** 
@@ -54,15 +131,19 @@ const DEFAULT_DRACO_PATH = "https://unpkg.com/three@0.183.2/examples/jsm/libs/dr
 const DEFAULT_KTX2_PATH = "https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/";
 
 
-function markOriginPointForDebugging(sceneInst, size = 400) {
+function markOriginPointForDebugging(sceneInst: THREE.Scene, size = 400): void {
 
     const axes = new THREE.AxesHelper(size);
     axes.name = "debug-local-axes";
     axes.renderOrder = 999;
     axes.traverse((child) => {
-        if (child.material) {
-            child.material.depthTest = false;
-            child.material.depthWrite = false;
+        const maybeMaterialChild = child as THREE.Object3D & { material?: THREE.Material | THREE.Material[] };
+        const materials = Array.isArray(maybeMaterialChild.material) ? maybeMaterialChild.material : [maybeMaterialChild.material];
+        for (const material of materials) {
+            if (material) {
+                material.depthTest = false;
+                material.depthWrite = false;
+            }
         }
     });
     sceneInst.add(axes);
@@ -70,7 +151,7 @@ function markOriginPointForDebugging(sceneInst, size = 400) {
 
 
 
-function calculateAnchorMatrices(anchor4326, offset, getTransformParameters) {
+function calculateAnchorMatrices(anchor4326: LngLatAltitude, offset: ThreeDTilesOffset | undefined, getTransformParameters: GetTransformParameters): AnchorMatrices {
     // Translate the EcefAnchor to sit on 0,0,0
     // In some sense we have moved the entire 3dtiles model from the earth's shell into earth's core and the anchor is now on 0,0,0 in the ecef world.
     const matrix_translateEcefAnchorToOrigin = translateEcefAnchorToOrigin(anchor4326);
@@ -93,7 +174,7 @@ function calculateAnchorMatrices(anchor4326, offset, getTransformParameters) {
 }
 
 /** See calculateAnchorMatrices for a description. */
-function translateEcefAnchorToOrigin(anchor4326) {
+function translateEcefAnchorToOrigin(anchor4326: LngLatAltitude): THREE.Matrix4 {
     const ecefOrigin = proj4("EPSG:4326", "EPSG:4978", anchor4326)
     return new THREE.Matrix4().makeTranslation(-ecefOrigin[0], -ecefOrigin[1], -ecefOrigin[2]);
 }
@@ -103,7 +184,7 @@ function translateEcefAnchorToOrigin(anchor4326) {
  *  For example at longitude=0, latitude=0, the UP vector is (1,0,0), the SOUTH vector is (0,0,-1), the East vector is (0,1,0)
  *  At the north pole (longitude=0, latitude=90), the UP vector is (0,0,1). SOUTH vector is (1,0,0), EAST vector is (0,1,0)
  */
-function getEcefCompassVectors([lng, lat]) {
+function getEcefCompassVectors([lng, lat]: LngLatAltitude): { east: THREE.Vector3; up: THREE.Vector3; south: THREE.Vector3 } {
     const lonRad = THREE.MathUtils.degToRad(lng);
     const latRad = THREE.MathUtils.degToRad(lat);
 
@@ -123,7 +204,7 @@ function getEcefCompassVectors([lng, lat]) {
 }
 
 /** See calculateAnchorMatrices for a description. */
-function rotateEcefUpTo3jsUp(anchor4326) {
+function rotateEcefUpTo3jsUp(anchor4326: LngLatAltitude): THREE.Matrix4 {
     const {east, up, south} = getEcefCompassVectors(anchor4326);
 
     return new THREE.Matrix4().set(
@@ -135,7 +216,7 @@ function rotateEcefUpTo3jsUp(anchor4326) {
 }
 
 /** See calculateAnchorMatrices for a description. */
-function originToAnchor(anchor4326, getTransformParameters) {
+function originToAnchor(anchor4326: LngLatAltitude, getTransformParameters: GetTransformParameters): THREE.Matrix4 {
     const modelTransform = getTransformParameters(anchor4326);
     const axisX = new THREE.Vector3(1, 0, 0);
     const axisY = new THREE.Vector3(0, 1, 0);
@@ -153,12 +234,12 @@ function originToAnchor(anchor4326, getTransformParameters) {
 }
 
 
-function handleWebMercatorAnchorPoint(mapInstance) {
+function calculateWebMercatorAnchorPoint(mapInstance: MapLibreMap): LngLatAltitude {
     const { lng, lat } = mapInstance.getCenter();
     return [lng, lat, 0];
 }
 
-function getWebMercatorTransformParameters(anchor4326) {
+function getWebMercatorTransformParameters(anchor4326: LngLatAltitude): TransformParameters {
     const webMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat([anchor4326[0], anchor4326[1]], anchor4326[2]);
     const scale = webMercatorCoordinate.meterInMercatorCoordinateUnits();
     return {
@@ -174,33 +255,41 @@ function getWebMercatorTransformParameters(anchor4326) {
     };
 }
 
-class ThreeDManager {
+export class ThreeDManager {
+    debugMode: boolean;
+    dracoPath: string;
+    ktx2Path: string;
+    calculateAnchorPoint: calculateAnchorPoint;
+    getTransformParameters: GetTransformParameters;
+    activeTiles: ThreeDTilesAsset | null;
+
     constructor({
         debugMode = false,
         dracoPath = DEFAULT_DRACO_PATH,
         ktx2Path = DEFAULT_KTX2_PATH,
-        handleAnchorPoint = handleWebMercatorAnchorPoint,
+        calculateAnchorPoint = calculateWebMercatorAnchorPoint,
         getTransformParameters = getWebMercatorTransformParameters,
-    } = {}) {
+    }: ThreeDManagerOptions = {}) {
         this.debugMode = debugMode;
         this.dracoPath = dracoPath;
         this.ktx2Path = ktx2Path;
-        this.handleAnchorPoint = handleAnchorPoint;
+        this.calculateAnchorPoint = calculateAnchorPoint;
         this.getTransformParameters = getTransformParameters;
 
         this.activeTiles = null;
     }
 
-    load3dTiles({ tilesetUrl, layerId = "3d-tiles", offset } = {}) {
+    load3dTiles({ tilesetUrl, layerId = "3d-tiles", offset, preprocessUrl }: Load3dTilesOptions): ThreeDTilesAsset {
         if (this.activeTiles && !this.activeTiles.destroyed) {
             throw new Error("concurrent loading of more than 1 3dtiles is currently unsupported");
         }
 
-        this.activeTiles = new ThreeDTilesAsset({
+        this.activeTiles = new ThreeDTilesAssetImpl({
             manager: this,
             tilesetUrl,
             layerId,
             offset,
+            preprocessUrl,
             debugMode: this.debugMode,
             dracoPath: this.dracoPath,
             ktx2Path: this.ktx2Path,
@@ -214,18 +303,41 @@ class ThreeDManager {
         return this.activeTiles;
     }
 
-    destroy() {
+    destroy(): void {
         this.activeTiles?.destroy();
         this.activeTiles = null;
     }
 }
 
-class ThreeDTilesAsset {
-    constructor({ manager, tilesetUrl, layerId, offset, debugMode, dracoPath, ktx2Path, onDestroy }) {
+class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
+    manager: ThreeDManager;
+    tilesetUrl: string;
+    layerId: string;
+    offset: ThreeDTilesOffset | undefined;
+    preprocessUrl: ((url: string) => string) | undefined;
+    debugMode: boolean;
+    dracoPath: string;
+    ktx2Path: string;
+    onDestroy: (tiles: ThreeDTilesAsset) => void;
+    scene: THREE.Scene | null;
+    camera: THREE.PerspectiveCamera | null;
+    renderer: THREE.WebGLRenderer | null;
+    mapInstance: MapLibreMap | null;
+    tiles: TilesRenderer | null;
+    tilesCamera: THREE.PerspectiveCamera | null;
+    matrixOriginToAnchor: THREE.Matrix4;
+    throttleTimeout: number | null;
+    moveHandler: (() => void) | null;
+    loadTilesetHandler: (() => void) | null;
+    customLayer: CustomLayerInterface | null;
+    destroyed: boolean;
+
+    constructor({ manager, tilesetUrl, layerId, offset, preprocessUrl, debugMode, dracoPath, ktx2Path, onDestroy }: ThreeDTilesAssetOptions) {
         this.manager = manager;
         this.tilesetUrl = tilesetUrl;
         this.layerId = layerId;
         this.offset = offset;
+        this.preprocessUrl = preprocessUrl;
         this.debugMode = debugMode;
         this.dracoPath = dracoPath;
         this.ktx2Path = ktx2Path;
@@ -245,7 +357,7 @@ class ThreeDTilesAsset {
         this.destroyed = false;
     }
 
-    getLayer() {
+    getLayer(): CustomLayerInterface {
         if (!this.customLayer) {
             this.customLayer = {
                 id: this.layerId,
@@ -260,7 +372,7 @@ class ThreeDTilesAsset {
         return this.customLayer;
     }
 
-    onAdd(mapArg, gl) {
+    onAdd(mapArg: MapLibreMap, gl: WebGLRenderingContext | WebGL2RenderingContext): void {
         if (this.destroyed) return;
 
         this.camera = new THREE.PerspectiveCamera();
@@ -285,11 +397,11 @@ class ThreeDTilesAsset {
         this.initTiles();
     }
 
-    onRemove() {
+    onRemove(): void {
         this.clearCallbacksAndTimeouts();
     }
 
-    destroy() {
+    destroy(): void {
         if (this.destroyed) return;
 
         const mapInstance = this.mapInstance;
@@ -315,7 +427,7 @@ class ThreeDTilesAsset {
         this.onDestroy?.(this);
     }
 
-    clearCallbacksAndTimeouts() {
+    clearCallbacksAndTimeouts(): void {
         if (this.moveHandler && this.mapInstance) {
             this.mapInstance.off("move", this.moveHandler);
         }
@@ -327,7 +439,12 @@ class ThreeDTilesAsset {
         this.mapInstance = null;
     }
 
-    initTiles() {
+    initTiles(): void {
+        const renderer = this.renderer;
+        const scene = this.scene;
+        const tilesCamera = this.tilesCamera;
+        if (!renderer || !scene || !tilesCamera) return;
+
         const gltfLoader = new GLTFLoader();
         const dracoLoader = new DRACOLoader();
         dracoLoader.setDecoderPath(this.dracoPath);
@@ -335,47 +452,58 @@ class ThreeDTilesAsset {
 
         const ktx2Loader = new KTX2Loader();
         ktx2Loader.setTranscoderPath(this.ktx2Path);
-        ktx2Loader.detectSupport(this.renderer);
+        ktx2Loader.detectSupport(renderer);
         gltfLoader.setKTX2Loader(ktx2Loader);
 
-        this.tiles = new TilesRenderer(this.tilesetUrl);
-        this.tiles.group.name = "tiles";
-        this.scene.add(this.tiles.group);
+        const tiles = new TilesRenderer(this.tilesetUrl);
+        this.tiles = tiles;
+        tiles.group.name = "tiles";
 
-        this.tiles.setCamera(this.tilesCamera);
-        this.tiles.setResolutionFromRenderer(this.tilesCamera, this.renderer);
-        this.tiles.manager.addHandler(/\.(gltf|glb)$/g, gltfLoader);
+        if (this.preprocessUrl) {
+            tiles.registerPlugin({
+                preprocessUrl: this.preprocessUrl
+            });
+        }
+        
+        scene.add(tiles.group);
+
+        tiles.setCamera(tilesCamera);
+        tiles.setResolutionFromRenderer(tilesCamera, renderer);
+        tiles.manager.addHandler(/\.(gltf|glb)$/g, gltfLoader);
 
         let loadedTileSetHandled = false;
-        const updateAnchorPoint = (anchor4326) => {
+        const updateAnchorPoint = (anchor4326: LngLatAltitude): void => {
             const newMatrices = calculateAnchorMatrices(anchor4326, this.offset, this.manager.getTransformParameters);
             this.matrixOriginToAnchor = newMatrices.matrixOriginToAnchor;
-            this.tiles.group.matrix.copy(newMatrices.matrix_ecefAnchorToOrigin);
-            this.tiles.group.matrixAutoUpdate = false;
-            this.tiles.group.updateMatrixWorld(true);
+            tiles.group.matrix.copy(newMatrices.matrix_ecefAnchorToOrigin);
+            tiles.group.matrixAutoUpdate = false;
+            tiles.group.updateMatrixWorld(true);
         };
 
-        const handleAnchorPoint = () => this.throttle(() => {
-            const anchor4326 = this.manager.handleAnchorPoint(this.mapInstance);
+        const calculateAnchorPoint = () => this.throttle(() => {
+            const mapInstance = this.mapInstance;
+            if (!mapInstance) return;
+
+            const anchor4326 = this.manager.calculateAnchorPoint(mapInstance);
             updateAnchorPoint(anchor4326);
         });
         const loadTileSet = () => {
             if (loadedTileSetHandled) {
-                this.tiles?.removeEventListener("load-tileset", loadTileSet);
+                tiles.removeEventListener("load-tileset", loadTileSet);
                 return;
             }
 
             loadedTileSetHandled = true;
-            this.moveHandler = () => handleAnchorPoint();
-            this.mapInstance.on("move", this.moveHandler);
-            handleAnchorPoint();
+            this.moveHandler = () => calculateAnchorPoint();
+            this.mapInstance?.on("move", this.moveHandler);
+            calculateAnchorPoint();
         };
 
         this.loadTilesetHandler = loadTileSet;
-        this.tiles.addEventListener("load-tileset", this.loadTilesetHandler);
+        tiles.addEventListener("load-tileset", this.loadTilesetHandler);
     }
 
-    throttle(cb) {
+    throttle(cb: () => void): void {
         if (this.throttleTimeout !== null) return;
         this.throttleTimeout = setTimeout(() => {
             this.throttleTimeout = null;
@@ -383,7 +511,7 @@ class ThreeDTilesAsset {
         }, 60);
     }
 
-    render(_gl, args) {
+    render(_gl: WebGLRenderingContext | WebGL2RenderingContext, args: CustomRenderMethodInput): void {
         if (this.destroyed) return;
         if (!this.camera || !this.renderer || !this.scene || !this.tilesCamera) return;
 
@@ -399,10 +527,9 @@ class ThreeDTilesAsset {
         this.tilesCamera.matrixWorld.copy(V).invert();
 
         this.renderer.resetState();
+        this.renderer.clearDepth(); // TODO investigate implications. Generally review the whole render function.
         this.renderer.render(this.scene, this.camera);
         if (this.tiles) this.tiles.update();
         this.mapInstance?.triggerRepaint();
     }
 }
-
-export { ThreeDManager };

@@ -1,9 +1,11 @@
-import maplibregl from 'maplibre-gl';
+import maplibregl, { type StyleSpecification } from 'maplibre-gl';
 import { ThreeDManager } from 'maplibre-gl-three';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './styles.css';
 import style from './style.json';
+
+const mapStyle = style as StyleSpecification;
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -12,7 +14,7 @@ const map = new maplibregl.Map({
     pitch: 55,
     bearing: -20,
     maxPitch: 85,
-    style,
+    style: mapStyle,
 });
 
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
