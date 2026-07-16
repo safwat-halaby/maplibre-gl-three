@@ -4,7 +4,7 @@
     {
       "id": "osm",
       "type": "raster",
-      "source": "natural-earth"
+      "source": "natural-earth-plate-carree"
     },
     {
       "id": "rivers",
@@ -38,7 +38,7 @@
     }
   ],
   "sources": {
-    "natural-earth": {
+    "natural-earth-plate-carree": {
         "type": "raster",
         "tiles": ["/datasets/natural-earth/GoogleCRS84Quad/{z}/{x}/{y}.png"],
         "minzoom": 0,

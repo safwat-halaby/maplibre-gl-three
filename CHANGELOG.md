@@ -6,7 +6,7 @@
   - Restrict OSM maxzoom in examples
   - Rename mislabeled natural-earth layer
   - CDN consistency - all URLs now use https://jsdelivr.net
-  - Inlined a 3dtiles dataset up to zoom 3 for complete offline development.
+  - Inlined a 3dtiles + natural earth dataset up to zoom 3 for complete offline development.
 
 ## 0.0.5 - 2026-07-16
 
