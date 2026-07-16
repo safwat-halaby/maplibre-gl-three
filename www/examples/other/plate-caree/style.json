@@ -4,7 +4,7 @@
     {
       "id": "osm",
       "type": "raster",
-      "source": "osm-tiles"
+      "source": "natural-earth"
     },
     {
       "id": "rivers",
@@ -38,13 +38,12 @@
     }
   ],
   "sources": {
-    "osm-tiles": {
+    "natural-earth": {
         "type": "raster",
         "tiles": ["/datasets/natural-earth/GoogleCRS84Quad/{z}/{x}/{y}.png"],
         "minzoom": 0,
         "maxzoom": 2,
-        "tileSize": 256,
-        "attribution": "&copy; OpenStreetMap contributors"
+        "tileSize": 256
     },
     "osm-vectors": {
       "type": "geojson",
