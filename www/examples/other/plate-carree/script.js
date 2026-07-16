@@ -1,12 +1,12 @@
 import maplibregl from 'maplibre-gl';
-import { ThreeDManager, PlateCareeTools } from 'maplibre-gl-three';
+import { ThreeDManager, PlateCarreeTools } from 'maplibre-gl-three';
 
 
 function alignGeoJSONWithPlateCarree(geojson) {
     geojson.features.forEach((feature) => {
         // assumes a LineString
         feature.geometry.coordinates.forEach(coordinate => {
-            const aligned = PlateCareeTools.alignWithEquirectangularProjection(coordinate);
+            const aligned = PlateCarreeTools.alignWithEquirectangularProjection(coordinate);
             coordinate[0] = aligned[0];
             coordinate[1] = aligned[1];
         })
@@ -19,7 +19,7 @@ const map = await (async () => {
     const mapInstance = new maplibregl.Map({
         container: 'map',
         zoom: 16,
-        center: PlateCareeTools.alignWithEquirectangularProjection([-75.596, 40.038]),
+        center: PlateCarreeTools.alignWithEquirectangularProjection([-75.596, 40.038]),
         pitch: 55,
         bearing: -20,
         maxPitch: 85,
@@ -35,8 +35,8 @@ map.on('load', () => {
     const threeDManager = new ThreeDManager({
         dracoPath: "/dependencies/three@0.183.2/examples/jsm/libs/draco/",
         ktx2Path: "/dependencies/three@0.183.2/examples/jsm/libs/basis/",
-        calculateAnchorPoint: PlateCareeTools.calculatePlateCarreeAnchorPoint,
-        getTransformParameters: PlateCareeTools.getPlateCareeTransformParameters,
+        calculateAnchorPoint: PlateCarreeTools.calculatePlateCarreeAnchorPoint,
+        getTransformParameters: PlateCarreeTools.getPlateCarreeTransformParameters,
 
     });
     const agiHqTiles = threeDManager.load3dTiles({

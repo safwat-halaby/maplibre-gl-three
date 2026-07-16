@@ -10,7 +10,7 @@ const EPSG_WGS84 = proj4.Proj("EPSG:4326");
 const WGS84_BOUND = 180;
 const EPSG3857_BOUND = 20037508.3427892;
 
-function getPlateCareeTransformParameters(anchor4326: LngLatAltitude): TransformParameters {
+function getPlateCarreeTransformParameters(anchor4326: LngLatAltitude): TransformParameters {
     const [lng, lat] = alignWithEquirectangularProjection(anchor4326);
     const mercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat([lng, lat], 0);
     const scales = getPlateCarreeMeterScales(anchor4326);
@@ -75,4 +75,4 @@ function wgs84_to_equirectangular([lon, lat]: LngLatLike): LngLat {
 function equirectangular_to_wgs84([lon, lat]: LngLat): LngLat {
     return [(lon / EPSG3857_BOUND) * WGS84_BOUND, (lat / EPSG3857_BOUND) * WGS84_BOUND];
 }
-export const PlateCareeTools = {getPlateCareeTransformParameters, calculatePlateCarreeAnchorPoint};
+export const PlateCarreeTools = {getPlateCarreeTransformParameters, calculatePlateCarreeAnchorPoint};

@@ -5,8 +5,8 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
 import maplibregl, { type CustomLayerInterface, type CustomRenderMethodInput, type Map as MapLibreMap } from 'maplibre-gl';
 import proj4 from 'proj4';
-import {PlateCareeTools} from './plateCareeTools';
-export { PlateCareeTools };
+import {PlateCarreeTools} from './PlateCarreeTools';
+export { PlateCarreeTools };
 import type { LngLatAltitude, TransformParameters } from './interfaces';
 
 
@@ -58,6 +58,10 @@ export interface Load3dTilesOptions {
      * Optional callback used to transform URLs before 3d-tiles-renderer fetches them.
      */
     preprocessUrl?: (url: string) => string;
+    /**
+     * Optional maximum traversal depth for the loaded tileset.
+     */
+    maxDepth?: number;
 }
 
 export interface ThreeDTilesAsset {
@@ -73,10 +77,7 @@ interface AnchorMatrices {
 
 interface ThreeDTilesAssetOptions {
     manager: ThreeDManager;
-    tilesetUrl: string;
-    layerId: string;
-    offset: ThreeDTilesOffset | undefined;
-    preprocessUrl: ((url: string) => string) | undefined;
+    load3dTilesOptions: Load3dTilesOptions & { layerId: string };
     debugMode: boolean;
     dracoPath: string;
     ktx2Path: string;
@@ -279,17 +280,14 @@ export class ThreeDManager {
         this.activeTiles = null;
     }
 
-    load3dTiles({ tilesetUrl, layerId = "3d-tiles", offset, preprocessUrl }: Load3dTilesOptions): ThreeDTilesAsset {
+    load3dTiles({ tilesetUrl, layerId = "3d-tiles", offset, preprocessUrl, maxDepth }: Load3dTilesOptions): ThreeDTilesAsset {
         if (this.activeTiles && !this.activeTiles.destroyed) {
             throw new Error("concurrent loading of more than 1 3dtiles is currently unsupported");
         }
 
         this.activeTiles = new ThreeDTilesAssetImpl({
             manager: this,
-            tilesetUrl,
-            layerId,
-            offset,
-            preprocessUrl,
+            load3dTilesOptions: { tilesetUrl, layerId, offset, preprocessUrl, maxDepth },
             debugMode: this.debugMode,
             dracoPath: this.dracoPath,
             ktx2Path: this.ktx2Path,
@@ -311,10 +309,7 @@ export class ThreeDManager {
 
 class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
     manager: ThreeDManager;
-    tilesetUrl: string;
-    layerId: string;
-    offset: ThreeDTilesOffset | undefined;
-    preprocessUrl: ((url: string) => string) | undefined;
+    load3dTilesOptions: Load3dTilesOptions & { layerId: string };
     debugMode: boolean;
     dracoPath: string;
     ktx2Path: string;
@@ -332,12 +327,9 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
     customLayer: CustomLayerInterface | null;
     destroyed: boolean;
 
-    constructor({ manager, tilesetUrl, layerId, offset, preprocessUrl, debugMode, dracoPath, ktx2Path, onDestroy }: ThreeDTilesAssetOptions) {
+    constructor({ manager, load3dTilesOptions, debugMode, dracoPath, ktx2Path, onDestroy }: ThreeDTilesAssetOptions) {
         this.manager = manager;
-        this.tilesetUrl = tilesetUrl;
-        this.layerId = layerId;
-        this.offset = offset;
-        this.preprocessUrl = preprocessUrl;
+        this.load3dTilesOptions = load3dTilesOptions;
         this.debugMode = debugMode;
         this.dracoPath = dracoPath;
         this.ktx2Path = ktx2Path;
@@ -360,7 +352,7 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
     getLayer(): CustomLayerInterface {
         if (!this.customLayer) {
             this.customLayer = {
-                id: this.layerId,
+                id: this.load3dTilesOptions.layerId,
                 type: "custom",
                 renderingMode: "3d",
                 onAdd: (mapArg, gl) => this.onAdd(mapArg, gl),
@@ -369,7 +361,7 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
             };
         }
 
-        return this.customLayer;
+        return this.customLayer!;
     }
 
     onAdd(mapArg: MapLibreMap, gl: WebGLRenderingContext | WebGL2RenderingContext): void {
@@ -405,8 +397,9 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
         if (this.destroyed) return;
 
         const mapInstance = this.mapInstance;
-        if (mapInstance && this.layerId && mapInstance.getLayer?.(this.layerId)) {
-            mapInstance.removeLayer(this.layerId); // will call onRemove which will call clearCallbacksAndTimeouts
+        const layerId = this.load3dTilesOptions.layerId;
+        if (mapInstance && layerId && mapInstance.getLayer?.(layerId)) {
+            mapInstance.removeLayer(layerId); // will call onRemove which will call clearCallbacksAndTimeouts
         } else {
             this.clearCallbacksAndTimeouts();
         }
@@ -455,13 +448,17 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
         ktx2Loader.detectSupport(renderer);
         gltfLoader.setKTX2Loader(ktx2Loader);
 
-        const tiles = new TilesRenderer(this.tilesetUrl);
+        const { tilesetUrl, preprocessUrl, maxDepth } = this.load3dTilesOptions;
+        const tiles = new TilesRenderer(tilesetUrl);
+        if (maxDepth !== undefined) {
+            tiles.maxDepth = maxDepth;
+        }
         this.tiles = tiles;
         tiles.group.name = "tiles";
 
-        if (this.preprocessUrl) {
+        if (preprocessUrl) {
             tiles.registerPlugin({
-                preprocessUrl: this.preprocessUrl
+                preprocessUrl
             });
         }
         
@@ -473,7 +470,7 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
 
         let loadedTileSetHandled = false;
         const updateAnchorPoint = (anchor4326: LngLatAltitude): void => {
-            const newMatrices = calculateAnchorMatrices(anchor4326, this.offset, this.manager.getTransformParameters);
+            const newMatrices = calculateAnchorMatrices(anchor4326, this.load3dTilesOptions.offset, this.manager.getTransformParameters);
             this.matrixOriginToAnchor = newMatrices.matrixOriginToAnchor;
             tiles.group.matrix.copy(newMatrices.matrix_ecefAnchorToOrigin);
             tiles.group.matrixAutoUpdate = false;
