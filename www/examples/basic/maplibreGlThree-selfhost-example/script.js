@@ -19,7 +19,7 @@ map.on('load', () => {
         ktx2Path: "/dependencies/three@0.183.2/examples/jsm/libs/basis/"
     });
     const agiHqTiles = threeDManager.load3dTiles({
-        tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
+        tilesetUrl: '/datasets/agi-hq/tileset.json',
         layerId: 'agi-hq-3d-tiles',
         offset: { east: 0, up: -310, south: 0 },
     });
