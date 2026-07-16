@@ -17,13 +17,11 @@ const destinationRoot = path.join(repoRoot, relativeDestinationRoot);
 const FILES_TO_UPDATE_ALL = [
 	'www/examples/basic/maplibreGlThree-cdn-example/index.html',
 	'www/examples/basic/maplibreGlThree-selfhost-example/index.html',
-	'www/examples/other/washington/index.html',
 ];
 // threeJS lazy loads some stuff and those URLs are hardcoded in a few places.
 const FILES_TO_UPDATE_THREEJS = [
 	'src/library/maplibre-gl-three.ts',
 	'www/examples/basic/maplibreGlThree-selfhost-example/script.js',
-	'www/examples/other/washington/script.js',
 	'README.md'
 ];
 
