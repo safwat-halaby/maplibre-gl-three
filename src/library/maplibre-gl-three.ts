@@ -29,12 +29,12 @@ export interface ThreeDManagerOptions {
     debugMode?: boolean;
     /**
      * Path to the Draco loader to be lazy loaded.
-     * @defaultValue `https://unpkg.com/three@0.183.2/examples/jsm/libs/draco/`
+     * @defaultValue `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/`
      */
     dracoPath?: string;
     /**
      * Path to the KTX2 loader to be lazy loaded.
-     * @defaultValue `https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/`
+     * @defaultValue `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/`
      */
     ktx2Path?: string;
     /**
@@ -127,8 +127,8 @@ interface ThreeDTilesAssetOptions {
  * - Not to be confused with the VERY similar but more geodetically faithful EPSG:3395 mercator, used for maritime navigation among other things.
  */
 proj4.defs("EPSG:4978", "+proj=geocent +datum=WGS84 +units=m +no_defs");
-const DEFAULT_DRACO_PATH = "https://unpkg.com/three@0.183.2/examples/jsm/libs/draco/";
-const DEFAULT_KTX2_PATH = "https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/";
+const DEFAULT_DRACO_PATH = "https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/";
+const DEFAULT_KTX2_PATH = "https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/";
 
 
 function markOriginPointForDebugging(sceneInst: THREE.Scene, size = 400): void {

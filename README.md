@@ -58,8 +58,8 @@ threeDManager.destroy(); // will implicitly call destroy() on all assets not yet
 
 **ThreeDManager optional constructor options**:
 - `debugMode`: If true, will render the 3JS anchor point for debugging purposes.
-- `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/draco/`.
-- `ktx2Path`: The path to the ktx2 loader. Defaults to `https://unpkg.com/three@0.183.2/examples/jsm/libs/basis/`.
+- `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/`.
+- `ktx2Path`: The path to the ktx2 loader. Defaults to `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/`.
 - Additionally, `calculateAnchorPoint(mapInstance)` and `getTransformParameters(anchor4326)` are advanced callbacks for overriding the calculation of the anchor point and the internal transform parameters, respectively. In the future the usage of these callbacks may be better documented. In the meantime see [www/examples/other/plate-caree/](www/examples/other/plate-caree/) for a usage example of the plate-caree projection. 
 
 **load3dTiles optional options**:
