@@ -1,4 +1,4 @@
-## next
+## 0.0.5 - 2026-07-16
 
 - Typescript support.
 - Exposed an optional `preprocessUrl` callback for `load3dTiles`, allowing the user to modify the URLs before 3dtile resources are requested.
