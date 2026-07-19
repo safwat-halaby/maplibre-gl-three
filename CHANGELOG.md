@@ -1,4 +1,4 @@
-## NEXT
+## 0.0.6 - 2026-07-19
 
 - Exposed `maxDepth` in `load3dTiles`.
 - Fixed typos in "Plate Carree".
