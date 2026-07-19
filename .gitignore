@@ -3,3 +3,4 @@ dist/
 local_only/
 *.tgz
 www/dependencies/
+.npmrc
