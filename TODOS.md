@@ -1,9 +1,7 @@
-
-
 **NEXT:**
-- store the 3dtile example locally
-- in the example cdn npm run devMode
-- get rid of proj4 dependencies
+
+- Ivestigate HSL vs non-HSL considerations
+
 ## Todos
 
 **Should:**
@@ -11,6 +9,8 @@
 * RGBTerrain plus skirts explanation in readme
 * prevent the anchor from leaving the 3d tile
 * height querying
+* get rid of proj4 dependencies
+* function to return center of minimal sphere
 
 **Could :**
 
