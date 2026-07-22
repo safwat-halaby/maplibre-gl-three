@@ -1,4 +1,4 @@
-## NEXT
+## 0.0.7 - 2026-07-22
 
 - renamed `preprocessUrl` to `preprocessURL` and fixed a bug which caused this parameter to be ignored.
 

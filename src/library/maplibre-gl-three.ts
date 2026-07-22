@@ -8,7 +8,7 @@ import proj4 from 'proj4';
 import {PlateCarreeTools} from './plateCarreeTools';
 export { PlateCarreeTools };
 import type { LngLatAltitude, TransformParameters } from './interfaces';
-const LATEST_VERSION="maplibre-gl-three@0.0.6";
+const LATEST_VERSION="maplibre-gl-three@0.0.7";
 
 export type { LngLatAltitude, TransformParameters } from './interfaces';
 
