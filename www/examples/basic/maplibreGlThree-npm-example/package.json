@@ -6,11 +6,12 @@
   "scripts": {
     "build": "webpack --mode=production",
     "start": "npm run build && webpack serve --mode=development --open",
-    "typecheck": "tsc --noEmit"
+    "local_dependency": "npm pkg set \"dependencies.maplibre-gl-three=file:../../../..\" && npm install",
+    "registry_dependency": "npm uninstall maplibre-gl-three && npm install maplibre-gl-three"
   },
   "dependencies": {
     "maplibre-gl": "^5.7.3",
-    "maplibre-gl-three": "0.0.6"
+    "maplibre-gl-three": "^0.0.6"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",

@@ -8,7 +8,7 @@ import proj4 from 'proj4';
 import {PlateCarreeTools} from './plateCarreeTools';
 export { PlateCarreeTools };
 import type { LngLatAltitude, TransformParameters } from './interfaces';
-
+const LATEST_VERSION="maplibre-gl-three@0.0.6";
 
 export type { LngLatAltitude, TransformParameters } from './interfaces';
 
@@ -271,6 +271,7 @@ export class ThreeDManager {
         calculateAnchorPoint = calculateWebMercatorAnchorPoint,
         getTransformParameters = getWebMercatorTransformParameters,
     }: ThreeDManagerOptions = {}) {
+        console.log(LATEST_VERSION);
         this.debugMode = debugMode;
         this.dracoPath = dracoPath;
         this.ktx2Path = ktx2Path;

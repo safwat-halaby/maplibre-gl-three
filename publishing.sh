@@ -33,7 +33,7 @@ cleanup() {
         wait "$static_server_pid" 2>/dev/null || true
     fi
     if [ -n "$npm_start_pid" ]; then
-        kill "$npm_start_pid" 2>/dev/null || true
+        kill -- "-$npm_start_pid" 2>/dev/null || true
         wait "$npm_start_pid" 2>/dev/null || true
     fi
 }

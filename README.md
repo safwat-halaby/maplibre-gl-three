@@ -1,5 +1,7 @@
 This library brings [Three.JS](https://threejs.org/) capabilities into [Maplibre-gl-js](https://maplibre.org/). Currently focused on enabling [3DTiles](https://cesium.com/why-cesium/3d-tiles/) in MapLibre. It internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
+Latest version: `maplibre-gl-three@0.0.6`
+
 **This project is not officially affiliated with MapLibre**
 
 ## Project status
@@ -40,8 +42,6 @@ const map = new maplibregl.Map(
 map.addLayer(agiHqTiles.getLayer());
 ```
 
-The repository contains a minimal [NPM-based example project](www/examples/basic/maplibreGlThree-npm-example) running the code above.
-
 **Swapping to new tiles:**
 
 ```js
@@ -64,7 +64,7 @@ threeDManager.destroy(); // will implicitly call destroy() on all assets not yet
 
 **load3dTiles optional options**:
 - `offset`: Optional `{ east, up, south }` translation applied to the 3d tiles in meters.
-- `preprocessURL(url)`: Optional callback used to rewrite asset URLs before `3d-tiles-renderer` fetches them.
+- `preprocessUrl(url)`: Optional callback used to rewrite asset URLs before `3d-tiles-renderer` fetches them.
 
 
 ## CDNs and direct browser import
@@ -103,7 +103,7 @@ For consequent runs, `npm run build:watch` is enough as long as dependencies are
 You probably also want run a basic browser frontend project in parallel, which uses your local version of the `dist/` folder as a dependency. There are 2 methods:
 
 1. Use [www/examples/basic/maplibreGlThree-npm-example](www/examples/basic/maplibreGlThree-npm-example/).
-  - Point that project to the local `dist` files rather than the npm registry by replacing the `maplibre-gl-three` dependency line with: `"maplibre-gl-three": "file:../../../.." ` in the project's `package.json`. 
+  - Point that project to the local `dist` files rather than the npm registry by running `npm run local_dependency`
   - Then run that project according to [its readme](www/examples/basic/maplibreGlThree-npm-example/README.md).
 
 2. Use [maplibreGlthree-selfhost-example](www/examples/basic/maplibreGlThree-selfhost-example). Run `node-static-server.sh` and browse to `http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html`.
