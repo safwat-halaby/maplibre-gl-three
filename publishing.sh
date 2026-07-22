@@ -23,18 +23,22 @@ await_manual_action() {
     echo ""
     echo "$1"
     echo "(AWAITING USER ACTION - Press ENTER to continue) <<<<<<<<<<<<<<<<<<<<<<<<"
-    read -r dummy </dev/tty
+    IFS= read -r dummy </dev/tty
 }
 static_server_pid=""
-npm_start_pid=""
+tmpdir=""
 cleanup() {
     if [ -n "$static_server_pid" ]; then
         kill "$static_server_pid" 2>/dev/null || true
         wait "$static_server_pid" 2>/dev/null || true
     fi
-    if [ -n "$npm_start_pid" ]; then
-        kill -- "-$npm_start_pid" 2>/dev/null || true
-        wait "$npm_start_pid" 2>/dev/null || true
+}
+cleanuptmp() {
+    if [ -n "$tmpdir" ]; then
+        set -x
+        rm -rf "$tmpdir"
+        set +x
+        tmpdir=""
     fi
 }
 echoBold() {
@@ -56,7 +60,7 @@ if [ -n "$(git status --porcelain)" ]; then
     exit 1
 fi
 echo 'Confirm `package.json` has the intended `name`, `version`, `description`, `license`, `exports`, `files`, `peerDependencies`, and `devDependencies`' 
-await_manual_action "Bump the version now in package.json and in CHANGELOG.md"
+await_manual_action "Bump the version now in package.json"
 
 ##### Obtain version from package.json
 published_version="$(node -p "require('./package.json').version")"
@@ -67,10 +71,19 @@ if git rev-parse -q --verify "refs/tags/$release_name" >/dev/null; then
     exit 1
 fi
 
+echoBold "Updating CHANGELOG.md header"
+release_date="$(date +%F)"
+if [ "$(head -n 1 CHANGELOG.md)" = "## NEXT" ]; then
+    sed -i "1s/^## NEXT$/## $published_version - $release_date/" CHANGELOG.md
+else
+    echo "Expected CHANGELOG.md to start with '## NEXT'."
+    exit 1
+fi
+
 echoBold "Building project"
 npm install
-npm run build
 npm run syncDeps
+npm run build
 
 echoBold "Smoke test the localhost example"
 ./node-static-server.sh </dev/null &
@@ -99,16 +112,19 @@ cp "$tarball_name" "$tmpdir/$tarball_name"
 pushd "$tmpdir"
 npm pkg set "dependencies.maplibre-gl-three=file:./$tarball_name"
 npm install
-npm start </dev/null &
-npm_start_pid="$!"
+npm run build
+npx webpack serve --mode=development --open </dev/null &
+# npm_start_pid="$!"
 set +x
 await_manual_action "Smoke test the example that will soon open in a browser"
 echo ""
-cleanup
-npm_start_pid=""
 set -x
 popd
 set +x
+# cleanup
+# npm_start_pid=""
+await_manual_action "Kill webpack manually from task manager until we find a better way "
+
 
 echoBold "Last confirmations..."
 set -x
@@ -117,7 +133,8 @@ npm publish --dry-run
 set +x
 
 echoBold "Dry run complete. Publish for real? Type 'publish' to continue:"
-read -r answer
+IFS= read -r answer
+answer=${answer//$'\t'/}
 if [ "$answer" != "publish" ]; then
     echo "Publishing cancelled."
     exit 0
@@ -137,13 +154,13 @@ pushd "$example_dir"
 npm pkg set "dependencies.maplibre-gl-three=$published_version"
 npm install
 npm run build
-npm start </dev/null &
-npm_start_pid="$!"
+npx webpack serve --mode=development --open </dev/null &
+# npm_start_pid="$!"
 set +x
 await_manual_action "check the published package smoke test in the tab that will soon open"
 echo ""
-cleanup
-npm_start_pid=""
+# cleanup
+# npm_start_pid=""
 set -x
 popd
 set +x
@@ -173,3 +190,4 @@ static_server_pid=""
 
 
 echoBold "Published and smoke-tested successfully."
+cleanuptmp

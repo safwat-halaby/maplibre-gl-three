@@ -14,16 +14,14 @@ const relativeNodeModulesRoot = 'node_modules';
 const nodeModulesRoot = path.join(repoRoot, relativeNodeModulesRoot);
 const relativeDestinationRoot = 'www/dependencies';
 const destinationRoot = path.join(repoRoot, relativeDestinationRoot);
-const FILES_TO_UPDATE_ALL = [
+const FILES_TO_UPDATE_ALL_VERSIONS = [
 	'www/examples/basic/maplibreGlThree-cdn-example/index.html',
 	'www/examples/basic/maplibreGlThree-selfhost-example/index.html',
-];
-// threeJS lazy loads some stuff and those URLs are hardcoded in a few places.
-const FILES_TO_UPDATE_THREEJS = [
 	'src/library/maplibre-gl-three.ts',
 	'www/examples/basic/maplibreGlThree-selfhost-example/script.js',
 	'README.md'
 ];
+
 
 // Dependencies and which files the cdn/selfhost versions need from each
 const DEPENDENCIES = {
@@ -164,22 +162,13 @@ async function updateFile(relativePath, callback) {
 }
 
 async function updateAllDependenciesInFiles(versions) {
-	for (const relativePath of FILES_TO_UPDATE_ALL) {
+	for (const relativePath of FILES_TO_UPDATE_ALL_VERSIONS) {
 		updateFile(relativePath, (text) => {
 			text = replaceVersionPin(text, 'maplibre-gl', versions['maplibre-gl']);
 			text = replaceVersionPin(text, 'three', versions['three']);
 			text = replaceVersionPin(text, '3d-tiles-renderer', versions['3d-tiles-renderer']);
 			text = replaceVersionPin(text, 'proj4', versions['proj4']);
 			text = replaceVersionPin(text, 'maplibre-gl-three', versions['maplibre-gl-three']);
-			return text;
-		});
-	}
-}
-
-async function updateThreeJsDependenciesInFiles(versions) {
-	for (const relativePath of FILES_TO_UPDATE_THREEJS) {
-		updateFile(relativePath, (text) => {
-			text = replaceVersionPin(text, 'three', versions['three']);
 			return text;
 		});
 	}
@@ -198,7 +187,6 @@ async function main() {
 	console.log('All dependency files have been copied.');
 	console.log('');
 	await updateAllDependenciesInFiles(versions);
-	await updateThreeJsDependenciesInFiles(versions);
 }
 
 main().catch((error) => {

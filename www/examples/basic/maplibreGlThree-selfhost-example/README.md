@@ -6,8 +6,8 @@ In the root directory of the repository:
 
 ```sh
 npm install
-npm run build
 npm run syncDeps
+npm run build
 cd utils/express-static-server
 npm install
 node static-server.js 6153
