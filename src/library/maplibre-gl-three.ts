@@ -57,7 +57,7 @@ export interface Load3dTilesOptions {
     /**
      * Optional callback used to transform URLs before 3d-tiles-renderer fetches them.
      */
-    preprocessUrl?: (url: string) => string;
+    preprocessURL?: (url: string) => string;
     /**
      * Optional maximum traversal depth for the loaded tileset.
      */
@@ -280,14 +280,14 @@ export class ThreeDManager {
         this.activeTiles = null;
     }
 
-    load3dTiles({ tilesetUrl, layerId = "3d-tiles", offset, preprocessUrl, maxDepth }: Load3dTilesOptions): ThreeDTilesAsset {
+    load3dTiles({ tilesetUrl, layerId = "3d-tiles", offset, preprocessURL, maxDepth }: Load3dTilesOptions): ThreeDTilesAsset {
         if (this.activeTiles && !this.activeTiles.destroyed) {
             throw new Error("concurrent loading of more than 1 3dtiles is currently unsupported");
         }
 
         this.activeTiles = new ThreeDTilesAssetImpl({
             manager: this,
-            load3dTilesOptions: { tilesetUrl, layerId, offset, preprocessUrl, maxDepth },
+            load3dTilesOptions: { tilesetUrl, layerId, offset, preprocessURL, maxDepth },
             debugMode: this.debugMode,
             dracoPath: this.dracoPath,
             ktx2Path: this.ktx2Path,
@@ -448,7 +448,7 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
         ktx2Loader.detectSupport(renderer);
         gltfLoader.setKTX2Loader(ktx2Loader);
 
-        const { tilesetUrl, preprocessUrl, maxDepth } = this.load3dTilesOptions;
+        const { tilesetUrl, preprocessURL, maxDepth } = this.load3dTilesOptions;
         const tiles = new TilesRenderer(tilesetUrl);
         if (maxDepth !== undefined) {
             tiles.maxDepth = maxDepth;
@@ -456,9 +456,9 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
         this.tiles = tiles;
         tiles.group.name = "tiles";
 
-        if (preprocessUrl) {
+        if (preprocessURL) {
             tiles.registerPlugin({
-                preprocessUrl
+                preprocessURL
             });
         }
         

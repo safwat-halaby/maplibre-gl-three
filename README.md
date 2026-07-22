@@ -64,7 +64,7 @@ threeDManager.destroy(); // will implicitly call destroy() on all assets not yet
 
 **load3dTiles optional options**:
 - `offset`: Optional `{ east, up, south }` translation applied to the 3d tiles in meters.
-- `preprocessUrl(url)`: Optional callback used to rewrite asset URLs before `3d-tiles-renderer` fetches them.
+- `preprocessURL(url)`: Optional callback used to rewrite asset URLs before `3d-tiles-renderer` fetches them.
 
 
 ## CDNs and direct browser import

@@ -1,3 +1,7 @@
+## NEXT
+
+- renamed `preprocessUrl` to `preprocessURL` and fixed a bug which caused this parameter to be ignored.
+
 ## 0.0.6 - 2026-07-19
 
 - Exposed `maxDepth` in `load3dTiles`.
