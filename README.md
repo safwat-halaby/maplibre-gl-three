@@ -1,6 +1,6 @@
 This library brings [Three.JS](https://threejs.org/) capabilities into [Maplibre-gl-js](https://maplibre.org/). Currently focused on enabling [3DTiles](https://cesium.com/why-cesium/3d-tiles/) in MapLibre. It internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
-Latest version: `maplibre-gl-three@0.0.7`
+Latest version: `maplibre-gl-three@0.0.8`
 
 **This project is not officially affiliated with MapLibre**
 

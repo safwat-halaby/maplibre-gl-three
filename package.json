@@ -1,6 +1,6 @@
 {
   "name": "maplibre-gl-three",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Brings Three.js capabilities into MapLibre GL JS.",
   "scripts": {
     "build": "tsup",
