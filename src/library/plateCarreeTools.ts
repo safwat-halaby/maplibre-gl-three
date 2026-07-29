@@ -75,4 +75,4 @@ function wgs84_to_equirectangular([lon, lat]: LngLatLike): LngLat {
 function equirectangular_to_wgs84([lon, lat]: LngLat): LngLat {
     return [(lon / EPSG3857_BOUND) * WGS84_BOUND, (lat / EPSG3857_BOUND) * WGS84_BOUND];
 }
-export const PlateCarreeTools = {getPlateCarreeTransformParameters, calculatePlateCarreeAnchorPoint};
+export const PlateCarreeTools = {alignWithEquirectangularProjection, getPlateCarreeTransformParameters, calculatePlateCarreeAnchorPoint};
