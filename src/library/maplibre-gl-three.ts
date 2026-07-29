@@ -64,10 +64,28 @@ export interface Load3dTilesOptions {
     maxDepth?: number;
 }
 
-export interface ThreeDTilesAsset {
+export interface GetLayerOptions {
+    separatorBefore?: boolean;
+    separatorAfter?: boolean;
+}
+
+export interface Asset {
     readonly destroyed: boolean;
-    getLayer(): CustomLayerInterface;
+    /**
+     * Returns the MapLibre custom layer for this tileset.
+     *
+     * @param options - Layer options.
+     * @param options.separatorBefore - Clears depth before rendering the layer. Defaults to `true`.
+     * @param options.separatorAfter - Clears depth after rendering the layer. Defaults to `true`.
+     */
+    getLayer(options?: GetLayerOptions): CustomLayerInterface;
     destroy(): void;
+}
+export interface ThreeDTilesAsset extends Asset {
+
+}
+export interface SeparatorAsset extends Asset {
+
 }
 
 interface AnchorMatrices {
@@ -308,6 +326,76 @@ export class ThreeDManager {
     }
 }
 
+/** This class returns a "separator" layer that can be added to MapLibre.
+ * It guarantees that all layers before it will render in a depth lower than all layers after it.
+ * It is mainly useful when some ThreeJS layers were set to separatorBefore = false or separatorAfter = false
+ */
+export class Separator implements SeparatorAsset {
+    renderer: THREE.WebGLRenderer | null;
+    customLayer: CustomLayerInterface | null;
+    mapInstance: MapLibreMap | null;
+    destroyed: boolean;
+    layerId: string;
+
+    constructor(layerId = "separator") {
+        this.renderer = null;
+        this.customLayer = null;
+        this.mapInstance = null;
+        this.destroyed = false;
+        this.layerId = layerId;
+    }
+
+    getLayer(): CustomLayerInterface {
+        if (!this.customLayer) {
+            this.customLayer = {
+                id: this.layerId,
+                type: "custom",
+                renderingMode: "3d",
+                onAdd: (mapArg, gl) => this.onAdd(mapArg, gl),
+                render: (_gl, _args) => this.render(),
+                onRemove: () => this.onRemove(),
+            };
+        }
+
+        return this.customLayer;
+    }
+
+    onAdd(_mapArg: MapLibreMap, gl: WebGLRenderingContext | WebGL2RenderingContext): void {
+        if (this.destroyed) return;
+
+        this.mapInstance = _mapArg;
+        this.renderer = new THREE.WebGLRenderer({
+            canvas: _mapArg.getCanvas(),
+            context: gl,
+        });
+        this.renderer.autoClear = false;
+    }
+
+    onRemove(): void {
+        this.mapInstance = null;
+        this.renderer = null;
+    }
+
+    render(): void {
+        if (this.destroyed || !this.renderer) return;
+
+        this.renderer.clearDepth();
+    }
+
+    destroy(): void {
+        if (this.destroyed) return;
+
+        const mapInstance = this.mapInstance;
+        if (mapInstance && mapInstance.getLayer?.(this.layerId)) {
+            mapInstance.removeLayer(this.layerId);
+        } else {
+            this.onRemove();
+        }
+        this.customLayer = null;
+        this.destroyed = true;
+    }
+}
+
 class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
     manager: ThreeDManager;
     load3dTilesOptions: Load3dTilesOptions & { layerId: string };
@@ -350,14 +438,23 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
         this.destroyed = false;
     }
 
-    getLayer(): CustomLayerInterface {
+    /**
+     * Returns the MapLibre custom layer for this tileset.
+     *
+     * @param options - Layer options.
+     * @param options.separatorBefore - Clears depth before rendering the layer, meaning the layer will render above all prior layers. Defaults to `true`.
+     * @param options.separatorAfter - Clears depth after rendering the layer, meaning the layer will render below all later layers. Defaults to `true`.
+     */
+    getLayer(options: GetLayerOptions = {}): CustomLayerInterface {
+        const { separatorBefore = true, separatorAfter = true } = options;
+
         if (!this.customLayer) {
             this.customLayer = {
                 id: this.load3dTilesOptions.layerId,
                 type: "custom",
                 renderingMode: "3d",
                 onAdd: (mapArg, gl) => this.onAdd(mapArg, gl),
-                render: (gl, args) => this.render(gl, args),
+                render: (gl, args) => this.render(gl, args, { separatorBefore, separatorAfter }),
                 onRemove: () => this.onRemove(),
             };
         }
@@ -509,7 +606,11 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
         }, 60);
     }
 
-    render(_gl: WebGLRenderingContext | WebGL2RenderingContext, args: CustomRenderMethodInput): void {
+    render(
+        _gl: WebGLRenderingContext | WebGL2RenderingContext,
+        args: CustomRenderMethodInput,
+        { separatorBefore = true, separatorAfter = true }: GetLayerOptions = {},
+    ): void {
         if (this.destroyed) return;
         if (!this.camera || !this.renderer || !this.scene || !this.tilesCamera) return;
 
@@ -525,8 +626,9 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
         this.tilesCamera.matrixWorld.copy(V).invert();
 
         this.renderer.resetState();
-        this.renderer.clearDepth(); // TODO investigate implications. Generally review the whole render function.
+        if (separatorBefore) this.renderer.clearDepth();
         this.renderer.render(this.scene, this.camera);
+        if (separatorAfter) this.renderer.clearDepth();
         if (this.tiles) this.tiles.update();
         this.mapInstance?.triggerRepaint();
     }

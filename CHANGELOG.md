@@ -1,3 +1,9 @@
+## NEXT
+
+- Rendering depth updates. The default behavior is now exactly Maplibre-style-like where the layer order in the style dictates the depth. Exposed depth controls; The user can now optionally render "interlaced" layers if the want to:
+  - on `getLayer`, one can optionally specify whether to clear the depth before/after the current layer (both default to true).
+  - exposed a "separator" custom layer that renders nothing and clears the depth. 
+
 ## 0.0.7 - 2026-07-22
 
 - renamed `preprocessUrl` to `preprocessURL` and fixed a bug which caused this parameter to be ignored.
