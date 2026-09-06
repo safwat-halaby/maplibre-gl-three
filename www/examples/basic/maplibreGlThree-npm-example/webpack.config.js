@@ -1,7 +1,10 @@
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import CopyPlugin from 'copy-webpack-plugin';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
 
 export default {
     entry: './src/script.ts',
@@ -10,6 +13,20 @@ export default {
         path: path.resolve(__dirname, 'dist'),
         clean: true,
     },
+    plugins: [
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: require.resolve('maplibre-gl/dist/maplibre-gl-worker.mjs'),
+                    to: 'maplibre-gl-worker.mjs',
+                },
+                {
+                    from: require.resolve('maplibre-gl/dist/maplibre-gl-shared.mjs'),
+                    to: 'maplibre-gl-shared.mjs',
+                },
+            ],
+        }),
+    ],
     module: {
         rules: [
             {

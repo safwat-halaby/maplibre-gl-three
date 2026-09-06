@@ -10,10 +10,11 @@
     "registry_dependency": "npm uninstall maplibre-gl-three && npm install maplibre-gl-three"
   },
   "dependencies": {
-    "maplibre-gl": "^5.7.3",
-    "maplibre-gl-three": "0.0.8"
+    "maplibre-gl": "^6.7.0",
+    "maplibre-gl-three": "file:../../../.."
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.2",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.4",

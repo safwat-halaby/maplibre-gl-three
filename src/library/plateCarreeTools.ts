@@ -1,4 +1,4 @@
-import maplibregl, { type Map as MapLibreMap } from 'maplibre-gl';
+import { MercatorCoordinate, type Map as MapLibreMap } from 'maplibre-gl';
 import proj4 from 'proj4';
 import type { LngLatAltitude, TransformParameters } from './interfaces';
 
@@ -12,7 +12,7 @@ const EPSG3857_BOUND = 20037508.3427892;
 
 function getPlateCarreeTransformParameters(anchor4326: LngLatAltitude): TransformParameters {
     const [lng, lat] = alignWithEquirectangularProjection(anchor4326);
-    const mercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat([lng, lat], 0);
+    const mercatorCoordinate = MercatorCoordinate.fromLngLat([lng, lat], 0);
     const scales = getPlateCarreeMeterScales(anchor4326);
     return {
         translateX: mercatorCoordinate.x,

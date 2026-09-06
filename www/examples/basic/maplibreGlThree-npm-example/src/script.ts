@@ -1,13 +1,15 @@
-import maplibregl, { type StyleSpecification } from 'maplibre-gl';
+import { Map, NavigationControl, setWorkerUrl, type StyleSpecification } from 'maplibre-gl';
 import { ThreeDManager } from 'maplibre-gl-three';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './styles.css';
 import style from './style.json';
 
+setWorkerUrl('dist/maplibre-gl-worker.mjs');
+
 const mapStyle = style as StyleSpecification;
 
-const map = new maplibregl.Map({
+const map = new Map({
     container: 'map',
     zoom: 16,
     center: [-75.596, 40.038],
@@ -17,7 +19,7 @@ const map = new maplibregl.Map({
     style: mapStyle,
 });
 
-map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
+map.addControl(new NavigationControl({ visualizePitch: true }));
 
 map.on('load', () => {
     const threeDManager = new ThreeDManager();

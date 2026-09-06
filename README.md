@@ -22,7 +22,7 @@ npm install three 3d-tiles-renderer maplibre-gl maplibre-gl-three
 
 ```js
 import {ThreeDManager} from 'maplibre-gl-three';
-import maplibregl from 'maplibre-gl';
+import {Map} from 'maplibre-gl';
 
 const threeDManager = new ThreeDManager();
 const agiHqTiles = threeDManager.load3dTiles({
@@ -30,7 +30,7 @@ const agiHqTiles = threeDManager.load3dTiles({
     layerId: 'agiHqTiles',
     offset: { east: 0, up: -300, south: 0 },
 });
-const map = new maplibregl.Map(
+const map = new Map({
     container: 'YOUR-HTML-MAPLIBRE-CONTAINER',
     zoom: 16,
     center: [-75.596, 40.038],
@@ -38,7 +38,7 @@ const map = new maplibregl.Map(
     bearing: -20,
     maxPitch: 85,
     style: 'YOUR-MAPLIBRE_STYLE'
-);
+});
 map.addLayer(agiHqTiles.getLayer());
 ```
 
@@ -75,48 +75,26 @@ You don't have to use a package manager. The repository contains an example for 
 
 `www/examples/basic/maplibreGlThree-npm-example` has a basic npm project which uses this library as a dependency. Check its [README](www/examples/basic/maplibreGlThree-npm-example/README.md) for running instructions.
 
-To  run the rest of the non-npm examples:  
+To the non-npm examples:  
 
 ```sh
 npm install
-npm updateDeps
+npm syncDeps
 npm run build
 node-static-server.sh
 ```
 
 ...then browse to `http://localhost:6153`.
 
-## Development
+## See also
 
-The TypeScript source code lives in `src/library`. To generate the library in the `dist/` folder:
-
-```
-npm install
-npm updateDeps
-npm run build:watch
-```
-
-*...or `npm run build` for a one-time generation*
-
-For consequent runs, `npm run build:watch` is enough as long as dependencies are unmodified. 
-
-You probably also want run a basic browser frontend project in parallel, which uses your local version of the `dist/` folder as a dependency. There are 2 methods:
-
-1. Use [www/examples/basic/maplibreGlThree-npm-example](www/examples/basic/maplibreGlThree-npm-example/).
-  - Point that project to the local `dist` files rather than the npm registry by running `npm run local_dependency`
-  - Then run that project according to [its readme](www/examples/basic/maplibreGlThree-npm-example/README.md).
-
-2. Use [maplibreGlthree-selfhost-example](www/examples/basic/maplibreGlThree-selfhost-example). Run `node-static-server.sh` and browse to `http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html`.
-
-In either case refresh your page after changing things in the library's source code.
+- [Development](development.md)
+- [Changelog](CHANGELOG.md)
+- [License](LICENSE.txt)
+- [TODOS.md](todos.md)
 
 ## Known issues / Notes
 
 - Tiles go wild if camera moves away far enough.
 - Does not yet work with the globe projection. (why?)
 
-## See also
-
-- [Changelog](CHANGELOG.md)
-- [License](LICENSE.txt)
-- [TODOS.md](TODOS.md).

@@ -9,7 +9,7 @@ npm start
 
 ### library developpment
 
-If you are making changes to `maplibre-gl-three`, you can point this example to use your local copy as a dependency with: 
+If you are making changes to `maplibre-gl-three`, you can point this example to use your local copy as a dependency with. Note that these commands internally invoke "npm install" so no need to do that.
 
 ```
 npm run local_dependency

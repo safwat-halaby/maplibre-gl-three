@@ -17,6 +17,7 @@ const destinationRoot = path.join(repoRoot, relativeDestinationRoot);
 const FILES_TO_UPDATE_ALL_VERSIONS = [
 	'www/examples/basic/maplibreGlThree-cdn-example/index.html',
 	'www/examples/basic/maplibreGlThree-selfhost-example/index.html',
+	'www/examples/other/plate-carree/index.html',
 	'src/library/maplibre-gl-three.ts',
 	'www/examples/basic/maplibreGlThree-selfhost-example/script.js',
 	'README.md'
@@ -25,7 +26,15 @@ const FILES_TO_UPDATE_ALL_VERSIONS = [
 
 // Dependencies and which files the cdn/selfhost versions need from each
 const DEPENDENCIES = {
-	'maplibre-gl': ['dist/maplibre-gl.js', 'dist/maplibre-gl.css'],
+	'maplibre-gl': [
+		'dist/maplibre-gl.mjs',
+		'dist/maplibre-gl-shared.mjs',
+		'dist/maplibre-gl-worker.mjs',
+		'dist/maplibre-gl.mjs.map',
+		'dist/maplibre-gl-shared.mjs.map',
+		'dist/maplibre-gl-worker.mjs.map',
+		'dist/maplibre-gl.css'
+	],
 	proj4: ['dist/proj4.js', 'dist/proj4-src.js'],
 	three: [
 		'build/three.module.js',
@@ -50,6 +59,13 @@ const DEPENDENCIES = {
 		{ relativeDir: 'build', fileRegex: /^constants-.*\.js$/ },
 		{ relativeDir: 'build', fileRegex: /^CameraTransitionManager-.*\.js$/ },
 		{ relativeDir: 'build', fileRegex: /^B3DMLoaderBase-.*\.js$/ },
+		'build/index.three.js.map',
+		'build/index.core.js.map',
+		{ relativeDir: 'build', fileRegex: /^MemoryUtils-.*\.js.map$/ },
+		{ relativeDir: 'build', fileRegex: /^LoaderBase-.*\.js.map$/ },
+		{ relativeDir: 'build', fileRegex: /^constants-.*\.js.map$/ },
+		{ relativeDir: 'build', fileRegex: /^CameraTransitionManager-.*\.js.map$/ },
+		{ relativeDir: 'build', fileRegex: /^B3DMLoaderBase-.*\.js.map$/ }
 	],
 };
 

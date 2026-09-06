@@ -3,7 +3,7 @@ import { TilesRenderer } from "3d-tiles-renderer";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
-import maplibregl, { type CustomLayerInterface, type CustomRenderMethodInput, type Map as MapLibreMap } from 'maplibre-gl';
+import { MercatorCoordinate, type CustomLayerInterface, type CustomRenderMethodInput, type Map as MapLibreMap } from 'maplibre-gl';
 import proj4 from 'proj4';
 import {PlateCarreeTools} from './plateCarreeTools';
 export { PlateCarreeTools };
@@ -259,7 +259,7 @@ function calculateWebMercatorAnchorPoint(mapInstance: MapLibreMap): LngLatAltitu
 }
 
 function getWebMercatorTransformParameters(anchor4326: LngLatAltitude): TransformParameters {
-    const webMercatorCoordinate = maplibregl.MercatorCoordinate.fromLngLat([anchor4326[0], anchor4326[1]], anchor4326[2]);
+    const webMercatorCoordinate = MercatorCoordinate.fromLngLat([anchor4326[0], anchor4326[1]], anchor4326[2]);
     const scale = webMercatorCoordinate.meterInMercatorCoordinateUnits();
     return {
         translateX: webMercatorCoordinate.x,

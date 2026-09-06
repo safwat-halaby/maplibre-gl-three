@@ -3,7 +3,6 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: [
     'src/library/maplibre-gl-three.ts',
-    'src/library/maplibre-gl-wrapper.ts',
     'src/library/proj4-wrapper.ts',
   ],
   format: ['esm'],
