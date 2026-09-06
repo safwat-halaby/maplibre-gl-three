@@ -49,101 +49,100 @@ echoBold() {
 trap cleanup EXIT
 
 
-# echoBold "Initial safety checks"
-# if [ "$(git rev-parse --is-inside-work-tree)" != "true" ]; then
-#     echo "This script must be run inside a git worktree."
-#     exit 1
-# fi
-# if [ -n "$(git status --porcelain)" ]; then
-#     echo "Git worktree is not clean. Commit, stash, or discard changes before publishing."
-#     git status --short
-#     exit 1
-# fi
-# echo 'Confirm `package.json` has the intended `name`, `version`, `description`, `license`, `exports`, `files`, `peerDependencies`, and `devDependencies`' 
-# await_manual_action "Bump the version now in package.json"
+echoBold "Initial safety checks"
+if [ "$(git rev-parse --is-inside-work-tree)" != "true" ]; then
+    echo "This script must be run inside a git worktree."
+    exit 1
+fi
+if [ -n "$(git status --porcelain)" ]; then
+    echo "Git worktree is not clean. Commit, stash, or discard changes before publishing."
+    git status --short
+    exit 1
+fi
+echo 'Confirm `package.json` has the intended `name`, `version`, `description`, `license`, `exports`, `files`, `peerDependencies`, and `devDependencies`' 
+await_manual_action "Bump the version now in package.json"
 
-# ##### Obtain version from package.json
+##### Obtain version from package.json
 published_version="$(node -p "require('./package.json').version")"
 release_name="v$published_version"
-# echoBold "Running semi-auto checklist for publishing $release_name"
-# if git rev-parse -q --verify "refs/tags/$release_name" >/dev/null; then
-#     echo "Git tag $release_name already exists."
-#     exit 1
-# fi
+echoBold "Running semi-auto checklist for publishing $release_name"
+if git rev-parse -q --verify "refs/tags/$release_name" >/dev/null; then
+    echo "Git tag $release_name already exists."
+    exit 1
+fi
 
-# echoBold "Updating CHANGELOG.md header"
-# release_date="$(date +%F)"
-# if [ "$(head -n 1 CHANGELOG.md)" = "## NEXT" ]; then
-#     sed -i "1s/^## NEXT$/## $published_version - $release_date/" CHANGELOG.md
-# else
-#     echo "Expected CHANGELOG.md to start with '## NEXT'."
-#     exit 1
-# fi
+echoBold "Updating CHANGELOG.md header"
+release_date="$(date +%F)"
+if [ "$(head -n 1 CHANGELOG.md)" = "## NEXT" ]; then
+    sed -i "1s/^## NEXT$/## $published_version - $release_date/" CHANGELOG.md
+else
+    echo "Expected CHANGELOG.md to start with '## NEXT'."
+    exit 1
+fi
 
-# echoBold "Building project"
-# npm install
-# npm run syncDeps
-# npm run build
+echoBold "Building project"
+npm install
+npm run syncDeps
+npm run build
 
-# echoBold "Smoke test the localhost example"
-# ./node-static-server.sh </dev/null &
-# static_server_pid="$!"
-# await_manual_action "Check the self-host example in a browser."
+echoBold "Smoke test the localhost example"
+./node-static-server.sh </dev/null &
+static_server_pid="$!"
+await_manual_action "Check the self-host example in a browser."
+cleanup
+static_server_pid=""
+
+echoBold "dry-run npm-pack"
+set -x
+npm pack --dry-run
+set +x 
+echo "The tarball should include only the dist entrypoint, generated declarations, package metadata, README, license, and the proj4 wrapper file."
+await_manual_action "Does the list of files make sense?"
+
+echoBold "Creating package tarball"
+set -x
+tarball_name="$(npm pack | tail -n 1)"
+set +x
+
+echoBold "Smoke test a copy of the NPM example against the newly packed tarball"
+tmpdir="$(mktemp -d)"
+set -x
+copy_npm_example "$tmpdir"
+cp "$tarball_name" "$tmpdir/$tarball_name"
+pushd "$tmpdir"
+npm pkg set "dependencies.maplibre-gl-three=file:./$tarball_name"
+npm install
+npm run build
+npx webpack serve --mode=development --open </dev/null &
+# npm_start_pid="$!"
+set +x
+await_manual_action "Smoke test the example that will soon open in a browser"
+echo ""
+set -x
+popd
+set +x
 # cleanup
-# static_server_pid=""
-
-# echoBold "dry-run npm-pack"
-# set -x
-# npm pack --dry-run
-# set +x 
-# echo "The tarball should include only the dist entrypoint, generated declarations, package metadata, README, license, and the proj4 wrapper file."
-# await_manual_action "Does the list of files make sense?"
-
-# echoBold "Creating package tarball"
-# set -x
-# tarball_name="$(npm pack | tail -n 1)"
-# set +x
-
-# echoBold "Smoke test a copy of the NPM example against the newly packed tarball"
-# tmpdir="$(mktemp -d)"
-# set -x
-# copy_npm_example "$tmpdir"
-# cp "$tarball_name" "$tmpdir/$tarball_name"
-# pushd "$tmpdir"
-# npm pkg set "dependencies.maplibre-gl-three=file:./$tarball_name"
-# npm install
-# npm run build
-# npx webpack serve --mode=development --open </dev/null &
-# # npm_start_pid="$!"
-# set +x
-# await_manual_action "Smoke test the example that will soon open in a browser"
-# echo ""
-# set -x
-# popd
-# set +x
-# # cleanup
-# # npm_start_pid=""
-# await_manual_action "Kill webpack manually from task manager until we find a better way "
+# npm_start_pid=""
+await_manual_action "Kill webpack manually from task manager until we find a better way "
 
 
-# echoBold "Last confirmations..."
-# set -x
-# npm whoami
-# npm publish --dry-run
-# set +x
+echoBold "Last confirmations..."
+set -x
+npm whoami
+npm publish --dry-run
+set +x
 
-tarball_name=maplibre-gl-three-0.0.9.tgz
-# echoBold "Dry run complete. Publish for real? Type 'publish' to continue:"
-# IFS= read -r answer
-# answer=${answer//$'\t'/}
-# if [ "$answer" != "publish" ]; then
-#     echo "Publishing cancelled."
-#     exit 0
-# fi
+echoBold "Dry run complete. Publish for real? Type 'publish' to continue:"
+IFS= read -r answer
+answer=${answer//$'\t'/}
+if [ "$answer" != "publish" ]; then
+    echo "Publishing cancelled."
+    exit 0
+fi
 
-# set -x
-# npm publish "$tarball_name"
-# set +x
+set -x
+npm publish "$tarball_name"
+set +x
 
 echoBold "POST-PUBLISH checks"
 echo "Sleeping for 10 seconds to let the packages propogate"
