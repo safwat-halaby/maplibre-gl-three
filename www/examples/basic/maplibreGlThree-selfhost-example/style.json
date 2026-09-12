@@ -1,5 +1,8 @@
 {
   "version": 8,
+  "terrain": {
+    "source": "height-mock"
+  },
   "layers": [
     {
       "id": "background-map",
@@ -82,6 +85,15 @@
     }
   ],
   "sources": {
+    "height-mock": {
+      "type": "raster-dem",
+      "tiles": [
+        "/datasets/height-mock/110_above_sea.png"
+      ],
+      "tileSize": 256,
+      "maxzoom": 8,
+      "encoding": "mapbox"
+    },
     "natural-earth": {
       "type": "raster",
       "tiles": [

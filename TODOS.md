@@ -1,20 +1,27 @@
-**NEXT:**
+Here are my plans for this project. This is not a guaranteed roadmap and just a rough line that may change at any time. Features arrive if/when they are ready with no deadlines guaranteed.
 
-- Ivestigate HSL vs non-HSL considerations
+## Next
 
-## Todos
+These are things I have reasonably commited myself to completing. 
 
-**Should:**
+- Vertical datums
+  - Make anchoring algoirthm more height aware. Anchor could sit roughly on the surface rather than on ellipsoid.
+- Raycasting and height querying
 
-* RGBTerrain plus skirts explanation in readme
-* prevent the anchor from leaving the 3d tile
-* height querying
-* get rid of proj4 dependencies
-* function to return center of minimal sphere
+## Should
 
-**Could :**
+Higher priority.
 
-* "auto height offset" mode for those who don't have rgbTerrain
+* Documentation overhaul
+  - RGBTerrain plus skirts explanation in readme
+  - blog post?
+  - examples documenting full potential.
+* Regression fix: prevent the anchor from leaving the 3d tile
+* Function to return center of minimal sphere ingulfing the 3d model
+
+## Could
+
+Lower priority.
+
 * Support multiple 3d tiles
 * Support 3d models in addition to 3d tiles
-* viewshed / raytracing

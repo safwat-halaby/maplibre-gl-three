@@ -1,5 +1,8 @@
 {
   "version": 8,
+  "terrain": {
+    "source": "height-mock"
+  },
   "layers": [
     {
       "id": "osm",
@@ -38,6 +41,15 @@
     }
   ],
   "sources": {
+    "height-mock": {
+      "type": "raster-dem",
+      "tiles": [
+        "/datasets/height-mock/110_above_sea.png"
+      ],
+      "tileSize": 256,
+      "maxzoom": 8,
+      "encoding": "mapbox"
+    },
     "natural-earth-plate-carree": {
         "type": "raster",
         "tiles": ["/datasets/natural-earth/GoogleCRS84Quad/{z}/{x}/{y}.png"],

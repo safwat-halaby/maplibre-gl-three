@@ -1,3 +1,7 @@
+## NEXT
+
+- Support for vertical datums
+
 ## 0.0.9 - 2026-09-06
 
 - Migration to maplibre-gl 6

@@ -44,9 +44,15 @@ export default {
         extensions: ['.ts', '.js'],
     },
     devServer: {
-        static: {
-            directory: __dirname,
-        },
+        static: [
+            {
+                directory: __dirname,
+            },
+            {
+                directory: path.resolve(__dirname, '../../../../www/datasets'),
+                publicPath: '/datasets',
+            },
+        ],
         port: 8080,
     },
 };

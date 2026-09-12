@@ -67,6 +67,10 @@ const DEPENDENCIES = {
 		{ relativeDir: 'build', fileRegex: /^CameraTransitionManager-.*\.js.map$/ },
 		{ relativeDir: 'build', fileRegex: /^B3DMLoaderBase-.*\.js.map$/ }
 	],
+	'geotiff': [
+		'dist-browser/geotiff.js',
+		'dist-browser/geotiff.js.map'
+	]
 };
 
 async function getPackageVersion(packageName) {
@@ -136,6 +140,7 @@ async function resolveLibraryFiles(sourceRoot, files) {
 async function copyLibraryFiles(packageName, version, files) {
 	const sourceRoot = path.join(nodeModulesRoot, packageName);
 	const destinationDir = path.join(destinationRoot, `${packageName}@${version}`);
+	const relativeDestinationDir = path.join(relativeDestinationRoot, `${packageName}@${version}`);
 	const fileList = await resolveLibraryFiles(sourceRoot, files);
 
 	for (const relativeFile of fileList) {
@@ -148,7 +153,7 @@ async function copyLibraryFiles(packageName, version, files) {
 		const destinationPath = path.join(destinationDir, relativeFile);
 		await mkdir(path.dirname(destinationPath), { recursive: true });
 		await copyFile(sourcePath, destinationPath);
-		console.log(`Copied ${path.join(relativeNodeModulesRoot, relativeFile)} -> ${path.join(relativeDestinationRoot, relativeFile)}`);
+		console.log(`Copied ${path.join(relativeNodeModulesRoot, relativeFile)} -> ${path.join(relativeDestinationDir, relativeFile)}`);
 	}
 }
 
@@ -184,6 +189,7 @@ async function updateAllDependenciesInFiles(versions) {
 			text = replaceVersionPin(text, 'three', versions['three']);
 			text = replaceVersionPin(text, '3d-tiles-renderer', versions['3d-tiles-renderer']);
 			text = replaceVersionPin(text, 'proj4', versions['proj4']);
+			text = replaceVersionPin(text, 'geotiff', versions['geotiff']);
 			text = replaceVersionPin(text, 'maplibre-gl-three', versions['maplibre-gl-three']);
 			return text;
 		});

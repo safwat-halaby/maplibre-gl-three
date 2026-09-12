@@ -31,7 +31,7 @@ const map = await (async () => {
     return mapInstance;
 })();
 
-map.on('load', () => {
+map.on('load', async () => {
     const threeDManager = new ThreeDManager({
         dracoPath: "/dependencies/three@0.183.2/examples/jsm/libs/draco/",
         ktx2Path: "/dependencies/three@0.183.2/examples/jsm/libs/basis/",
@@ -39,7 +39,7 @@ map.on('load', () => {
         getTransformParameters: PlateCarreeTools.getPlateCarreeTransformParameters,
 
     });
-    const agiHqTiles = threeDManager.load3dTiles({
+    const agiHqTiles = await threeDManager.load3dTiles({
         tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
         layerId: 'agi-hq-3d-tiles',
         offset: { east: 0, up: -310, south: 0 },

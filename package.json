@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsup",
     "build:watch": "tsup --watch",
+    "test": "vitest run",
     "pack:dry-run": "npm pack --dry-run",
     "syncDeps": "node utils/sync_dependencies.js"
   },
@@ -36,6 +37,10 @@
     "./proj4-wrapper.js": {
       "types": "./dist/proj4-wrapper.d.ts",
       "import": "./dist/proj4-wrapper.js"
+    },
+    "./geotiff-wrapper.js": {
+      "types": "./dist/geotiff-wrapper.d.ts",
+      "import": "./dist/geotiff-wrapper.js"
     }
   },
   "files": [
@@ -46,6 +51,7 @@
     "README.md"
   ],
   "dependencies": {
+    "geotiff": "^3.0.5",
     "proj4": "^2.15.0"
   },
   "peerDependencies": {
@@ -60,6 +66,7 @@
     "proj4": "^2.20.9",
     "three": "^0.183.0",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.0"
   }
 }

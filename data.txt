@@ -1,0 +1,7 @@
+The 3d tile model is roughly at -75.596, 40.038
+
+The ground is 310 above ellipsoid, this is an error.
+The place is 110m above sea level datum shift is about -34.5. Expected height above ellipsoid is therefore 75.5 meters
+The place has a 234.5 offset
+
+
