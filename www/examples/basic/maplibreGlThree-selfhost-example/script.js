@@ -16,7 +16,10 @@ map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
 map.on('load', async () => {
     const threeDManager = new ThreeDManager({
         dracoPath: "/dependencies/three@0.183.2/examples/jsm/libs/draco/",
-        ktx2Path: "/dependencies/three@0.183.2/examples/jsm/libs/basis/"
+        ktx2Path: "/dependencies/three@0.183.2/examples/jsm/libs/basis/",
+        verticalDatum: {
+            path: "/datasets/vertical-datum/us_nga_egm96_15.tif"
+        }
     });
     const agiHqTiles = await threeDManager.load3dTiles({
         tilesetUrl: '/datasets/agi-hq/tileset.json',
