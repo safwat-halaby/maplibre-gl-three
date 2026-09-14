@@ -1,11 +1,14 @@
 Here are my plans for this project. This is not a guaranteed roadmap and just a rough line that may change at any time. Features arrive if/when they are ready with no deadlines guaranteed.
 
+
+
 ## Next
 
 These are things I have reasonably commited myself to completing. 
 
 - Vertical datums
   - Make anchoring algoirthm more height aware. Anchor could sit roughly on the surface rather than on ellipsoid.
+  - interpolation
 - Raycasting and height querying
 
 ## Should

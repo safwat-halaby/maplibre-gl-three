@@ -22,3 +22,7 @@ You probably also want run a basic browser frontend project in parallel, which u
 2. Use [maplibreGlthree-selfhost-example](www/examples/basic/maplibreGlThree-selfhost-example). Run `node-static-server.sh` and browse to `http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html`.
 
 In either case refresh your page after changing things in the library's source code.
+
+## Internal docs
+
+Docs intended for development can be found in `/internal-docs`.
