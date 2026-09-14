@@ -6,7 +6,7 @@ import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
 import { MercatorCoordinate, type CustomLayerInterface, type CustomRenderMethodInput, type Map as MapLibreMap } from 'maplibre-gl';
 import proj4 from 'proj4';
 import type {
-    EllipsoidalToOrthometric,
+    GeographicRaster,
     GetLayerOptions,
     GetTransformParameters,
     Load3dTilesOptions,
@@ -189,11 +189,11 @@ export class ThreeDManager {
     calculateAnchorPoint: calculateAnchorPoint;
     getTransformParameters: GetTransformParameters;
     activeTiles: ThreeDTilesAsset | null;
-    private readonly ellipsoidalToOrthometric: EllipsoidalToOrthometric;
-    private ellipsoidalToOrthometricInitialization: Promise<void> | null;
+    private readonly geographicRaster: GeographicRaster;
+    private geographicRasterInitialization: Promise<void> | null;
 
     protected constructor(
-        ellipsoidalToOrthometric: EllipsoidalToOrthometric,
+        geographicRaster: GeographicRaster,
         {
             debugMode = false,
             dracoPath = DEFAULT_DRACO_PATH,
@@ -203,7 +203,7 @@ export class ThreeDManager {
         }: ThreeDManagerOptions = {},
     ) {
         console.log(LATEST_VERSION);
-        this.ellipsoidalToOrthometric = ellipsoidalToOrthometric;
+        this.geographicRaster = geographicRaster;
         this.debugMode = debugMode;
         this.dracoPath = dracoPath;
         this.ktx2Path = ktx2Path;
@@ -211,7 +211,7 @@ export class ThreeDManager {
         this.getTransformParameters = getTransformParameters;
 
         this.activeTiles = null;
-        this.ellipsoidalToOrthometricInitialization = null;
+        this.geographicRasterInitialization = null;
     }
 
     async load3dTiles({ tilesetUrl, layerId = "3d-tiles", offset, preprocessURL, maxDepth }: Load3dTilesOptions): Promise<ThreeDTilesAsset> {
@@ -221,7 +221,7 @@ export class ThreeDManager {
 
         // awaits the initialization promise and creates it we're the first 3dtile.
         // This is future-proof for multiple 3d tiles.
-        await this.initializeEllipsoidalToOrthometric();
+        await this.initializeGeographicRaster();
 
         if (this.activeTiles && !this.activeTiles.destroyed) {
             throw new Error("concurrent loading of more than 1 3dtiles is currently unsupported");
@@ -244,16 +244,17 @@ export class ThreeDManager {
         return tiles;
     }
 
-    private initializeEllipsoidalToOrthometric(): Promise<void> {
-        if (!this.ellipsoidalToOrthometricInitialization) {
-            this.ellipsoidalToOrthometricInitialization = this.ellipsoidalToOrthometric.init();
+    private initializeGeographicRaster(): Promise<void> {
+        if (!this.geographicRasterInitialization) {
+            this.geographicRasterInitialization = this.geographicRaster.init();
         }
-        return this.ellipsoidalToOrthometricInitialization;
+        return this.geographicRasterInitialization;
     }
 
     /** @internal Used by ThreeDTilesAssetImpl after load3dTiles initializes the adapter. */
     getGeoidUndulation(anchor4326: LngLatAltitude): number {
-        return this.ellipsoidalToOrthometric.getGeoidUndulation([anchor4326[0], anchor4326[1]]);
+        const point: [number, number] = [anchor4326[0], anchor4326[1]];
+        return this.geographicRaster.getPixelValue(this.geographicRaster.wgs84ToPixels(point));
     }
 
     destroy(): void {

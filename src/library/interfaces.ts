@@ -112,14 +112,6 @@ export interface SeparatorAsset extends Asset {
 }
 
 /** INTERNAL INTERFACES */
-export interface EllipsoidalToOrthometric {
-    init(): Promise<void>;
-    /** Return the difference between the ellipsoid height and the geoid height at the given point based on a vertical datum.
-     * This is required for calculating true height above sea level (The sea isn't a perfect sphere due to Earth's gravitational variations).
-     */
-    getGeoidUndulation(point: [number, number]): number;
-}
-
 /** Represents a raster that has geographic awareness. */
 export interface GeographicRaster {
     init(): Promise<void>;

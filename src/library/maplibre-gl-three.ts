@@ -1,6 +1,7 @@
 import { ThreeDManager as CoreThreeDManager, Separator } from './core';
 import { PlateCarreeTools } from './plateCarreeTools';
-import { GeoTiffEllipsoidalToOrthometric } from './adapters/GeoTiffEllipsoidalToOrthometric';
+import { GeoTiffGeographicRaster } from './adapters/GeoTiffGeographicRaster';
+import { BilinearGeographicRaster } from './adapters/BilinearGeographicRaster';
 import type {
     Asset,
     GetLayerOptions,
@@ -34,6 +35,11 @@ export type {
 
 export class ThreeDManager extends CoreThreeDManager {
     constructor(options: ThreeDManagerOptions = {}) {
-        super(new GeoTiffEllipsoidalToOrthometric(options.verticalDatum), options);
+        super(
+            new BilinearGeographicRaster(
+                new GeoTiffGeographicRaster(options.verticalDatum),
+            ),
+            options,
+        );
     }
 }

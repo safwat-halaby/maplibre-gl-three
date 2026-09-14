@@ -1,9 +1,9 @@
 import { fromUrl, type GeoTIFFImage, type TypedArray } from "geotiff";
-import type { EllipsoidalToOrthometric, VerticalDatumOptions } from '../interfaces';
+import type { GeographicRaster, VerticalDatumOptions } from '../interfaces';
 
 const DEFAULT_VERTICAL_DATUM_PATH = 'https://cdn.proj.org/us_nga_egm96_15.tif';
 
-export class GeoTiffEllipsoidalToOrthometric implements EllipsoidalToOrthometric {
+export class GeoTiffGeographicRaster implements GeographicRaster {
 	private readonly enabled: boolean;
 	private readonly path: string;
 	private image: GeoTIFFImage | undefined;
@@ -43,18 +43,16 @@ export class GeoTiffEllipsoidalToOrthometric implements EllipsoidalToOrthometric
 		// console.log({width, height, tileWidth, tileHeight});
 
 	}
-	public getGeoidUndulation(point: [number, number]): number {
+	public getPixelValue([x, y]: [number, number]): number {
 		if (!this.enabled) return 0;
-		if (!this.image || !this.raster) throw new Error('init() must succeed before calling getGeoidUndulation');
-		const [x, y] = this.wgs84ToPixels(point);
-		const elevation = this.raster[x + y * this.width];
-		return elevation;
+		if (!this.image || !this.raster) throw new Error('init() must succeed before calling getPixelValue');
+		return this.raster[x + y * this.width];
 	}
 	public wgs84ToPixels([lon, lat]: [number, number]): [number, number] {
 		const matrix = this.wgs84ToPixelMatrix
 		return [
-			(matrix[0] + matrix[1] * lon + matrix[2] * lat) | 0,
-			(matrix[3] + matrix[4] * lon + matrix[5] * lat) | 0,
+			matrix[0] + matrix[1] * lon + matrix[2] * lat,
+			matrix[3] + matrix[4] * lon + matrix[5] * lat,
 		];
 	}
 }
