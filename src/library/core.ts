@@ -167,7 +167,7 @@ function calculateWebMercatorAnchorPoint(mapInstance: MapLibreMap): LngLatAltitu
 }
 
 function getWebMercatorTransformParameters(anchor4326: LngLatAltitude): TransformParameters {
-    const webMercatorCoordinate = MercatorCoordinate.fromLngLat([anchor4326[0], anchor4326[1]], anchor4326[2]);
+    const webMercatorCoordinate = MercatorCoordinate.fromLngLat([anchor4326[0], anchor4326[1]]);
     const scale = webMercatorCoordinate.meterInMercatorCoordinateUnits();
     return {
         translateX: webMercatorCoordinate.x,
@@ -252,8 +252,8 @@ export class ThreeDManager {
     }
 
     /** @internal Used by ThreeDTilesAssetImpl after load3dTiles initializes the adapter. */
-    getVerticalDatumOffset(anchor4326: LngLatAltitude): number {
-        return this.ellipsoidalToOrthometric.getOrthometricHeight([anchor4326[0], anchor4326[1]]);
+    getGeoidUndulation(anchor4326: LngLatAltitude): number {
+        return this.ellipsoidalToOrthometric.getGeoidUndulation([anchor4326[0], anchor4326[1]]);
     }
 
     destroy(): void {
@@ -504,7 +504,7 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
 
         let loadedTileSetHandled = false;
         const updateAnchorPoint = (anchor4326: LngLatAltitude): void => {
-            const verticalDatumOffset = this.manager.getVerticalDatumOffset(anchor4326);
+            const verticalDatumOffset = this.manager.getGeoidUndulation(anchor4326);
             const newMatrices = calculateAnchorMatrices(
                 anchor4326,
                 this.load3dTilesOptions.offset,

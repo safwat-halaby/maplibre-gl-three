@@ -11,15 +11,15 @@ class TestThreeDManager extends ThreeDManager {
 test('initializes the vertical datum adapter before loading tiles', async () => {
     const adapter: EllipsoidalToOrthometric = {
         init: vi.fn(async () => undefined),
-        getOrthometricHeight: vi.fn(([longitude, latitude]) => longitude + latitude),
+        getGeoidUndulation: vi.fn(([longitude, latitude]) => longitude + latitude),
     };
     const manager = new TestThreeDManager(adapter);
 
     const tiles = await manager.load3dTiles({ tilesetUrl: 'tileset.json' });
 
     expect(adapter.init).toHaveBeenCalledOnce();
-    expect(manager.getVerticalDatumOffset([35.049, 31.703, 0])).toBeCloseTo(66.752, 3);
-    expect(adapter.getOrthometricHeight).toHaveBeenLastCalledWith([35.049, 31.703]);
+    expect(manager.getGeoidUndulation([35.049, 31.703, 0])).toBeCloseTo(66.752, 3);
+    expect(adapter.getGeoidUndulation).toHaveBeenLastCalledWith([35.049, 31.703]);
 
     tiles.destroy();
 });

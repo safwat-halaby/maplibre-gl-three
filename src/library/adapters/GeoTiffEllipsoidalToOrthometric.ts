@@ -43,12 +43,11 @@ export class GeoTiffEllipsoidalToOrthometric implements EllipsoidalToOrthometric
 		// console.log({width, height, tileWidth, tileHeight});
 
 	}
-	public getOrthometricHeight(point: [number, number]): number {
+	public getGeoidUndulation(point: [number, number]): number {
 		if (!this.enabled) return 0;
-		if (!this.image || !this.raster) throw new Error('init() must succeed before calling getOrthometricHeight');
+		if (!this.image || !this.raster) throw new Error('init() must succeed before calling getGeoidUndulation');
 		const [x, y] = this.wgs84ToPixels(point);
 		const elevation = this.raster[x + y * this.width];
-		console.log(`getOrthometricHeight elevation: ${elevation}`)
 		return elevation;
 	}
 	public wgs84ToPixels([lon, lat]: [number, number]): [number, number] {

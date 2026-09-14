@@ -6,6 +6,6 @@ test('returns the orthometric height for the supplied WGS-84 point', async () =>
 	await ellipsoidalToOrthometric.init();
 
 	expect(
-		ellipsoidalToOrthometric.getOrthometricHeight([35.049, 31.703]),
+		ellipsoidalToOrthometric.getGeoidUndulation([35.049, 31.703]),
 	).toBeCloseTo(19.7542, 4);
 });
