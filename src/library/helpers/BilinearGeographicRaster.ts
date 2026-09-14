@@ -1,4 +1,4 @@
-import type { GeographicRaster } from '../interfaces';
+import type { GeographicRaster, LngLat } from '../interfaces';
 
 /** Prevents rough jumps when transitioning from one pixel to the next via bilinear interpolation. */
 export class BilinearGeographicRaster implements GeographicRaster {
@@ -29,7 +29,7 @@ export class BilinearGeographicRaster implements GeographicRaster {
 		);
 	}
 
-	public wgs84ToPixels(point: [number, number]): [number, number] {
+	public wgs84ToPixels(point: LngLat): [number, number] {
 		return this.raster.wgs84ToPixels(point);
 	}
 }

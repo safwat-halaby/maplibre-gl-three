@@ -10,7 +10,7 @@ import type {
     GetLayerOptions,
     GetTransformParameters,
     Load3dTilesOptions,
-    LngLatAltitude,
+    LngLat,
     SeparatorAsset,
     ThreeDManagerOptions,
     ThreeDTilesAsset,
@@ -60,9 +60,9 @@ function markOriginPointForDebugging(sceneInst: THREE.Scene, size = 400): void {
 
 
 function calculateAnchorMatrices(
-    anchor4326: LngLatAltitude,
+    anchor4326: LngLat,
     offset: ThreeDTilesOffset | undefined,
-    verticalDatumOffset: number,
+    undulation: number,
     getTransformParameters: GetTransformParameters,
 ): AnchorMatrices {
     // It helps to imagine the initial 3js coordinate system as identical to the ECEF system, [0,0,0] being earth's core, and the 3d model resting somewhere on the shell.
@@ -88,7 +88,7 @@ function calculateAnchorMatrices(
     // Also apply manual offsets if any are present.
     // Now, the [_,Y,_] coordinate of any point is actually its height above sea level.
     const matrix_ecefAnchorToOrigin = new THREE.Matrix4().multiplyMatrices(
-        new THREE.Matrix4().makeTranslation(offset.east, offset.up - verticalDatumOffset, offset.south),
+        new THREE.Matrix4().makeTranslation(offset.east, offset.up - undulation, offset.south),
         matrix_ecefAnchorToOrigin_beforeOffset
     );
     // 5. make "origin" match "anchor4326"
@@ -101,8 +101,8 @@ function calculateAnchorMatrices(
 }
 
 /** See calculateAnchorMatrices for a description. */
-function translateEcefAnchorToOrigin(anchor4326: LngLatAltitude): THREE.Matrix4 {
-    const ecefOrigin = proj4("EPSG:4326", "EPSG:4978", anchor4326)
+function translateEcefAnchorToOrigin(anchor4326: LngLat): THREE.Matrix4 {
+    const ecefOrigin = proj4("EPSG:4326", "EPSG:4978", [anchor4326[0], anchor4326[1], 0])
     return new THREE.Matrix4().makeTranslation(-ecefOrigin[0], -ecefOrigin[1], -ecefOrigin[2]);
 }
 
@@ -111,7 +111,7 @@ function translateEcefAnchorToOrigin(anchor4326: LngLatAltitude): THREE.Matrix4 
  *  For example at longitude=0, latitude=0, the UP vector is (1,0,0), the SOUTH vector is (0,0,-1), the East vector is (0,1,0)
  *  At the north pole (longitude=0, latitude=90), the UP vector is (0,0,1). SOUTH vector is (1,0,0), EAST vector is (0,1,0)
  */
-function getEcefCompassVectors([lng, lat]: LngLatAltitude): { east: THREE.Vector3; up: THREE.Vector3; south: THREE.Vector3 } {
+function getEcefCompassVectors([lng, lat]: LngLat): { east: THREE.Vector3; up: THREE.Vector3; south: THREE.Vector3 } {
     const lonRad = THREE.MathUtils.degToRad(lng);
     const latRad = THREE.MathUtils.degToRad(lat);
 
@@ -131,7 +131,7 @@ function getEcefCompassVectors([lng, lat]: LngLatAltitude): { east: THREE.Vector
 }
 
 /** See calculateAnchorMatrices for a description. */
-function rotateEcefUpTo3jsUp(anchor4326: LngLatAltitude): THREE.Matrix4 {
+function rotateEcefUpTo3jsUp(anchor4326: LngLat): THREE.Matrix4 {
     const {east, up, south} = getEcefCompassVectors(anchor4326);
 
     return new THREE.Matrix4().set(
@@ -143,7 +143,7 @@ function rotateEcefUpTo3jsUp(anchor4326: LngLatAltitude): THREE.Matrix4 {
 }
 
 /** See calculateAnchorMatrices for a description. */
-function originToAnchor(anchor4326: LngLatAltitude, getTransformParameters: GetTransformParameters): THREE.Matrix4 {
+function originToAnchor(anchor4326: LngLat, getTransformParameters: GetTransformParameters): THREE.Matrix4 {
     const modelTransform = getTransformParameters(anchor4326);
     const axisX = new THREE.Vector3(1, 0, 0);
     const axisY = new THREE.Vector3(0, 1, 0);
@@ -161,12 +161,12 @@ function originToAnchor(anchor4326: LngLatAltitude, getTransformParameters: GetT
 }
 
 
-function calculateWebMercatorAnchorPoint(mapInstance: MapLibreMap): LngLatAltitude {
+function calculateWebMercatorAnchorPoint(mapInstance: MapLibreMap): LngLat {
     const { lng, lat } = mapInstance.getCenter();
-    return [lng, lat, 0];
+    return [lng, lat];
 }
 
-function getWebMercatorTransformParameters(anchor4326: LngLatAltitude): TransformParameters {
+function getWebMercatorTransformParameters(anchor4326: LngLat): TransformParameters {
     const webMercatorCoordinate = MercatorCoordinate.fromLngLat([anchor4326[0], anchor4326[1]]);
     const scale = webMercatorCoordinate.meterInMercatorCoordinateUnits();
     return {
@@ -252,8 +252,8 @@ export class ThreeDManager {
     }
 
     /** @internal Used by ThreeDTilesAssetImpl after load3dTiles initializes the adapter. */
-    getGeoidUndulation(anchor4326: LngLatAltitude): number {
-        const point: [number, number] = [anchor4326[0], anchor4326[1]];
+    getGeoidUndulation(anchor4326: LngLat): number {
+        const point: LngLat = [anchor4326[0], anchor4326[1]];
         return this.geographicRaster.getPixelValue(this.geographicRaster.wgs84ToPixels(point));
     }
 
@@ -367,7 +367,7 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
         this.mapInstance = null;
         this.tiles = null;
         this.tilesCamera = null;
-        this.matrixOriginToAnchor = originToAnchor([0, 0, 0], this.manager.getTransformParameters);
+        this.matrixOriginToAnchor = originToAnchor([0, 0], this.manager.getTransformParameters);
         this.throttleTimeout = null;
         this.moveHandler = null;
         this.loadTilesetHandler = null;
@@ -504,12 +504,12 @@ class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
         tiles.manager.addHandler(/\.(gltf|glb)$/g, gltfLoader);
 
         let loadedTileSetHandled = false;
-        const updateAnchorPoint = (anchor4326: LngLatAltitude): void => {
-            const verticalDatumOffset = this.manager.getGeoidUndulation(anchor4326);
+        const updateAnchorPoint = (anchor4326: LngLat): void => {
+            const undulation = this.manager.getGeoidUndulation(anchor4326);
             const newMatrices = calculateAnchorMatrices(
                 anchor4326,
                 this.load3dTilesOptions.offset,
-                verticalDatumOffset,
+                undulation,
                 this.manager.getTransformParameters,
             );
             this.matrixOriginToAnchor = newMatrices.matrixOriginToAnchor;

@@ -1,11 +1,11 @@
 import { expect, test, vi } from 'vitest';
-import type { GeographicRaster } from '../interfaces';
+import type { GeographicRaster, LngLat } from '../interfaces';
 import { BilinearGeographicRaster } from './BilinearGeographicRaster';
 
 test('initializes the underlying raster and bilinearly interpolates its neighboring pixels', async () => {
 	const raster: GeographicRaster = {
 		init: vi.fn(async () => undefined),
-		wgs84ToPixels: vi.fn(([x, y]: [number, number]): [number, number] => [x, y]),
+		wgs84ToPixels: vi.fn(([x, y]: LngLat): [number, number] => [x, y]),
 		getPixelValue: vi.fn(([x, y]) => x + y * 10),
 	};
 	const interpolatedRaster = new BilinearGeographicRaster(raster);

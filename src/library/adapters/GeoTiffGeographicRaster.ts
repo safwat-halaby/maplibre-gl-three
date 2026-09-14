@@ -1,5 +1,5 @@
 import { fromUrl, type GeoTIFFImage, type TypedArray } from "geotiff";
-import type { GeographicRaster, VerticalDatumOptions } from '../interfaces';
+import type { GeographicRaster, LngLat, VerticalDatumOptions } from '../interfaces';
 
 const DEFAULT_VERTICAL_DATUM_PATH = 'https://cdn.proj.org/us_nga_egm96_15.tif';
 
@@ -48,7 +48,7 @@ export class GeoTiffGeographicRaster implements GeographicRaster {
 		if (!this.image || !this.raster) throw new Error('init() must succeed before calling getPixelValue');
 		return this.raster[x + y * this.width];
 	}
-	public wgs84ToPixels([lon, lat]: [number, number]): [number, number] {
+	public wgs84ToPixels([lon, lat]: LngLat): [number, number] {
 		const matrix = this.wgs84ToPixelMatrix
 		return [
 			matrix[0] + matrix[1] * lon + matrix[2] * lat,

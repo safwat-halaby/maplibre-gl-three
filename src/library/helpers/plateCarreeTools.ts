@@ -1,16 +1,13 @@
 import { MercatorCoordinate, type Map as MapLibreMap } from 'maplibre-gl';
 import proj4 from 'proj4';
-import type { LngLatAltitude, TransformParameters } from '../interfaces';
-
-type LngLat = [longitude: number, latitude: number];
-type LngLatLike = LngLat | LngLatAltitude;
+import type { LngLat, TransformParameters } from '../interfaces';
 
 const EPSG_WEB_MERCATOR = proj4.Proj("EPSG:3857");
 const EPSG_WGS84 = proj4.Proj("EPSG:4326");
 const WGS84_BOUND = 180;
 const EPSG3857_BOUND = 20037508.3427892;
 
-function getPlateCarreeTransformParameters(anchor4326: LngLatAltitude): TransformParameters {
+function getPlateCarreeTransformParameters(anchor4326: LngLat): TransformParameters {
     const [lng, lat] = alignWithEquirectangularProjection(anchor4326);
     const mercatorCoordinate = MercatorCoordinate.fromLngLat([lng, lat], 0);
     const scales = getPlateCarreeMeterScales(anchor4326);
@@ -25,7 +22,7 @@ function getPlateCarreeTransformParameters(anchor4326: LngLatAltitude): Transfor
     };
 }
 
-function getPlateCarreeMeterScales([_lng, lat]: LngLatLike): Pick<TransformParameters, 'scaleEast' | 'scaleSouth' | 'scaleUp'> {
+function getPlateCarreeMeterScales([_lng, lat]: LngLat): Pick<TransformParameters, 'scaleEast' | 'scaleSouth' | 'scaleUp'> {
     const a = 6378137.0;
     const e2 = 6.69437999014e-3;
     const latRad = degToRad(lat);
@@ -48,27 +45,27 @@ function getPlateCarreeMeterScales([_lng, lat]: LngLatLike): Pick<TransformParam
     };
 }
 
-function calculatePlateCarreeAnchorPoint(mapInstance: MapLibreMap): LngLatAltitude {
+function calculatePlateCarreeAnchorPoint(mapInstance: MapLibreMap): LngLat {
     const alignedCoordinates = mapInstance.getCenter();
     const [originalLng, originalLat] = reverse_alignWithEquirectangularProjection([alignedCoordinates.lng, alignedCoordinates.lat]);
-    return [originalLng, originalLat, 0];
+    return [originalLng, originalLat];
 }
 
 function degToRad(degrees: number): number {
     return degrees * Math.PI / 180;
 }
 
-function alignWithEquirectangularProjection(point: LngLatLike): LngLat {
+function alignWithEquirectangularProjection(point: LngLat): LngLat {
     const [lng, lat] = proj4(EPSG_WEB_MERCATOR, EPSG_WGS84, wgs84_to_equirectangular(point));
     return [lng, lat];
 }
 
-function reverse_alignWithEquirectangularProjection(point: LngLatLike): LngLat {
+function reverse_alignWithEquirectangularProjection(point: LngLat): LngLat {
     const [lng, lat] = proj4(EPSG_WGS84, EPSG_WEB_MERCATOR, [point[0], point[1]]);
     return equirectangular_to_wgs84([lng, lat]);
 }
 
-function wgs84_to_equirectangular([lon, lat]: LngLatLike): LngLat {
+function wgs84_to_equirectangular([lon, lat]: LngLat): LngLat {
     return [(lon / WGS84_BOUND) * EPSG3857_BOUND, (lat / WGS84_BOUND) * EPSG3857_BOUND];
 }
 

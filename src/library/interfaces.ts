@@ -1,6 +1,6 @@
 import type { CustomLayerInterface, Map as MapLibreMap } from 'maplibre-gl';
 
-export type LngLatAltitude = [longitude: number, latitude: number, altitude: number];
+export type LngLat = [longitude: number, latitude: number];
 
 export interface TransformParameters {
     translateX: number;
@@ -20,8 +20,8 @@ export interface ThreeDTilesOffset {
     south: number;
 }
 
-export type calculateAnchorPoint = (mapInstance: MapLibreMap) => LngLatAltitude;
-export type GetTransformParameters = (anchor4326: LngLatAltitude) => TransformParameters;
+export type calculateAnchorPoint = (mapInstance: MapLibreMap) => LngLat;
+export type GetTransformParameters = (anchor4326: LngLat) => TransformParameters;
 
 export interface VerticalDatumOptions {
     /**
@@ -121,5 +121,5 @@ export interface GeographicRaster {
      * a pixel may be a square spanning a large area. The returned coordinates are therefore not rounded
      * Example:  1042.5, 1322.5 means the coordinate is right in the middle of the pixel's square while 1042.0, 1322.0 is top left corner of the pixel's square. 
      */
-    wgs84ToPixels(point: [number, number]): [number, number];
+    wgs84ToPixels(point: LngLat): [number, number];
 }
