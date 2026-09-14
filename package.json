@@ -35,19 +35,19 @@
       "import": "./dist/maplibre-gl-three.js"
     },
     "./proj4-wrapper.js": {
-      "types": "./dist/proj4-wrapper.d.ts",
-      "import": "./dist/proj4-wrapper.js"
+      "types": "./dist/type-wrappers/proj4-wrapper.d.ts",
+      "import": "./dist/type-wrappers/proj4-wrapper.js"
     },
     "./geotiff-wrapper.js": {
-      "types": "./dist/geotiff-wrapper.d.ts",
-      "import": "./dist/geotiff-wrapper.js"
+      "types": "./dist/type-wrappers/geotiff-wrapper.d.ts",
+      "import": "./dist/type-wrappers/geotiff-wrapper.js"
     }
   },
   "files": [
-    "dist/*.js",
-    "dist/*.js.map",
-    "dist/*.d.ts",
-    "dist/*.d.ts.map",
+    "dist/**/*.js",
+    "dist/**/*.js.map",
+    "dist/**/*.d.ts",
+    "dist/**/*.d.ts.map",
     "README.md"
   ],
   "dependencies": {

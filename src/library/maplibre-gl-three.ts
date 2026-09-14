@@ -1,7 +1,7 @@
 import { ThreeDManager as CoreThreeDManager, Separator } from './core';
-import { PlateCarreeTools } from './plateCarreeTools';
+import { PlateCarreeTools } from './helpers/plateCarreeTools';
 import { GeoTiffGeographicRaster } from './adapters/GeoTiffGeographicRaster';
-import { BilinearGeographicRaster } from './adapters/BilinearGeographicRaster';
+import { BilinearGeographicRaster } from './helpers/BilinearGeographicRaster';
 import type {
     Asset,
     GetLayerOptions,

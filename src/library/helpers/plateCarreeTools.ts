@@ -1,6 +1,6 @@
 import { MercatorCoordinate, type Map as MapLibreMap } from 'maplibre-gl';
 import proj4 from 'proj4';
-import type { LngLatAltitude, TransformParameters } from './interfaces';
+import type { LngLatAltitude, TransformParameters } from '../interfaces';
 
 type LngLat = [longitude: number, latitude: number];
 type LngLatLike = LngLat | LngLatAltitude;
