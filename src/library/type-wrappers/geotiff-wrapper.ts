@@ -9,3 +9,4 @@ if (!geotiffGlobal) {
 }
 
 export const fromUrl = geotiffGlobal.fromUrl;
+export const fromArrayBuffer = geotiffGlobal.fromArrayBuffer;

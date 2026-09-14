@@ -1,4 +1,4 @@
-import { ThreeDManager as CoreThreeDManager, Separator } from './core';
+import { ThreeDManager as CoreThreeDManager } from './core';
 import { PlateCarreeTools } from './helpers/plateCarreeTools';
 import { GeoTiffGeographicRaster } from './adapters/GeoTiffGeographicRaster';
 import { BilinearGeographicRaster } from './helpers/BilinearGeographicRaster';
@@ -17,7 +17,7 @@ import type {
     calculateAnchorPoint,
 } from './interfaces';
 
-export { PlateCarreeTools, Separator };
+export { PlateCarreeTools };
 export type {
     Asset,
     GetLayerOptions,

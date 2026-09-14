@@ -11,7 +11,6 @@ import type {
     GetTransformParameters,
     Load3dTilesOptions,
     LngLat,
-    SeparatorAsset,
     ThreeDManagerOptions,
     ThreeDTilesAsset,
     ThreeDTilesOffset,
@@ -260,76 +259,6 @@ export class ThreeDManager {
     destroy(): void {
         this.activeTiles?.destroy();
         this.activeTiles = null;
-    }
-}
-
-/** This class returns a "separator" layer that can be added to MapLibre.
- * It guarantees that all layers before it will render in a depth lower than all layers after it.
- * It is mainly useful when some ThreeJS layers were set to separatorBefore = false or separatorAfter = false
- */
-export class Separator implements SeparatorAsset {
-    renderer: THREE.WebGLRenderer | null;
-    customLayer: CustomLayerInterface | null;
-    mapInstance: MapLibreMap | null;
-    destroyed: boolean;
-    layerId: string;
-
-    constructor(layerId = "separator") {
-        this.renderer = null;
-        this.customLayer = null;
-        this.mapInstance = null;
-        this.destroyed = false;
-        this.layerId = layerId;
-    }
-
-    getLayer(): CustomLayerInterface {
-        if (!this.customLayer) {
-            this.customLayer = {
-                id: this.layerId,
-                type: "custom",
-                renderingMode: "3d",
-                onAdd: (mapArg, gl) => this.onAdd(mapArg, gl),
-                render: (_gl, _args) => this.render(),
-                onRemove: () => this.onRemove(),
-            };
-        }
-
-        return this.customLayer;
-    }
-
-    onAdd(_mapArg: MapLibreMap, gl: WebGLRenderingContext | WebGL2RenderingContext): void {
-        if (this.destroyed) return;
-
-        this.mapInstance = _mapArg;
-        this.renderer = new THREE.WebGLRenderer({
-            canvas: _mapArg.getCanvas(),
-            context: gl,
-        });
-        this.renderer.autoClear = false;
-    }
-
-    onRemove(): void {
-        this.mapInstance = null;
-        this.renderer = null;
-    }
-
-    render(): void {
-        if (this.destroyed || !this.renderer) return;
-
-        this.renderer.clearDepth();
-    }
-
-    destroy(): void {
-        if (this.destroyed) return;
-
-        const mapInstance = this.mapInstance;
-        if (mapInstance && mapInstance.getLayer?.(this.layerId)) {
-            mapInstance.removeLayer(this.layerId);
-        } else {
-            this.onRemove();
-        }
-        this.customLayer = null;
-        this.destroyed = true;
     }
 }
 

@@ -1,4 +1,4 @@
-import { fromUrl, type GeoTIFFImage, type TypedArray } from "geotiff";
+import { fromArrayBuffer, type GeoTIFFImage, type TypedArray } from "geotiff";
 import type { GeographicRaster, LngLat, VerticalDatumOptions } from '../interfaces';
 
 const DEFAULT_VERTICAL_DATUM_PATH = 'https://cdn.proj.org/us_nga_egm96_15.tif';
@@ -16,7 +16,13 @@ export class GeoTiffGeographicRaster implements GeographicRaster {
 	}
 	async init() {
 		if (!this.enabled) return;
-		const tiff = await fromUrl(this.path);
+		// TODO Range-based alternative that would need an async getPixelValue and some more refactors
+		// const tiff = await fromUrl(this.path);
+		const response = await fetch(this.path);
+		if (!response.ok) {
+			throw new Error(`Failed to fetch GeoTIFF: ${response.status} ${response.statusText}`);
+		}
+		const tiff = await fromArrayBuffer(await response.arrayBuffer());
 		const image = await tiff.getImage();
 		// Construct the WGS-84 forward affine matrix.
 		// The matrix construction is adopted from the geotiff usage example without much modification or understanding:
