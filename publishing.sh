@@ -146,8 +146,7 @@ npm publish "$tarball_name"
 set +x
 
 echoBold "POST-PUBLISH checks"
-echo "Sleeping for 10 seconds to let the packages propogate"
-sleep 10
+await_manual_action "Wait until changes propagate. Check out https://www.npmjs.com/package/maplibre-gl-three?activeTab=versions "
 
 echoBold "Smoke test NPM example with the freshly published version and update package.json of npm example"
 set -x
