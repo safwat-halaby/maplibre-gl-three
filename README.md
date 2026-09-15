@@ -1,6 +1,6 @@
 This library brings [Three.JS](https://threejs.org/) capabilities into [Maplibre-gl-js](https://maplibre.org/). Currently focused on enabling [3DTiles](https://cesium.com/why-cesium/3d-tiles/) in MapLibre. It internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
-Latest version: `maplibre-gl-three@0.0.10`
+Latest version: `maplibre-gl-three@0.0.9`
 
 **This project is not officially affiliated with MapLibre**
 
@@ -55,8 +55,8 @@ threeDManager.destroy(); // will implicitly call destroy() on all assets not yet
 - `debugMode`: If true, will render the 3JS anchor point for debugging purposes.
 - `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/`.
 - `ktx2Path`: The path to the ktx2 loader. Defaults to `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/`.
-- (next version) - `verticalDatum.enabled`: Optional flag controlling whether the vertical datum is loaded and applied. This will make the model have the proper height above sea level, and the ground will sit at a height matching the height of a Maplibre RGB Terrain. This entails loading a vertical datum file from the network. EGM96 height (EPSG:5773). Size: 2.6 MB. Default is `true`. Setting to `false` means no network request will take place, but means you likely need to apply a vertical offset to get the right height, using the `offset` option. Note that if the raw data has vertical errors, you may still need to apply an offset regardless of this flag. More info about the file and the CDN used can be found here: https://github.com/OSGeo/PROJ-data/tree/master
-- (next version) - `verticalDatum.path`: Optional URL of the GeoTIFF vertical datum file. Defaults to `https://cdn.proj.org/us_nga_egm96_15.tif`. Ignored if the vertical datum corrections are disabled via `verticalDatum.enabled`. More info about the file and the CDN used can be found here: https://github.com/OSGeo/PROJ-data/tree/master  
+- `verticalDatum.enabled`: Optional flag controlling whether the vertical datum is loaded and applied. This will make the model have the proper height above sea level, and the ground will sit at a height matching the height of a Maplibre RGB Terrain. This entails loading a vertical datum file from the network. EGM96 height (EPSG:5773). Size: 2.6 MB. Default is `true`. Setting to `false` means no network request will take place, but means you likely need to apply a vertical offset to get the right height, using the `offset` option. Note that if the raw data has vertical errors, you may still need to apply an offset regardless of this flag. More info about the file and the CDN used can be found here: https://github.com/OSGeo/PROJ-data/tree/master
+- `verticalDatum.path`: Optional URL of the GeoTIFF vertical datum file. Defaults to `https://cdn.proj.org/us_nga_egm96_15.tif`. Ignored if the vertical datum corrections are disabled via `verticalDatum.enabled`. More info about the file and the CDN used can be found here: https://github.com/OSGeo/PROJ-data/tree/master  
 - Additionally, `calculateAnchorPoint(mapInstance)` and `getTransformParameters(anchor4326)` are advanced callbacks for overriding the calculation of the anchor point and the internal transform parameters, respectively. In the future the usage of these callbacks may be better documented. In the meantime see [www/examples/other/plate-carree/](www/examples/other/plate-carree/) for a usage example of the plate-carree projection. 
 
 **load3dTiles optional options**:
