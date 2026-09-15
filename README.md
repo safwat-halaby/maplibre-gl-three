@@ -1,6 +1,6 @@
 This library brings [Three.JS](https://threejs.org/) capabilities into [Maplibre-gl-js](https://maplibre.org/). Currently focused on enabling [3DTiles](https://cesium.com/why-cesium/3d-tiles/) in MapLibre. It internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
-Latest version: `maplibre-gl-three@0.0.9`
+Latest version: `maplibre-gl-three@0.0.10`
 
 **This project is not officially affiliated with MapLibre**
 
@@ -22,7 +22,7 @@ const threeDManager = new ThreeDManager();
 const agiHqTiles = await threeDManager.load3dTiles({
     tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
     layerId: 'agiHqTiles',
-    offset: { east: 0, up: -300, south: 0 },
+    offset: { east: 0, up: -234, south: 0 },
 });
 const map = new Map({
     container: 'YOUR-HTML-MAPLIBRE-CONTAINER',
@@ -31,7 +31,8 @@ const map = new Map({
     pitch: 55,
     bearing: -20,
     maxPitch: 85,
-    style: 'YOUR-MAPLIBRE_STYLE'
+    style: 'YOUR-MAPLIBRE_STYLE',
+    terrainSkirtLength: 'none' // this is IMPORTANT if you are using a transparent maplibre terrain to prevent vertical artifacts
 });
 map.addLayer(agiHqTiles.getLayer());
 ```

@@ -17,6 +17,7 @@ const map = new Map({
     bearing: -20,
     maxPitch: 85,
     style: mapStyle,
+    terrainSkirtLength: 'none'
 });
 
 map.addControl(new NavigationControl({ visualizePitch: true }));
@@ -26,7 +27,7 @@ map.on('load', async () => {
     const agiHqTiles = await threeDManager.load3dTiles({
         tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
         layerId: 'agi-hq-3d-tiles',
-        offset: { east: 0, up: -310, south: 0 },
+        offset: { east: 0, up: -234, south: 0 },
     });
 
     map.addLayer(agiHqTiles.getLayer(), "rivers");

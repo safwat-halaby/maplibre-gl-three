@@ -94,15 +94,6 @@
       "maxzoom": 8,
       "encoding": "mapbox"
     },
-    "natural-earth": {
-      "type": "raster",
-      "tiles": [
-        "/datasets/natural-earth/WebMercatorQuad/{z}/{x}/{y}.png"
-      ],
-      "minzoom": 0,
-      "maxzoom": 3,
-      "tileSize": 256
-    },
     "osm-tiles": {
         "type": "raster",
         "tiles": ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],

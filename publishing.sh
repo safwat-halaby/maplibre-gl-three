@@ -6,7 +6,7 @@ IFS=$'\n\t'
 example_dir="www/examples/basic/maplibreGlThree-npm-example"
 copy_npm_example() {
     local target_dir="$1"
-    mkdir -p "$target_dir/src"
+    mkdir -p "$target_dir/src" "$target_dir/assets"
     # project root
     cp "$example_dir/package.json" "$target_dir/package.json"
     cp "$example_dir/webpack.config.js" "$target_dir/webpack.config.js"
@@ -17,6 +17,7 @@ copy_npm_example() {
     cp "$example_dir/src/style.json" "$target_dir/src/style.json"
     cp "$example_dir/src/styles.css" "$target_dir/src/styles.css"
     cp "$example_dir/src/declarations.d.ts" "$target_dir/src/declerations.d.ts"
+    cp "$example_dir/assets/110_above_sea.png" "$target_dir/assets/110_above_sea.png"
 }
 
 await_manual_action() {

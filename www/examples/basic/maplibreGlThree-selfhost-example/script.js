@@ -9,6 +9,7 @@ const map = new maplibregl.Map({
     bearing: -20,
     maxPitch: 85,
     style: './style.json',
+    terrainSkirtLength: 'none'
 });
 
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));

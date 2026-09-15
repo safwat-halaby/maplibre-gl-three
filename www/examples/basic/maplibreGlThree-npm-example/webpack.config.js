@@ -24,6 +24,10 @@ export default {
                     from: require.resolve('maplibre-gl/dist/maplibre-gl-shared.mjs'),
                     to: 'maplibre-gl-shared.mjs',
                 },
+                {
+                    from: path.resolve(__dirname, 'assets/110_above_sea.png'),
+                    to: 'datasets/height-mock/110_above_sea.png',
+                },
             ],
         }),
     ],
@@ -49,8 +53,8 @@ export default {
                 directory: __dirname,
             },
             {
-                directory: path.resolve(__dirname, '../../../../www/datasets'),
-                publicPath: '/datasets',
+                directory: path.resolve(__dirname, 'dist'),
+                publicPath: '/',
             },
         ],
         port: 8080,
