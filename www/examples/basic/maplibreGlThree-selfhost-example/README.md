@@ -1,6 +1,6 @@
 This example demonstrates self-hosting `maplibre-gl-three` and all its dependencies.
 
-It renders a 3dtiles model, a  Maplibre Style Spec which contains a river and two streets derived from OpenStreetMap data, a regular threeJS model of a fox, and some spheres that demonstrate coordinate conversions.
+It renders a 3D Tiles model, a MapLibre Style Spec which contains a river and two streets derived from OpenStreetMap data, a regular Three.js model of a fox, and some spheres that demonstrate coordinate conversions.
 
 
 ## How to run

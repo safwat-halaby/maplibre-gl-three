@@ -22,7 +22,7 @@ function getPlateCarreeTransformParameters(anchor4326: LngLat): AffineTransforma
     };
 }
 
-/** A plate caree "meter" unit is not a real meter except on the equator. Given a longitude/latitude, this returns
+/** A Plate Carree "meter" unit is not a real meter except on the equator. Given a longitude/latitude, this returns
  * the conversion scales.
 */
 function getPlateCarreeMeterScales([_lng, lat]: LngLat):  {scaleEast: number, scaleSouth: number, scaleUp: number} {

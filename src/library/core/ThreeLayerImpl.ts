@@ -92,7 +92,7 @@ export class ThreeLayerImpl implements ThreeLayer {
     applyAnchor(anchor: AnchorMatrices): void {
         this.scene.matrix.copy(anchor.ecefToLocal);
         this.localToMap.copy(anchor.localToMap);
-        // Keep the debug axes in anchor-local space despite the ECEF scene.
+        // Keep the debug axes in LocalSpace despite the ECEF scene. The scene will call ecefToLocal on these coordinates, cancelling this out and putting them back to (0,0,0)
         this.debugAxes?.matrix.copy(anchor.localToEcef);
         this.scene.updateMatrixWorld(true);
     }

@@ -15,7 +15,7 @@ export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
     private gltfLoader: GLTFLoader | null = null;
     private abortController = new AbortController();
     private loaderPattern = /\.(gltf|glb)(\?.*)?$/i;
-    /** A single point representing the location of the 3dtiles. Currently the center of the containing sphere. */
+    /** A single point representing the location of the 3D Tiles. Currently the center of the containing sphere. */
     private reference: LngLatAlt | null = null;
     /** Configurable offset from the original reference point */
     private offset: MetersOffset;
@@ -34,7 +34,7 @@ export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
         if (options.maxDepth !== undefined) this.tiles.maxDepth = options.maxDepth;
         if (options.preprocessURL) this.tiles.registerPlugin({ preprocessURL: options.preprocessURL });
         this.placementRoot.name = 'tiles-offset';
-        // add the 3dtiles as parents of placementRoot. This allows us to offset the 3dtiles by moving around placementRoot.
+        // Add the 3D Tiles as children of placementRoot. This allows us to offset the 3D Tiles by moving placementRoot.
         this.placementRoot.add(this.tiles.group);
         this.tiles.addEventListener('load-root-tileset', this.rootLoaded);
         this.tiles.addEventListener('needs-update', this.requestRepaint);

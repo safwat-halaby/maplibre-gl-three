@@ -1,0 +1,8 @@
+I believe this dataset has a vertical error.
+
+The 3D Tiles model is roughly at -75.596, 40.038.
+
+The ground is 310 m above the ellipsoid; this is an error.
+The place is 110 m above sea level. The datum shift is about -34.5 m. The expected ellipsoidal height is therefore 75.5 m.
+The place has a 234.5 offset
+

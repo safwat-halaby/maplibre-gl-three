@@ -25,7 +25,7 @@ export class GeoTiffGeographicRaster implements GeographicRaster {
 		}
 		const tiff = await fromArrayBuffer(await response.arrayBuffer());
 		const image = await tiff.getImage();
-		// Construct the WGS-84 forward affine matrix.
+		// Construct the WGS84 forward affine matrix.
 		// The matrix construction is adopted from the geotiff usage example without much modification or understanding:
 		// https://geotiffjs.github.io/geotiff.js/#example-usage
 		const s = image.fileDirectory.getValue('ModelPixelScale');

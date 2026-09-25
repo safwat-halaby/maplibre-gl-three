@@ -11,7 +11,7 @@ import type {
 const DEFAULT_DRACO_PATH = 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/';
 const DEFAULT_KTX2_PATH = 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/';
 
-/** This class is the entry point of this library. It manages a MapLibre map's 3d layers.
+/** This class is the entry point of this library. It manages a MapLibre map's 3D layers.
  * If you have multiple MapLibre maps, you should use a separate ThreeDManager for each.
 */
 export class ThreeDManagerImpl {
@@ -22,22 +22,17 @@ export class ThreeDManagerImpl {
     /** The MapLibre map instance. For the sake of a clean API, we "Steal" this from a layer when it's added to the map. */
     private mapInstance: MapLibreMap | null = null;
     /** The anchor matrices are responsible for converting between the different coordinate systems.
-     * The anchor is the main graphical trick of this library. See coordinate-systems.md and updateAnchor to make sense of this.
-     * Short version: the "anchor" is the same point in several coordinate systems. The matrices convert between those different versions of the anchor.
-     * The anchor goes by different names in each coordinate system:
-     * Origin:     [0,0,0]    in the threeJS world. aka "local space".
-     * anchor4326: [lon, lat] a geographical point close to the MapLibre camera center. WGS84 EPSG:4326
-     * anchorEcef: [x,y,z] The same geographical point described in meters offset from earth's core. ECEF (EPSG:4978)
-     * 
-     * localToEcef and ecefToLocal convert points between ECEF and local space.
-     * localToMap converts from local space to the web mercator(by default) point that corresponds to anchor4326.
-     * (MapLibre's internal coordinate system is web mercator EPSG:3857, not WGS84 EPSG:4326).
-     * 
-     * The calculation of matrices is performed in updateAnchor(). The "input" is an anchor4326 returned by the callback `calculateAnchorPoint`.
+     * The anchor is the main graphical trick of this library. See coordinate-systems.md and updateAnchor to make full sense of this.
+     *
+     * localToEcef and ecefToLocal convert points between ECEF and LocalSpace.
+     * localToMap converts from LocalSpace to the Web Mercator (by default) point that corresponds to Anchor4326.
+     * (MapLibre's internal coordinate system is Web Mercator EPSG:3857, not WGS84 EPSG:4326).
+     *
+     * The calculation of matrices is performed in updateAnchor(). The "input" is an Anchor4326 returned by the callback `calculateAnchorPoint`.
      */
     private anchorMatrices: AnchorMatrices | null = null;
     private anchorDirty = true;
-    /** If true, will render some debug markers. Currently anchor-local axis system. */
+    /** If true, will render some debug markers. Currently a LocalSpace axis system. */
     private debugMode: boolean;
     private status : 'not_initialized' | 'initializing' | 'ready' | 'destroyed' = 'not_initialized';
     // CONSTRUCTOR PARAMETERS
@@ -96,8 +91,8 @@ export class ThreeDManagerImpl {
     }
 
     /** Creates a new layer which implements the MapLibre customLayer interface and can be added to a MapLibre map.
-     * The layer exposes convenience functions for creating common assets such as 3dTiles,
-     * as well as lower-level threeJS primitives for rendering anything with threeJS on a Maplibre custom layer.
+     * The layer exposes convenience functions for creating common assets such as 3D Tiles,
+     * as well as lower-level Three.js primitives for rendering anything Three.js can render on a MapLibre custom layer.
      * If no id is supplied, an id will be auto-generated.
     */
     createLayer(options?: CreateLayerOptions): ThreeLayer {
@@ -123,7 +118,7 @@ export class ThreeDManagerImpl {
     }
 
     /** Convert longitude/latitude (degrees) and altitude above sea level (meters) to ECEF.
-     * - Source coordinates: EPSG:9707 (which is a WGS84 (EPSG:4326) point with orthometric height (EGM96 EPSG:5773)) 
+     * - Source coordinates: EPSG:9707 (which is a WGS84 (EPSG:4326) point with orthometric height (EGM96 EPSG:5773))
      * - Used vertical datum: EGM96 EPSG:5773
      * - Output coordinates: EPSG:4978
     */
@@ -139,7 +134,7 @@ export class ThreeDManagerImpl {
     /** Convert ECEF to longitude/latitude and height above sea level.
      * - Source coordinates: EPSG:4978
      * - Used vertical datum: EGM96 EPSG:5773
-     * - Output coordinates: EPSG:9707 (which is a WGS84 (EPSG:4326) point with orthometric height (EGM96 EPSG:5773)) 
+     * - Output coordinates: EPSG:9707 (which is a WGS84 (EPSG:4326) point with orthometric height (EGM96 EPSG:5773))
      */
     ecefToLngLatAlt(point: THREE.Vector3): LngLatAlt {
         this.assertReady();
@@ -150,33 +145,33 @@ export class ThreeDManagerImpl {
         };
     }
 
-    /** Convert a Three.js local-space point (e.g. a raycast hit) to an ECEF Vector3.
-     * ATTENTION: This assumes the camera has not yet moved since the local-space point was generated.
-     * If the camera has moved, you should not use the local-space point anymore.
-      * If raycasting, the best way to avoid trouble is to immediately convert any calculated localPoint using localVectorToEcef or localVectorToLngLatAlt
+    /** Convert a Three.js LocalSpace point (e.g. a raycast hit) to an ECEF Vector3.
+     * ATTENTION: This assumes the camera has not yet moved since the LocalSpace point was generated.
+     * If the camera has moved, you should not use the LocalSpace point anymore.
+     * If raycasting, the best way to avoid trouble is to immediately convert any calculated LocalSpace point using localVectorToEcef or localVectorToLngLatAlt.
      * 
      * Output coordinates: EPSG:4978
      */
     localVectorToEcef(point: THREE.Vector3): THREE.Vector3 {
         this.assertReady();
-        if (!this.anchorMatrices) throw new Error('Attach a layer before converting anchor-local coordinates');
+        if (!this.anchorMatrices) throw new Error('Attach a layer before converting LocalSpace coordinates');
         return point.clone().applyMatrix4(this.anchorMatrices.localToEcef);
     }
-    /** Convert an ECEF point to a Three.js local-space point. You should probably not use this function unless you know what you're doing.
-     * ATTENTION: Once the camera moves, you should not use the generated local-space point anymore.
+    /** Convert an ECEF point to a Three.js LocalSpace point. You should probably not use this function unless you know what you're doing.
+     * ATTENTION: Once the camera moves, you should not use the generated LocalSpace point anymore.
      */
     ecefToLocalVector(point: THREE.Vector3): THREE.Vector3 {
         this.assertReady();
-        if (!this.anchorMatrices) throw new Error('Attach a layer before converting anchor-local coordinates');
+        if (!this.anchorMatrices) throw new Error('Attach a layer before converting LocalSpace coordinates');
         return point.clone().applyMatrix4(this.anchorMatrices.ecefToLocal);
     }
 
-    /** Convert a Three.js local-space point (e.g. a raycast hit) to a longitude, latitude, and height above sea level.
-     * * ATTENTION: This assumes the camera has not yet moved since the local-space point was generated.
-     * If the camera has moved, you should not use the local-space point anymore.
-      * If raycasting, the best way to avoid trouble is to immediately convert any calculated localPoint using localVectorToEcef or localVectorToLngLatAlt
+    /** Convert a Three.js LocalSpace point (e.g. a raycast hit) to a longitude, latitude, and height above sea level.
+     * * ATTENTION: This assumes the camera has not yet moved since the LocalSpace point was generated.
+     * If the camera has moved, you should not use the LocalSpace point anymore.
+     * If raycasting, the best way to avoid trouble is to immediately convert any calculated LocalSpace point using localVectorToEcef or localVectorToLngLatAlt.
      * 
-     * Output coordinates: EPSG:9707 (which is a WGS84 (EPSG:4326) point with orthometric height (EGM96 EPSG:5773)) 
+     * Output coordinates: EPSG:9707 (which is a WGS84 (EPSG:4326) point with orthometric height (EGM96 EPSG:5773))
      */
     localVectorToLngLatAlt(point: THREE.Vector3): LngLatAlt {
         return this.ecefToLngLatAlt(this.localVectorToEcef(point));
@@ -188,12 +183,12 @@ export class ThreeDManagerImpl {
 
 
     /**
-     * Returns a matrix which, when applied to a ThreeJS object, places the object at the given location in ECEF space,
+     * Returns a matrix which, when applied to a Three.js object, places the object at the given location in ECEF space,
      * rotating it such that local +X points east, +Y points up, and +Z points south.
      * 
      * Typical usage: threeObject.applyMatrix4(threeDManager.getEcefMatrix(lngLatAlt));
      * 
-     * This is very useful on a threeJS group. The children of the group's positions would be given as an offset from lngLatLat in meters.
+     * This is very useful on a Three.js group. The children of the group's positions would be given as an offset from lngLatLat in meters.
      * 
      * This is equivalent to:
      *  - threeObject.position.copy(threeDManager.lngLatAltToEcef(lngLatAlt));
@@ -204,11 +199,11 @@ export class ThreeDManagerImpl {
             .invert();
     }
 
-    /** Returns a matrix which transforms ECEF coordinates to the localSpace coordinates of the current anchor.
+    /** Returns a matrix which transforms ECEF coordinates to the LocalSpace coordinates of the current anchor.
      * 
      * This is most useful to set on a raycaster with `raycaster.ray.applyMatrix4(threeDManager.getEcefMatrix())`.
      * Afterwards the rays can be fed into it in ECEF coordinates. 
-     * The raycaster output would still be in localSpace, and can be converted to ECEF with vector.applyMatrix4(threeDManager.getAnchorLocalToEcefMatrix())
+     * The raycaster output would still be in LocalSpace, and can be converted to ECEF with vector.applyMatrix4(threeDManager.getAnchorLocalToEcefMatrix()).
      * */
     getAnchorEcefToLocalMatrix(): THREE.Matrix4 {
         if (!this.anchorMatrices) {
@@ -269,17 +264,17 @@ export class ThreeDManagerImpl {
     /** Update the geographical location of the anchor if it's dirty. What makes an anchor dirty is camera movement. See this.moveHandler.
      * This is called by an attached layer when it needs to render itself.
      * It may be called multiple times in a frame if we have multiple layers, but only the first call would perform a calculation.
-     * Once an anchor is updated, the local reference frame shifts. a ThreeJS 0,0,0 point is always where the anchor is at.
+     * Once an anchor is updated, the LocalSpace reference frame shifts. A Three.js 0,0,0 point is always where the anchor is.
      */
     private updateAnchor(): void {
         if (!this.anchorDirty || !this.mapInstance) return;
         // calculate the anchor point. The default calculation is "calculateWebMercatorAnchorPoint" but is user-overridable.
         const anchor4326 = this.calculateAnchorPoint(this.mapInstance);
         const ecefToLocal = ecefToLocalMatrix(anchor4326, this.getGeoidUndulation(anchor4326));
-        // The 3js objects have ECEF coordinates, but they are children of the scene.
+        // The Three.js objects have ECEF coordinates, but they are children of the scene.
         // and the scene's matrix will end up being "ecefToLocal" in ThreeLayerImpl,
-        // so the final WorldMatrix/world coordinates of the 3js objects
-        // will be in local space, around the 0,0,0 anchor.
+        // so the final WorldMatrix/world coordinates of the Three.js objects
+        // will be in LocalSpace, around the 0,0,0 anchor.
         this.anchorMatrices = {
             ecefToLocal,
             localToEcef: ecefToLocal.clone().invert(),
@@ -298,11 +293,11 @@ function calculateWebMercatorAnchorPoint(map: MapLibreMap): LngLat {
 
 /** The default getTransformParameters function. See the ThreeDManager public interface docs for more info. */
 function getWebMercatorTransformParameters(anchor4326: LngLat): AffineTransformation {
-    const coordinate = MercatorCoordinate.fromLngLat(anchor4326);
-    // A web mercator "meter" unit is not a real meter except on the equator. Given a longitude/latitude, this returns the needed scaling.
-    const scale = coordinate.meterInMercatorCoordinateUnits();
+    const anchorWM = MercatorCoordinate.fromLngLat(anchor4326);
+    // A Web Mercator "meter" unit is not a real meter except on the equator. Given a longitude/latitude, this returns the needed scaling.
+    const scale = anchorWM.meterInMercatorCoordinateUnits();
     return {
-        translateX: coordinate.x, translateY: coordinate.y, translateZ: coordinate.z,
+        translateX: anchorWM.x, translateY: anchorWM.y, translateZ: anchorWM.z,
         rotateX: Math.PI / 2, rotateY: 0, rotateZ: 0,
         scaleEast: scale, scaleSouth: scale, scaleUp: scale,
     };

@@ -1,4 +1,4 @@
-/** TODO This code make sures the ThreeJS camerea has proper metadata despite the custom projections, allowing raycasting to work properly.
+/** TODO This code makes sure the Three.js camera has proper metadata despite the custom projections, allowing raycasting to work properly.
  * It was found by ChatGPT sol 5.6. Are there better solutions? I did not carefully research alternatives or correctness,
  * but it empirically works. -Saf 
  */

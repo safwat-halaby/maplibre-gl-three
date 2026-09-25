@@ -4,7 +4,7 @@ I picked "Natural Earth I with Shaded Relief, Water, and Drainages, large size" 
 
 Note: The ones without water seem to have misaligned landmass.
 
-Web mercator conversion:
+Web Mercator conversion:
 
 ```sh
 gdal raster tile --min-zoom 0 --max-zoom 4 --tiling-scheme WebMercatorQuad --input NE1_HR_LC_SR_W_DR\NE1_HR_LC_SR_W_DR.tif --output WebMercatorQuad
@@ -18,4 +18,4 @@ gdal raster tile --min-zoom 0 --max-zoom 2 --tiling-scheme GoogleCRS84Quad --inp
 
 Date is early 2026.
 
-License: Natural earth is a Public Domain map dataset.
+License: Natural Earth is a public-domain map dataset.

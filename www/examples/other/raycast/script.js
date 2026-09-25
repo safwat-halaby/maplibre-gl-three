@@ -61,17 +61,17 @@ map.on('load', async () => {
 	// keep raycasting on each tile load, until we hit something.
 	tilesAsset.getTilesRenderer().addEventListener('load-model', topDownRayCast);
 	function topDownRayCast() {
-		// the raycast destination is the reference point of the 3dtiles, which is the center of the tiles' enclosing circle. 
+		// The raycast destination is the reference point of the 3D Tiles, which is the center of the tiles' enclosing circle.
 		const destination = tilesAsset.getReference();
 		if (!destination) {
-			throw new Error("could not obtain the 3dtile reference")
+			throw new Error("could not obtain the 3D Tiles reference")
 		}
 		// The ray starts 10 meters above the reference point, heading straight down.
 		const origin = { 
 			point: destination.point,
 			height: destination.height + 10
 		};
-		// Convert to the ECEF coordinate system. 
+		// Convert to the ECEF coordinate system.
 		const ecef_origin = threeDManager.lngLatAltToEcef(origin);
 		const ecef_destination = threeDManager.lngLatAltToEcef(destination);
 		const ecef_impactPoint = raycast_originDestination(ecef_origin, ecef_destination);
@@ -117,27 +117,27 @@ map.on('load', async () => {
 		}
 		ecef_direction.normalize();
 		raycaster.set(ecef_origin, ecef_direction);
-		// The raycaster works internally in localSpace, this converts ECEF to localSpace
+		// The raycaster works internally in LocalSpace; this converts ECEF to LocalSpace.
 		raycaster.ray.applyMatrix4(threeDManager.getAnchorEcefToLocalMatrix());
         const intersections = raycaster.intersectObject(tilesAsset.getObject3D(), true);
         const hit = intersections.length === 0 ? null : intersections[0];
 
 		if (!hit) return null;
-		// convert localSpace back to ECEF
+		// Convert LocalSpace back to ECEF.
 		hit.point.applyMatrix4(threeDManager.getAnchorLocalToEcefMatrix());
 		return hit.point;
 	}
 	function raycast_pointer(event) {
         const bounds = renderer.domElement.getBoundingClientRect();
 
-        // From pixels (MapLibre) to normalized device coordinates as expected by ThreeJS.
+        // From pixels (MapLibre) to normalized device coordinates as expected by Three.js.
         pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
         pointer.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
 
         raycaster.setFromCamera(pointer, camera);
 
-		// the camera ray is in localSpace, so we change it to ECEF space.
-		// This is a bit of a redundant calculation and we could have implemented a separate localSpace raycaster. But this is less code.
+		// The camera ray is in LocalSpace, so we change it to ECEF space.
+		// This is a bit of a redundant calculation and we could have implemented a separate LocalSpace raycaster. But this is less code.
 		raycaster.ray.applyMatrix4(threeDManager.getAnchorLocalToEcefMatrix());
 
 		const ecef_cameraOrigin = raycaster.ray.origin.clone();
@@ -168,7 +168,7 @@ map.on('load', async () => {
 	}
 	function updateHtmlImpactText(lngLatAlt_impactPoint, ecef_impactPoint) {
 		const str = 
-		`Raycasting impact Point (WGS84)\n\n` + 
+		`Raycasting impact Point (WGS84)\n\n` +
 		`lngLatAlt EPSG:4326/EPSG:9707: (lon: ${lngLatAlt_impactPoint.point[0].toFixed(6)}°, lat: ${lngLatAlt_impactPoint.point[1].toFixed(6)}°, alt: ${lngLatAlt_impactPoint.height.toFixed(1)}m orthometric)\n` + 
 		`ECEF EPSG:4978:                (${ecef_impactPoint.x.toFixed(1)}m, ${ecef_impactPoint.y.toFixed(1)}m, ${ecef_impactPoint.z.toFixed(1)}m)`;
 		console.log(str);

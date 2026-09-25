@@ -1,4 +1,4 @@
-This example demonstrates using `maplibre-gl-three` with NPM and webpack. It's a minimal example which loads a 3dtiles model and a basic Maplibre Style Spec which contains a river and two streets derived from OpenStreetMap data. 
+This example demonstrates using `maplibre-gl-three` with NPM and webpack. It's a minimal example which loads a 3D Tiles model and a basic MapLibre Style Spec which contains a river and two streets derived from OpenStreetMap data.
 
 You can run it with:
 
