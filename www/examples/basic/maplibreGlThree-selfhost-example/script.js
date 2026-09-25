@@ -31,14 +31,14 @@ map.on('load', async () => {
         offset: { east: 0, up: -234, south: 0 },
         maxDepth: 5
     });
-    // an individual pink sphere
+
+    // an individual pink sphere.
     const marker = new THREE.Mesh(
         new THREE.SphereGeometry(10, 32, 16),
         new THREE.MeshStandardMaterial({ color: 0xff00ff }),
     );
     marker.applyMatrix4(threeDManager.getEcefMatrix({ point: [-75.598, 40.040], height: 130 }));
     layer.getScene().add(marker);
-
 
     // A group of four spheres. Their offset is in meters relative to a single geographical placement.
     const placement = new THREE.Group();
@@ -77,34 +77,5 @@ map.on('load', async () => {
     placement.add(west);
     placement.add(model.scene);
     layer.getScene().add(placement);
-
-    // const mixer = new THREE.AnimationMixer(model.scene);
-    // const clip = model.animations.find(({ name }) => name === 'Walk') ?? model.animations[0];
-    // if (clip) mixer.clipAction(clip).play();
-    // const clock = new THREE.Clock();
-    // let animationFrame;
-    // const animate = () => {
-    //     mixer.update(clock.getDelta());
-    //     layer.requestRepaint();
-    //     animationFrame = requestAnimationFrame(animate);
-    // };
-    // if (clip) animate();
-
-    // both the spheres and the 3dtiles are below the streets/rivers in terms of depth.
-    // If you want the spheres above, you can create another maplibre-three layer!
     map.addLayer(layer, 'rivers');
-    // map.on('remove', () => {
-    //     cancelAnimationFrame(animationFrame);
-    //     mixer.stopAllAction();
-    //     threeDManager.destroy();
-    //     marker.geometry.dispose();
-    //     marker.material.dispose();
-    //     model.scene.traverse((object) => {
-    //         if (object instanceof THREE.Mesh) {
-    //             object.geometry.dispose();
-    //             object.material.dispose();
-    //         }
-    //     });
-    // });
-    
 });

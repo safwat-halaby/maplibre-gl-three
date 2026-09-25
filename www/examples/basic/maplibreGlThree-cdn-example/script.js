@@ -17,7 +17,7 @@ map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
 map.on('load', async () => {
     const threeDManager = new ThreeDManager();
     await threeDManager.init();
-    const layer = threeDManager.createLayer({ id: 'agi-hq-3d' });
+    const layer = threeDManager.createLayer();
     await layer.load3dTiles({
         tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
         offset: { east: 0, up: -234, south: 0 },
