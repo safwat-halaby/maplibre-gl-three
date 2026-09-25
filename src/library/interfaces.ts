@@ -45,6 +45,7 @@ export interface VerticalDatumOptions {
      * {@link VerticalDatumOptions.enabled}
      * 
      * @see {@link https://github.com/OSGeo/PROJ-data/tree/master | More info about the datum file and the CDN}
+     * @see {@link https://github.com/safwat-halaby/maplibre-gl-three/blob/master/README.md | More info about vertical datums in this library}
      * @defaultValue `https://cdn.proj.org/us_nga_egm96_15.tif`
      */
     path?: string;
@@ -52,7 +53,7 @@ export interface VerticalDatumOptions {
      * Whether to load and apply the vertical datum. When disabled, uses a
      * zero-undulation approximation.
      * 
-     * @see {@link https://github.com/safwat-halaby/maplibre-gl-three/blob/master/README.md | Implications of turning vertical datum on/off }
+     * @see {@link https://github.com/safwat-halaby/maplibre-gl-three/blob/master/README.md | More info about vertical datums in this library}
      * @defaultValue true
      */
     enabled?: boolean;
@@ -79,7 +80,9 @@ export interface ThreeDManagerOptions {
     ktx2Path?: string;
     /**
      * Configuration for loading and applying a vertical datum, necessary for accurate above-sea-level calculations.
+     * 
      * @see {@link VerticalDatumOptions}
+     * @see {@link https://github.com/OSGeo/PROJ-data/tree/master | More info about the vertical datum}
      */
     verticalDatum?: VerticalDatumOptions;
     /**

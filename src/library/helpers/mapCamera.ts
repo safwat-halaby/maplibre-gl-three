@@ -1,8 +1,13 @@
+/** TODO This code make sures the ThreeJS camerea has proper metadata despite the custom projections, allowing raycasting to work properly.
+ * It was found by ChatGPT sol 5.6. Are there better solutions? I did not carefully research alternatives or correctness,
+ * but it empirically works. -Saf 
+ */
 import { MathUtils, Matrix4, PerspectiveCamera, Vector3 } from 'three';
 import type { CustomRenderMethodInput } from 'maplibre-gl';
 
 /** Maintains a rigid Three.js camera while preserving MapLibre's complete clip transform. */
 export class MapCameraSync {
+    // These are just an optimization. A reused memory area.
     private combined = new Matrix4();
     private view = new Matrix4();
     private scale = new Vector3();
