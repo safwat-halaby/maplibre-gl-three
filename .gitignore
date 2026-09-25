@@ -1,5 +1,7 @@
 node_modules/
 dist/
+site/
+docs/api/
 local_only/
 *.tgz
 www/dependencies/

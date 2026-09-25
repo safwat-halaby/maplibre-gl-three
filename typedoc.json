@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/typedoc-plugin-markdown/typedoc-plugin-markdown.schema.json",
+  "entryPoints": ["src/library/maplibre-gl-three.ts"],
+  "entryPointStrategy": "resolve",
+  "tsconfig": "tsconfig.json",
+  "plugin": ["typedoc-plugin-markdown"],
+  "out": "docs/api",
+  "readme": "none",
+  "router": "module",
+  "entryFileName": "index",
+  "name": "maplibre-gl-three API",
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "treatWarningsAsErrors": true,
+  "useCustomAnchors": true
+}

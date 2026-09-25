@@ -160,7 +160,7 @@ npm run build
 
 ## See also
 
-- [In depth explanation of coordinate systems and the gluing process](docs/coordinate-systems.md)
-- [Development](docs/development.md)
-- [Changelog](docs/CHANGELOG.md)
+- [In depth explanation of coordinate systems and the gluing process](coordinate-systems.md)
+- [Development](development.md)
+- [Changelog](CHANGELOG.md)
 - [License](LICENSE.txt)

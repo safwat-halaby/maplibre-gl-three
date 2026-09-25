@@ -23,6 +23,27 @@ You probably also want to run a basic browser frontend project in parallel, whic
 
 In either case refresh your page after changing things in the library's source code.
 
-## Internal docs
+## Build the documentation
 
-Docs intended for development can be found in [internal-docs](internal-docs/).
+Install the Python documentation dependencies, then generate the API reference and site:
+
+```sh
+python -m pip install -r docs/requirements.txt
+npm run docs:api
+mkdocs serve
+```
+
+For a production-style validation build:
+
+```sh
+npm run docs
+```
+
+The TypeDoc output is generated in `docs/api/` and is not committed to the repository.
+
+To update the pinned Python documentation dependencies after editing `docs/requirements.in`:
+
+```sh
+python -m pip install uv
+python -m uv pip compile --python-version 3.12 --output-file docs/requirements.txt docs/requirements.in
+```
