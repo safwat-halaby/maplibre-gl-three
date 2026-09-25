@@ -3,10 +3,11 @@ import { TilesRenderer } from '3d-tiles-renderer';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
-import { ecefToWgs84WithEllipsoidalHeight, getEcefCompassVectors } from '../helpers/coordinates';
+import { getEcefCompassVectors } from '../helpers/coordinates';
+import { Asset, type AssetServices } from './asset';
 import type { LngLat, Load3dTilesOptions, ThreeDTilesAsset, MetersOffset, LngLatAlt } from '../interfaces';
 
-export class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
+export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
     placementRoot = new THREE.Group();
     private tiles: TilesRenderer;
     private dracoLoader: DRACOLoader | null = null;
@@ -22,10 +23,11 @@ export class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
 
     constructor(
         options: Load3dTilesOptions,
-        private loaderOptions: {dracoPath: string, ktx2Path: string},
+        services: AssetServices,
         private requestRepaint: () => void,
         private onDestroy: (asset: ThreeDTilesAssetImpl) => void,
     ) {
+        super(services);
         this.offset = { ...(options.offset ?? { east: 0, up: 0, south: 0 }) };
         this.tiles = new TilesRenderer(options.tilesetUrl);
         this.tiles.fetchOptions.signal = this.abortController.signal;
@@ -53,8 +55,8 @@ export class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
     /** Called by ThreeDTilesAssetImpl */
     attach(camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer): void {
         if (!this.gltfLoader) {
-            this.dracoLoader = new DRACOLoader(this.tiles.manager).setDecoderPath(this.loaderOptions.dracoPath);
-            this.ktx2Loader = new KTX2Loader(this.tiles.manager).setTranscoderPath(this.loaderOptions.ktx2Path);
+            this.dracoLoader = new DRACOLoader(this.tiles.manager).setDecoderPath(this.services.dracoPath);
+            this.ktx2Loader = new KTX2Loader(this.tiles.manager).setTranscoderPath(this.services.ktx2Path);
             this.gltfLoader = new GLTFLoader(this.tiles.manager)
                 .setDRACOLoader(this.dracoLoader)
                 .setKTX2Loader(this.ktx2Loader);
@@ -103,7 +105,7 @@ export class ThreeDTilesAssetImpl implements ThreeDTilesAsset {
         if (!this.tiles.getBoundingSphere(sphere)) {
             throw new Error('Failed to calculate 3D Tiles bounding sphere');
         }
-        this.reference = ecefToWgs84WithEllipsoidalHeight(sphere.center);
+        this.reference = this.services.ecefToLngLatAlt(sphere.center);
         // apply offset (if needed) relative to the reference point.
         this.applyOffset();
     };

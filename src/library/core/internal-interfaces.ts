@@ -1,27 +1,10 @@
 import type { Matrix4 } from 'three';
-import type { Map as MapLibreMap } from 'maplibre-gl';
-import type { ThreeLayerImpl } from './ThreeLayerImpl';
 import type { LngLat } from '../interfaces';
 
 export interface AnchorMatrices {
     ecefToLocal: Matrix4;
     localToEcef: Matrix4;
     localToMap: Matrix4;
-}
-
-/** Dependency inversion interface for the layer.
- * Manager knows layer.
- * Manager supplies LayerServices to layer.
- * Layer calls layerServices and does not know manager directly.
- */
-export interface LayerServices {
-    debugMode: boolean;
-    dracoPath: string;
-    ktx2Path: string;
-    notifyAttach(layer: ThreeLayerImpl, map: MapLibreMap): void;
-    notifyDetach(layer: ThreeLayerImpl): void;
-    notifyDestroy(layer: ThreeLayerImpl): void;
-    updateAnchor(): void;
 }
 
 /** Represents a raster that has geographic awareness. */

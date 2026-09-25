@@ -2,8 +2,25 @@ import * as THREE from 'three';
 import type { CustomRenderMethodInput, Map as MapLibreMap } from 'maplibre-gl';
 import { MapCameraSync } from '../helpers/mapCamera';
 import { ThreeDTilesAssetImpl } from './ThreeDTilesAssetImpl';
-import type { AnchorMatrices, LayerServices } from './internal-interfaces';
-import type { CreateLayerOptions, Load3dTilesOptions, ThreeDTilesAsset, ThreeLayer } from '../interfaces';
+import type { AssetServices } from './asset';
+import type { AnchorMatrices } from './internal-interfaces';
+import type { CreateLayerOptions, Load3dTilesOptions, LngLatAlt, ThreeDTilesAsset, ThreeLayer } from '../interfaces';
+
+/** Dependency inversion interface for the layer.
+ * Manager knows layer.
+ * Manager supplies LayerServices to layer.
+ * Layer calls layerServices and does not know manager directly.
+ */
+export interface LayerServices {
+    debugMode: boolean;
+    dracoPath: string;
+    ktx2Path: string;
+    notifyAttach(layer: ThreeLayerImpl, map: MapLibreMap): void;
+    notifyDetach(layer: ThreeLayerImpl): void;
+    notifyDestroy(layer: ThreeLayerImpl): void;
+    updateAnchor(): void;
+    ecefToLngLatAlt(point: THREE.Vector3): LngLatAlt;
+}
 
 export class ThreeLayerImpl implements ThreeLayer {
     private static idAutoIncrement = 0;
@@ -51,7 +68,12 @@ export class ThreeLayerImpl implements ThreeLayer {
 
     async load3dTiles(options: Load3dTilesOptions): Promise<ThreeDTilesAsset> {
         this.assertAlive();
-        const asset = new ThreeDTilesAssetImpl(options, this.services, this.requestRepaint, asset => {
+        const assetServices: AssetServices = {
+            dracoPath: this.services.dracoPath,
+            ktx2Path: this.services.ktx2Path,
+            ecefToLngLatAlt: this.services.ecefToLngLatAlt,
+        };
+        const asset = new ThreeDTilesAssetImpl(options, assetServices, this.requestRepaint, asset => {
             asset.detach(this.camera);
             this.assets.delete(asset);
             this.requestRepaint();

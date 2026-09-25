@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { MercatorCoordinate, type Map as MapLibreMap } from 'maplibre-gl';
 import { ecefToWgs84WithEllipsoidalHeight, ecefToLocalMatrix, wgs84WithEllipsoidalHeightToEcef, affineTransformation } from '../helpers/coordinates';
-import { ThreeLayerImpl } from './ThreeLayerImpl';
-import type { AnchorMatrices, GeographicRaster, LayerServices } from './internal-interfaces';
+import { ThreeLayerImpl, type LayerServices } from './ThreeLayerImpl';
+import type { AnchorMatrices, GeographicRaster } from './internal-interfaces';
 import type {
     CreateLayerOptions, GetTransformParameters,
     LngLat, LngLatAlt, ThreeDManagerOptions, ThreeLayer, AffineTransformation, calculateAnchorPoint,
@@ -113,6 +113,7 @@ export class ThreeDManagerImpl {
             notifyDetach: layer => this.detachLayer(layer),
             notifyDestroy: layer => this.layers.delete(layer.id),
             updateAnchor: () => this.updateAnchor(),
+            ecefToLngLatAlt: point => this.ecefToLngLatAlt(point),
         };
         const layer = new ThreeLayerImpl(options, services);
         if (this.layers.has(layer.id)) throw new Error(`Layer "${layer.id}" already exists`);

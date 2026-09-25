@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import type { CustomLayerInterface, CustomRenderMethodInput, Map as MapLibreMap } from 'maplibre-gl';
 import type { Tileset } from '3d-tiles-renderer/core';
 import type { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { ThreeDManager } from './core/ThreeDManagerImpl';
+import { ThreeDManagerImpl } from './core/ThreeDManagerImpl';
 import { ThreeDManager as PublicManager } from './maplibre-gl-three';
 import { getEcefOrientationMatrix } from './helpers/coordinates';
 import type { GeographicRaster } from './core/internal-interfaces';
@@ -34,11 +34,11 @@ vi.mock('three', async importOriginal => {
     };
 });
 
-class TestThreeDManager extends ThreeDManager {
+class TestThreeDManager extends ThreeDManagerImpl {
     constructor(raster: GeographicRaster, options: ThreeDManagerOptions = {}) { super(raster, options); }
 }
 
-const managers: ThreeDManager[] = [];
+const managers: TestThreeDManager[] = [];
 
 function createRaster(undulation = 0): GeographicRaster {
     return {
@@ -264,6 +264,25 @@ test('caches the inverse anchor matrix for repeated local-to-ECEF conversions', 
     manager.localVectorToEcef(point);
 
     expect(invert).toHaveBeenCalledOnce();
+});
+
+test('asset references use the manager vertical datum conversion', async () => {
+    const manager = createManager(createRaster(30));
+    await manager.init();
+    const layer = manager.createLayer({ id: 'reference' });
+    const asset = await layer.load3dTiles({ tilesetUrl: 'https://example.test/tiles.json' });
+
+    await loadRoot(
+        asset,
+        { sphere: [0, 0, 0, 10] },
+        new THREE.Matrix4().makeTranslation(0, 6378137, 0).toArray(),
+    );
+
+    const reference = asset.getReference();
+    expect(reference).not.toBeNull();
+    expect(reference!.point[0]).toBeCloseTo(90, 9);
+    expect(reference!.point[1]).toBeCloseTo(0, 9);
+    expect(reference!.height).toBeCloseTo(-30, 5);
 });
 
 test('offset directions use the transformed root sphere and remain stable across anchor movement', async () => {
