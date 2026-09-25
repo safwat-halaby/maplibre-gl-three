@@ -16,10 +16,18 @@ const relativeDestinationRoot = 'www/dependencies';
 const destinationRoot = path.join(repoRoot, relativeDestinationRoot);
 const FILES_TO_UPDATE_ALL_VERSIONS = [
 	'www/examples/basic/maplibreGlThree-cdn-example/index.html',
+
 	'www/examples/basic/maplibreGlThree-selfhost-example/index.html',
+	'www/examples/other/fox-animation/index.html',
+	'www/examples/other/raycast/index.html',
 	'www/examples/other/plate-carree/index.html',
-	'src/library/maplibre-gl-three.ts',
+	
 	'www/examples/basic/maplibreGlThree-selfhost-example/script.js',
+	'www/examples/other/fox-animation/script.js',
+	'www/examples/other/raycast/script.js',
+	'www/examples/other/plate-carree/script.js',
+
+	'src/library/maplibre-gl-three.ts',
 	'README.md'
 ];
 
@@ -52,20 +60,8 @@ const DEPENDENCIES = {
 		'examples/jsm/libs/draco/draco_decoder.wasm',
 	],
 	'3d-tiles-renderer': [
-		'build/index.three.js',
-		'build/index.core.js',
-		{ relativeDir: 'build', fileRegex: /^MemoryUtils-.*\.js$/ },
-		{ relativeDir: 'build', fileRegex: /^LoaderBase-.*\.js$/ },
-		{ relativeDir: 'build', fileRegex: /^constants-.*\.js$/ },
-		{ relativeDir: 'build', fileRegex: /^CameraTransitionManager-.*\.js$/ },
-		{ relativeDir: 'build', fileRegex: /^B3DMLoaderBase-.*\.js$/ },
-		'build/index.three.js.map',
-		'build/index.core.js.map',
-		{ relativeDir: 'build', fileRegex: /^MemoryUtils-.*\.js.map$/ },
-		{ relativeDir: 'build', fileRegex: /^LoaderBase-.*\.js.map$/ },
-		{ relativeDir: 'build', fileRegex: /^constants-.*\.js.map$/ },
-		{ relativeDir: 'build', fileRegex: /^CameraTransitionManager-.*\.js.map$/ },
-		{ relativeDir: 'build', fileRegex: /^B3DMLoaderBase-.*\.js.map$/ }
+		{ relativeDir: 'build', fileRegex: /^.*\.js$/ },
+		{ relativeDir: 'build', fileRegex: /^.*\.js.map$/ },
 	],
 	'geotiff': [
 		'dist-browser/geotiff.js',

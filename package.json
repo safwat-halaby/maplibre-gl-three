@@ -54,23 +54,22 @@
   ],
   "dependencies": {
     "geotiff": "^3.0.5",
-    "proj4": "^2.15.0"
+    "proj4": "^2.22.0"
   },
   "peerDependencies": {
-    "3d-tiles-renderer": "^0.4.21",
-    "maplibre-gl": "^6.7.0",
-    "three": "^0.183.0"
+    "3d-tiles-renderer": "^0.5.3",
+    "maplibre-gl": "^6.11.2",
+    "three": "^0.186.1"
   },
   "devDependencies": {
-    "@types/three": "^0.183.0",
-    "3d-tiles-renderer": "^0.4.21",
-    "maplibre-gl": "^6.7.0",
-    "proj4": "^2.20.9",
-    "three": "^0.183.0",
-    "tsup": "^8.5.0",
-    "typedoc": "0.28.20",
-    "typedoc-plugin-markdown": "4.13.1",
-    "typescript": "^5.9.3",
-    "vitest": "^5.0.0"
+    "@types/three": "^0.186.0",
+    "3d-tiles-renderer": "^0.5.3",
+    "maplibre-gl": "^6.11.2",
+    "three": "^0.186.1",
+    "tsup": "^8.5.1",
+    "typedoc": "^0.28.20",
+    "typedoc-plugin-markdown": "^4.13.1",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.2"
   }
 }

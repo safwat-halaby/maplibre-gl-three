@@ -1,6 +1,6 @@
 ## NEXT
 
-- Nothing changed except `package.json` metadata.
+- Update package dependencies
 
 ## 1.0.1 - 2026-09-25
 
