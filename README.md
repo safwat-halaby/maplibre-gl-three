@@ -145,7 +145,7 @@ You don't have to use a package manager. The repository contains an example for 
 
 ## Run the examples and demos
 
-`https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/basic/maplibreGlThree-npm-example` has a basic npm project which uses this library as a dependency.
+[The NPM example](https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/basic/maplibreGlThree-npm-example) has a basic npm project which uses this library as a dependency.
 
 For the non-npm examples:
 
@@ -162,5 +162,5 @@ npm run build
 
 - [In depth explanation of coordinate systems and the gluing process](docs/coordinate-systems.md)
 - [Development](docs/development.md)
-- [Changelog](docs/CHANGELOG.md)
+- [Changelog](docs/changelog.md)
 - [License](LICENSE.txt)

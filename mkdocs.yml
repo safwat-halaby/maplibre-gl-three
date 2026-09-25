@@ -19,15 +19,18 @@ theme:
 markdown_extensions:
   - admonition
   - attr_list
-  - pymdownx.details
-  - pymdownx.superfences
+  - fenced_code
   - toc:
       permalink: true
 
 nav:
   - Home: index.md
-  - API Reference: api/index.md
-  - Development: development.md
   - Changelog: changelog.md
+  - License: https://github.com/safwat-halaby/maplibre-gl-three/blob/master/LICENSE.txt
+  - API Reference:
+    - Main classes and interfaces: api-quick.md
+    - Full API Reference: api/index.md
   - Guides:
       - Coordinate systems and projections: coordinate-systems.md
+  - Development:
+    - Development: development.md

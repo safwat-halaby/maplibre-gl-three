@@ -160,7 +160,4 @@ npm run build
 
 ## See also
 
-- [In depth explanation of coordinate systems and the gluing process](coordinate-systems.md)
-- [Development](development.md)
-- [Changelog](CHANGELOG.md)
-- [License](LICENSE.txt)
+- [License](https://github.com/safwat-halaby/maplibre-gl-three/blob/master/LICENSE.txt)
