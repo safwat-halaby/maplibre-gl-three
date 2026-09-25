@@ -2,7 +2,7 @@ This library brings [Three.js](https://threejs.org/) capabilities into [MapLibre
 
 **This project is not officially affiliated with MapLibre**
 
-Latest version: `maplibre-gl-three@0.0.10`
+Latest version: `maplibre-gl-three@1.0.0`
 
 ## Installation and basic usage
 

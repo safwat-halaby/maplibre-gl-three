@@ -1,4 +1,4 @@
-## NEXT
+## 1.0.0 - 2026-09-25
 
 This version introduces *breaking* API changes and major internal refactors.
 
