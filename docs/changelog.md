@@ -1,3 +1,7 @@
+## NEXT
+
+- Nothing changed except `package.json` metadata.
+
 ## 1.0.1 - 2026-09-25
 
 - API method documentation now links to https://maplibre-gl-three.readthedocs.io rather than to the markdown files

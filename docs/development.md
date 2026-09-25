@@ -1,7 +1,7 @@
 
 ## Development
 
-The TypeScript source code lives in `src/library`. To generate the library in the `dist/` folder:
+The code is currently hosted at [Github](https://github.com/safwat-halaby/maplibre-gl-three). The TypeScript source code lives in `src/library`. To generate the library in the `dist/` folder:
 
 ```
 npm install

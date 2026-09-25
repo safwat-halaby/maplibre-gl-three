@@ -12,7 +12,7 @@
     "syncDeps": "node utils/sync_dependencies.js"
   },
   "license": "MIT",
-  "homepage": "https://github.com/safwat-halaby/maplibre-gl-three",
+  "homepage": "https://maplibre-gl-three.readthedocs.io",
   "bugs": {
     "url": "https://github.com/safwat-halaby/maplibre-gl-three/issues"
   },
