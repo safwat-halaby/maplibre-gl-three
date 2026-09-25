@@ -46,7 +46,6 @@ export class ThreeLayerImpl implements ThreeLayer {
         this.separatorAfter = options.separatorAfter ?? true;
         this.scene.matrixAutoUpdate = false;
         this.camera.matrixAutoUpdate = false;
-        this.scene.add(new THREE.AmbientLight(0xffffff, 3));
         this.debugAxes = services.debugMode ? new THREE.AxesHelper(400) : null;
         if (this.debugAxes) {
             this.debugAxes.name = 'debug-local-axes';
@@ -79,6 +78,9 @@ export class ThreeLayerImpl implements ThreeLayer {
             this.requestRepaint();
         });
         this.assets.add(asset);
+        if (this.scene.children.length === 0) {
+            this.scene.add(new THREE.AmbientLight(0xffffff, 3));
+        }
         this.scene.add(asset.placementRoot);
         if (this.renderer) asset.attach(this.camera, this.renderer); 
         // else, we'll attach the asset later, when we're added to the map, in onAdd.

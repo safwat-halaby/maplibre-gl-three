@@ -1,10 +1,8 @@
 This library brings [Three.js](https://threejs.org/) capabilities into [MapLibre GL JS](https://maplibre.org/). It allows you to treat Three.js as a MapLibre custom layer, rendering anything Three.js can render (including [3D Tiles](https://cesium.com/why-cesium/3d-tiles/)) along with the MapLibre Style Spec. For 3D Tiles, the library internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
-The library is designed with good developer experience in mind and the API strives to be as simple as possible.
+**This project is not officially affiliated with MapLibre**
 
 Latest version: `maplibre-gl-three@0.0.10`
-
-**This project is not officially affiliated with MapLibre**
 
 ## Installation and basic usage
 
@@ -57,6 +55,15 @@ const sphere = new THREE.Mesh(
 sphere.applyMatrix4(threeDManager.getEcefMatrix({ point: [-75.598, 40.040], height: 130 }));
 layer.getScene().add(sphere);
 ```
+
+## Design philosophy
+
+- **Thin wrapper only:** The library glues between Three.js and MapLibre, then gets out of the way and lets the developer use the two libraries as natively as possible.
+- **Sane defaults:** Minimal mandatory configuration.
+- **Great DX:** Strive to keep the API elegant, simple, and well documented.
+- **Maintainable code:** Keep the internal tech debt low and aim to minimize accidental complexity. Try to make the tricky math functions approachable by adding commentary where appropriate. 
+
+
 ## List of features
 
 - Load a geographically synced Three.js scene as a layer in MapLibre.
@@ -73,7 +80,7 @@ layer.getScene().add(sphere);
 ## Limitations
 
 - The 3D Tiles become misaligned if the camera pans away and zooms out far enough from the scene. This is related to the anchoring algorithm and will be improved later.
-- Except for camera and height synchronization, Three.js and MapLibre do not interact. MapLibre is not aware of the positioning of Three.js primitives (like 3D Tiles or models), and Three.js is not aware of the position of MapLibre Style Spec objects. Syncing those requires app-level code.
+- Except for camera and height synchronization, Three.js and MapLibre do not interact. MapLibre is not aware of the positioning of Three.js primitives (like 3D Tiles or models), and Three.js is not aware of the position of MapLibre features. Syncing those requires app-level code and depends on use case.
 - Lacking good demos. The current demos do not show the full power of the library!
 
 ## Principles

@@ -208,6 +208,9 @@ export interface ThreeLayer extends CustomLayerInterface {
     getRenderer(): WebGLRenderer | null;
     /** Adds 3D Tiles to the map and returns the controlling asset. Resolves after asset setup, not after streaming finishes.
      * The asset is a thin wrapper around the "3d-tiles-renderer" library.
+     * 
+     * If the current Three.JS scene is empty, automatically adds an ambient light as a sane default before adding the 3D Tiles.
+     * To prevent this behaviour, add your own lighting or any object to the scene before calling load3dTiles.
      */
     load3dTiles(options: Load3dTilesOptions): Promise<ThreeDTilesAsset>;
     /** Calls MapLibre's triggerRepaint(). */

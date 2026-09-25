@@ -162,6 +162,30 @@ test('initialization failures propagate', async () => {
     expect(() => failure.lngLatAltToEcef({ point: [0, 0], height: 0 })).toThrow('manager.init()');
 });
 
+test('loading tiles adds one ambient light only to an initially empty scene', async () => {
+    const manager = createManager();
+    await manager.init();
+    const layer = manager.createLayer({ id: 'deferred-light' });
+
+    expect(layer.getScene().children).toHaveLength(0);
+    await layer.load3dTiles({ tilesetUrl: 'https://example.test/tiles.json' });
+
+    expect(layer.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(1);
+    await layer.load3dTiles({ tilesetUrl: 'https://example.test/other.json' });
+    expect(layer.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(1);
+});
+
+test('loading tiles does not add ambient light to a non-empty scene', async () => {
+    const manager = createManager();
+    await manager.init();
+    const layer = manager.createLayer({ id: 'existing-object' });
+    layer.getScene().add(new THREE.Object3D());
+
+    await layer.load3dTiles({ tilesetUrl: 'https://example.test/tiles.json' });
+
+    expect(layer.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(0);
+});
+
 test('multiple assets share one scene, renderer, camera and depth pass', async () => {
     const manager = createManager();
     await manager.init();
