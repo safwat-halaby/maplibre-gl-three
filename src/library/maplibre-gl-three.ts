@@ -1,4 +1,4 @@
-import { ThreeDManager as CoreThreeDManager } from './core/ThreeDManager';
+import { ThreeDManagerImpl } from './core/ThreeDManagerImpl';
 import { PlateCarreeTools } from './helpers/plateCarreeTools';
 import { GeoTiffGeographicRaster } from './adapters/GeoTiffGeographicRaster';
 import { BilinearGeographicRaster } from './helpers/BilinearGeographicRaster';
@@ -36,7 +36,8 @@ export type {
     calculateAnchorPoint,
 };
 
-export class ThreeDManager extends CoreThreeDManager {
+export class ThreeDManager extends ThreeDManagerImpl {
+    /** @see {@link ThreeDManagerOptions} */
     constructor(options: ThreeDManagerOptions = {}) {
         super(
             new BilinearGeographicRaster(

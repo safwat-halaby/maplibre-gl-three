@@ -40,13 +40,19 @@ export type GetTransformParameters = (anchor4326: LngLat) => AffineTransformatio
 
 export interface VerticalDatumOptions {
     /**
-     * URL of the GeoTIFF vertical datum file.
+     * Optional URL of the GeoTIFF vertical datum file.
+     * Ignored if the vertical datum corrections are disabled via
+     * {@link VerticalDatumOptions.enabled}
+     * 
+     * @see {@link https://github.com/OSGeo/PROJ-data/tree/master | More info about the datum file and the CDN}
      * @defaultValue `https://cdn.proj.org/us_nga_egm96_15.tif`
      */
     path?: string;
     /**
      * Whether to load and apply the vertical datum. When disabled, uses a
-     * zero-undulation approximation; altitude still means above sea level.
+     * zero-undulation approximation.
+     * 
+     * @see {@link https://github.com/safwat-halaby/maplibre-gl-three/blob/master/README.md | Implications of turning vertical datum on/off }
      * @defaultValue true
      */
     enabled?: boolean;
@@ -62,17 +68,18 @@ export interface ThreeDManagerOptions {
     /**
      * Path to the Draco loader to be lazy loaded if needed.
      * This is used internally by 3d-tiles-rendrer to decompress draco-compressed 3dtiles.
-     * @defaultValue `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/`
+     * @defaultValue https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/
      */
     dracoPath?: string;
     /**
      * Path to the KTX2 loader to be lazy loaded if needed.
-     * * This is used internally by 3d-tiles-rendrer.
-     * @defaultValue `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/`
+     * This is used internally by 3d-tiles-rendrer.
+     * @defaultValue https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/
      */
     ktx2Path?: string;
     /**
      * Configuration for loading and applying a vertical datum, necessary for accurate above-sea-level calculations.
+     * @see {@link VerticalDatumOptions}
      */
     verticalDatum?: VerticalDatumOptions;
     /**
@@ -94,7 +101,9 @@ export interface ThreeDManagerOptions {
      * This is an approximation. An affine transformation cannot really take the earth's curvature into account. 
      * It turns out this approximation is very accurate around the anchor. The anchor is recalculated whenever the map moves, such that 0,0,0 is the camera center. Accuracy problem largely solved!
      * 
-     * If not supplied, the default transformation assumes MapLibre's internal coordinate system, web mercator.   
+     * If not supplied, the default transformation assumes MapLibre's internal coordinate system, web mercator.
+     * 
+     * @see {@link https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/other/plate-carree/README.md | Example usage which enables plate carree within MapLibre}
      */
     getTransformParameters?: GetTransformParameters;
 }
@@ -102,8 +111,7 @@ export interface ThreeDManagerOptions {
 export interface Load3dTilesOptions {
     tilesetUrl: string;
     /**
-     * Translation in meters along east/up/south at the root bounding-volume
-     * center. The reference stays fixed as the map moves.
+     * Offset in meters along east/up/south.
      */
     offset?: MetersOffset;
     /**

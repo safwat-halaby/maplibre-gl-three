@@ -117,21 +117,6 @@ You're out of luck. Your 3dtiles have slopes, but MapLibre does not have any gro
 
 A vertical datum is fetched from `https://cdn.proj.org` when `ThreedManager.init()` is called. This can be modified or disabled. See the height section above for more info.
 
-## Main API
-
-**ThreeDManager constructor options**:
-- `debugMode`: If true, will render the 3JS anchor point for debugging purposes.
-- `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco
-- `ktx2Path`: The path to the ktx2 loader. Defaults to `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/`.
-- `verticalDatum.enabled`: Optional flag controlling whether the vertical datum is loaded and applied. This will make the model have the proper height above sea level, and the ground will sit at a height matching the height of a Maplibre RGB Terrain. This entails loading a vertical datum file from the network. EGM96 height (EPSG:5773). Size: 2.6 MB. Default is `true`. Setting to `false` means no network request will take place, but means you likely need to apply a vertical offset to get the right height, using the `offset` option. Note that if the raw data has vertical errors, you may still need to apply an offset regardless of this flag. More info about the file and the CDN used can be found here: https://github.com/OSGeo/PROJ-data/tree/master
-- `verticalDatum.path`: Optional URL of the GeoTIFF vertical datum file. Defaults to `https://cdn.proj.org/us_nga_egm96_15.tif`. Ignored if the vertical datum corrections are disabled via `verticalDatum.enabled`. More info about the file and the CDN used can be found here: https://github.com/OSGeo/PROJ-data/tree/master  
-- Additionally, `calculateAnchorPoint(mapInstance)` and `getTransformParameters(anchor4326)` are advanced callbacks for overriding the calculation of the anchor point and the internal transform parameters, respectively. In the future the usage of these callbacks may be better documented. In the meantime see [www/examples/other/plate-carree/](www/examples/other/plate-carree/) for a usage example of the plate-carree projection. 
-
-**load3dTiles optional options**:
-- `offset`: `{ east, up, south }` translation in meters at a fixed reference derived from the **root bounding-volume center**. Sphere/box transforms and geographic regions are resolved by the tiles renderer. Directions stay fixed as the map moves; the reference does not recenter the content. Use `asset.setOffset(...)` to change it and `asset.getOffset()` to read a copy.
-- `preprocessURL(url)`: Rewrites asset URLs before `3d-tiles-renderer` fetches them.
-- `maxDepth`: Maximum tileset traversal depth.
-
 ## Project status
 
 This project forked from the [official Maplibre 3d Tiles example](https://maplibre.org/maplibre-gl-js/docs/examples/add-3d-tiles-using-threejs/). I am confident it is better than the existing example in almost every way, and if you are willing to use that for production, you should be comfortable using this project as well. However, I do not consider this project fully production ready. In particular, the documentation can be improved a lot to demonstrate the full potential of mixing Maplibre Style Spec with 3d tiles.

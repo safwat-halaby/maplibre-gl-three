@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import type { CustomLayerInterface, CustomRenderMethodInput, Map as MapLibreMap } from 'maplibre-gl';
 import type { Tileset } from '3d-tiles-renderer/core';
 import type { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { ThreeDManager } from './core/ThreeDManager';
+import { ThreeDManager } from './core/ThreeDManagerImpl';
 import { ThreeDManager as PublicManager } from './maplibre-gl-three';
 import { getEcefOrientationMatrix } from './helpers/coordinates';
 import type { GeographicRaster } from './core/internal-interfaces';

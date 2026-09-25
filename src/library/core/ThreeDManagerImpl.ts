@@ -14,7 +14,7 @@ const DEFAULT_KTX2_PATH = 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/j
 /** This class is the entry point of this library. It manages a MapLibre map's 3d layers.
  * If you have multiple MapLibre maps, you should use a separate ThreeDManager for each.
 */
-export class ThreeDManager {
+export class ThreeDManagerImpl {
     /** All of our layers, whether attached to a MapLibre map or not */
     private layers = new Map<string, ThreeLayerImpl>();
     /** All of our layers which were added(attached) to a MapLibre map */
