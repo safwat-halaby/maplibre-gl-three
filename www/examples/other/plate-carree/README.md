@@ -4,6 +4,8 @@ Normally, MapLibre expects the background maps to be projected using the Web Mer
 
 This demo "lies" to MapLibre by using a Plate Carree projection for the background map in `style.json`. To visually see the difference, observe that when zooming out, Greenland is "squashed" in this example, while in the rest of the examples, Greenland is stretched (Web Mercator). The squashing is one indicator of a Plate Carree background map.
 
+Despite the projection being Plate Carree (squashed Greenland), observe that the 3D Tiles model is sitting where it should be, in the USA.
+
 Since MapLibre isn't aware that the background map is not in Web Mercator, all background tiles are sitting in the wrong place (they sit properly in terms of left-right position, but they are closer to the equator than they should be), and if you render any vector feature on top, that feature would seem to sit on the wrong background tiles. In the northern hemisphere, the feature will seem to be north of where it should be. In fact, the feature is correct and the background is not, because it is biased towards the equator. To correct this, we use the same principle twice:
 
 1. `alignGeoJSONWithPlateCarree` - For the MapLibre Style Spec, we reproject the GeoJSON feature collection. Now the features are also sitting in the "wrong" place. We add the same offset the tiles have to the features, and now everything visually looks in place. (It seems that sometimes, two wrongs do make a right!)
