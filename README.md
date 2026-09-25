@@ -1,4 +1,4 @@
-This library brings [Three.JS](https://threejs.org/) capabilities into [Maplibre-gl-js](https://maplibre.org/). It allows you to treat ThreeJS as MapLibre Custom Layer, rendering anything 3JS can render (inlcuding [3DTiles](https://cesium.com/why-cesium/3d-tiles/)!) along with the MapLibre Style Spec. For 3DTiles, the library internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
+This library brings [Three.js](https://threejs.org/) capabilities into [MapLibre GL JS](https://maplibre.org/). It allows you to treat Three.js as a MapLibre custom layer, rendering anything Three.js can render (including [3D Tiles](https://cesium.com/why-cesium/3d-tiles/)) along with the MapLibre Style Spec. For 3D Tiles, the library internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
 Latest version: `maplibre-gl-three@0.0.10`
 
@@ -33,9 +33,8 @@ await threeDManager.init();
 const layer = threeDManager.createLayer();
 const tilesAsset = await layer.load3dTiles({
     tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
-    layerId: 'agiHqTiles',
     // Manually offset the 3dtiles down.
-    // Note: Datum corrections are automatically applied! Manual corrections are only needed when there are errors in the 3DTIles data. 
+    // Note: Datum corrections are automatically applied! Manual corrections are only needed when there are errors in the 3D Tiles data.
     offset: { east: 0, up: -234, south: 0 }
 });
 map.on('load', () => map.addLayer(layer));
@@ -54,25 +53,25 @@ const sphere = new THREE.Mesh(
     new THREE.MeshStandardMaterial({ color: 0xff00ff }),
 );
 sphere.applyMatrix4(threeDManager.getEcefMatrix({ point: [-75.598, 40.040], height: 130 }));
-layer.getScene().add(marker);
+layer.getScene().add(sphere);
 ```
 ## List of features
 
-- Load a 3d ThreeJS scene, geoegraphically synced, as a layer in MapLibre.
-- 3dTiles in MapLibre.
+- Load a geographically synced Three.js scene as a layer in MapLibre.
+- 3D Tiles in MapLibre.
 - Full depth control, allowing for "interlaced" mode or layering based on layer order.
-- Full vertical datum support. True height above sea level (orthometric) can be calculated, The ground/terrain of a 3dtiles model can perfectly match the ground layer of MapLibre, assuming you've loaded a good terrain to MapLibre.
+- Full vertical datum support. True height above sea level (orthometric) can be calculated. The ground/terrain of a 3D Tiles model can closely match the ground layer of MapLibre, assuming you've loaded suitable terrain into MapLibre.
 - Supports anything MapLibre or ThreeJS natively support, including but not limited to:
   - ThreeJS raycasting
   - ThreeJS models, lighting, etc
   - MapLibre Style Spec
-  - Maplibre 
-- Convenience
+  - MapLibre GL JS
+- Convenience helpers for coordinate conversion, placement, and lifecycle management.
 
 ## Limitations
 
 - The 3d tiles become misaligned if the camera pans away and zooms out far enough from the model. This is related to the anchoring algorithm and will be improved later. 
-- Except in camera synchornization and height synchornization, ThreeJS and MapLibre do not interact. MapLibre is not aware of the positioning of the ThreeJS primitives (like 3dtiles or models), and ThreeJS is not aware of the position of style spec objects. Syncing those requires app-level code.
+- Except for camera and height synchronization, Three.js and MapLibre do not interact. MapLibre is not aware of the positioning of Three.js primitives (like 3D Tiles or models), and Three.js is not aware of the position of style spec objects. Syncing those requires app-level code.
 
 ## Principles
 
@@ -80,7 +79,7 @@ layer.getScene().add(marker);
 
 A `ThreeDManager` owns layers. Each layer owns "assets" and ThreeJS primitives (scene, camera, etc). The primitives allow direct ThreeJS access, while the "assets" are convenience wrappers, and they ultimately manipulate the same primitives. Currently the only asset type is the 3DTiles asset, created with `tilesAsset = await layer.load3dTiles(...)`.
 
-A `ThreeDManager` is associataed with one MapLibre map. On the rare occasion of using multipel MapLibre maps, you should use multiple `ThreedManager` ocjects, one for each map.
+A `ThreeDManager` is associated with one MapLibre map. On the rare occasion of using multiple MapLibre maps, you should use multiple `ThreeDManager` objects, one for each map.
 
 ### Lifecycle and destruction
 
@@ -132,7 +131,7 @@ You're out of luck. Your 3dtiles have slopes, but MapLibre does not have any gro
 
 `3d-tiles-renderer` has some network dependencies that are lazily fetched from `https://cdn.jsdelivr.net` when you call `layer.load3dTiles(...)`. You can fetch them from elsewhere by changing `ThreeDManager`'s `dracoPath` and `ktx2Path` options.
 
-A vertical datum is fetched from `https://cdn.proj.org` when `ThreedManager.init()` is called. This can be modified or disabled. See the height section above for more info.
+A vertical datum is fetched from `https://cdn.proj.org` when `ThreeDManager.init()` is called. This can be modified or disabled. See the height section above for more info.
 
 ## CDNs and direct browser import
 
@@ -142,13 +141,13 @@ You don't have to use a package manager. The repository contains an example for 
 
 `www/examples/basic/maplibreGlThree-npm-example` has a basic npm project which uses this library as a dependency. Check its [README](www/examples/basic/maplibreGlThree-npm-example/README.md) for running instructions.
 
-To the non-npm examples:  
+For the non-npm examples:
 
 ```sh
 npm install
-npm syncDeps
+npm run syncDeps
 npm run build
-node-static-server.sh
+./node-static-server.sh
 ```
 
 ...then browse to `http://localhost:6153`.

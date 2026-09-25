@@ -7,7 +7,7 @@ npm install
 npm start
 ```
 
-## library developpment
+## Library development
 
 If you are making changes to `maplibre-gl-three`, this example can be used as a testing ground mock project. You can point this example to use your local copy of `maplibre-gl-three`. 
 

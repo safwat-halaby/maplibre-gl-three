@@ -24,9 +24,9 @@ Now browse to: http://localhost:6153/examples/basic/maplibreGlThree-selfhost-exa
 
 We first download all the dependencies by running `npm install` in the root directory of the repository. This generates `node_modules`. Then we copy the relevant files from `node_modules` to `www/dependencies` using a helper script with `npm run syncDeps`
 
-We then use a simple web server to serve [www/dependencies](../../../../www/dependencies/) at `http://localhost:6153/dependencies` and [dist](../../../../dist/) at `http://localhost:6153/library`.
+We then use a simple web server to serve the generated `www/dependencies/` directory at `http://localhost:6153/dependencies` and the generated `dist/` directory at `http://localhost:6153/library`.
 
-## library developpment
+## Library development
 
 If you are making changes to `maplibre-gl-three`, this example can be used as a testing ground mock project, since it directly imports the compiled library. For convenience can run the library compilation in watch mode with `npm run build:watch`. You still have to manually refresh the html page on each change.
 
