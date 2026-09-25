@@ -56,6 +56,23 @@ const sphere = new THREE.Mesh(
 sphere.applyMatrix4(threeDManager.getEcefMatrix({ point: [-75.598, 40.040], height: 130 }));
 layer.getScene().add(marker);
 ```
+## List of features
+
+- Load a 3d ThreeJS scene, geoegraphically synced, as a layer in MapLibre.
+- 3dTiles in MapLibre.
+- Full depth control, allowing for "interlaced" mode or layering based on layer order.
+- Full vertical datum support. True height above sea level (orthometric) can be calculated, The ground/terrain of a 3dtiles model can perfectly match the ground layer of MapLibre, assuming you've loaded a good terrain to MapLibre.
+- Supports anything MapLibre or ThreeJS natively support, including but not limited to:
+  - ThreeJS raycasting
+  - ThreeJS models, lighting, etc
+  - MapLibre Style Spec
+  - Maplibre 
+- Convenience
+
+## Limitations
+
+- The 3d tiles become misaligned if the camera pans away and zooms out far enough from the model. This is related to the anchoring algorithm and will be improved later. 
+- Except in camera synchornization and height synchornization, ThreeJS and MapLibre do not interact. MapLibre is not aware of the positioning of the ThreeJS primitives (like 3dtiles or models), and ThreeJS is not aware of the position of style spec objects. Syncing those requires app-level code.
 
 ## Principles
 
@@ -117,26 +134,6 @@ You're out of luck. Your 3dtiles have slopes, but MapLibre does not have any gro
 
 A vertical datum is fetched from `https://cdn.proj.org` when `ThreedManager.init()` is called. This can be modified or disabled. See the height section above for more info.
 
-## Project status
-
-This project forked from the [official Maplibre 3d Tiles example](https://maplibre.org/maplibre-gl-js/docs/examples/add-3d-tiles-using-threejs/). I am confident it is better than the existing example in almost every way, and if you are willing to use that for production, you should be comfortable using this project as well. However, I do not consider this project fully production ready. In particular, the documentation can be improved a lot to demonstrate the full potential of mixing Maplibre Style Spec with 3d tiles.
-
-The project aims to be minimally scoped by design, and it will always be glue code between the libraries that do the heavy lifting. But some future features are in my mind. See [TODOS.md](todos.md).
-
-**List of improvements over the official example:**
-
-- Layer-based composition with direct access to Three.js scenes, cameras, and renderers.
-- Better anchoring algorithm, ensuring precision even when moving away from the model's center.
-- Supports any `root.transform` matrix. In contrast, the official example assumes a particular matrix so some models will not align in the proper place.
-
-**Known regressions:**
-
-- The 3d tiles become misaligned if the camera pans away and zooms out far enough from the model. This is related to the anchoring algorithm and will be improved later. 
-
-## List of features
-
-soon.
-
 ## CDNs and direct browser import
 
 You don't have to use a package manager. The repository contains an example for a [direct dependency import from a CDN](www/examples/basic/maplibreGlThree-cdn-example). If you prefer to host all the dependencies yourself, there's also [a self-hosting example](www/examples/basic/maplibreGlThree-selfhost-example). There's a convenience script to run these examples. See the next section.
@@ -161,7 +158,6 @@ node-static-server.sh
 - [Development](development.md)
 - [Changelog](CHANGELOG.md)
 - [License](LICENSE.txt)
-- [TODOS.md](todos.md)
 
 ## Known issues / Notes
 
