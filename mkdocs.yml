@@ -29,7 +29,9 @@ nav:
   - Features & limitations: features.md
   - Changelog: changelog.md
   - License: https://github.com/safwat-halaby/maplibre-gl-three/blob/master/LICENSE.txt
-  - Examples and demos: demos.md
+  - Examples and demos:
+    - Live Demos: examples/live.md
+    - Repository examples: examples/repo.md
   - Principles:
     - Core principles: principles.md 
     - Coordinate systems and projections: coordinate-systems.md

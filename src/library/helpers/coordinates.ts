@@ -64,7 +64,7 @@ export function ecefToLocalMatrix(anchor: LngLat, ellipsoidalHeight: number): Ma
     // We don't like that. We want EcefAnchor to be at [0,0,0] LocalSpace. This transformation takes care of that.
     // It moves the 3D model in the Three.js world as follows.
 
-    // 1. Make EcefAnchor match the [0,0,0] Origin (see terminology in internal-docs/coordinate-systems.md).
+    // 1. Make EcefAnchor match the [0,0,0] Origin (see terminology in https://maplibre-gl-three.readthedocs.io/en/latest/coordinate-systems/).
     // We move the entire 3D Tiles model (or ThreeJS scene) such that EcefAnchor is at [0,0,0] in LocalSpace.
     // In ECEF the model would have been sitting at earth's core now.
     // In the case of `anchor=anchor4326`, ellipsoidalHeight equals undulation,

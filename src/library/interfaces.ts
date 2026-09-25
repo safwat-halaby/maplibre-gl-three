@@ -45,7 +45,7 @@ export interface VerticalDatumOptions {
      * {@link VerticalDatumOptions.enabled}
      * 
      * @see {@link https://github.com/OSGeo/PROJ-data/tree/master | More info about the datum file and the CDN}
-     * @see {@link https://github.com/safwat-halaby/maplibre-gl-three/blob/master/README.md | More info about vertical datums in this library}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/en/latest/principles/#heights-and-datums | More info about vertical datums in this library}
      * @defaultValue `https://cdn.proj.org/us_nga_egm96_15.tif`
      */
     path?: string;
@@ -53,7 +53,7 @@ export interface VerticalDatumOptions {
      * Whether to load and apply the vertical datum. When disabled, uses a
      * zero-undulation approximation.
      * 
-     * @see {@link https://github.com/safwat-halaby/maplibre-gl-three/blob/master/README.md | More info about vertical datums in this library}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/en/latest/principles/#heights-and-datums | More info about vertical datums in this library}
      * @defaultValue true
      */
     enabled?: boolean;
@@ -106,7 +106,7 @@ export interface ThreeDManagerOptions {
      * 
      * If not supplied, the default transformation assumes MapLibre's internal coordinate system, Web Mercator.
      * 
-     * @see {@link https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/other/plate-carree/README.md | Example usage which enables Plate Carree within MapLibre}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/en/latest/examples/repo/ | the repo example which uses a Plate Carree projection}
      */
     getTransformParameters?: GetTransformParameters;
 }

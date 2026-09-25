@@ -4,6 +4,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 example_dir="www/examples/basic/maplibreGlThree-npm-example"
+changelog_file="docs/changelog.md"
 copy_npm_example() {
     local target_dir="$1"
     mkdir -p "$target_dir/src" "$target_dir/assets"
@@ -72,12 +73,12 @@ if git rev-parse -q --verify "refs/tags/$release_name" >/dev/null; then
     exit 1
 fi
 
-echoBold "Updating CHANGELOG.md header"
+echoBold "Updating changelog header"
 release_date="$(date +%F)"
-if [ "$(head -n 1 CHANGELOG.md)" = "## NEXT" ]; then
-    sed -i "1s/^## NEXT$/## $published_version - $release_date/" CHANGELOG.md
+if [ "$(head -n 1 "$changelog_file")" = "## NEXT" ]; then
+    sed -i "1s/^## NEXT$/## $published_version - $release_date/" "$changelog_file"
 else
-    echo "Expected CHANGELOG.md to start with '## NEXT'."
+    echo "Expected $changelog_file to start with '## NEXT'."
     exit 1
 fi
 

@@ -1,3 +1,7 @@
+## NEXT
+
+- API method documentation now links to https://maplibre-gl-three.readthedocs.io rather than to the markdown files
+
 ## 1.0.0 - 2026-09-25
 
 This version introduces *breaking* API changes and major internal refactors.

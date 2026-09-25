@@ -1,6 +1,6 @@
 ## ThreeDManager
 
-You always start with a [ThreeDManager](api/index.md#threedmanager). It has various [constructor options](http://localhost:8000/api/#threedmanageroptions), all optional. You'll probably want to call the [init method](api/index.md#init) immediately.
+You always start with a [ThreeDManager](api/index.md#threedmanager). It has various [constructor options](api/index.md#threedmanageroptions), all optional. You'll probably want to call the [init method](api/index.md#init) immediately.
 
 ```js
 const threeDManager = new ThreeDManager(options);
@@ -9,7 +9,7 @@ await threeDManager.init();
 
 ## ThreeLayer
 
-Next, you'll probably want to call [ThreeDManager.createlayer](api/index.md#createlayer). It also has various [optional paramaters](http://localhost:8000/api/#createlayeroptions). It returns a [ThreeLayer](api/index.md#threelayer), which can be added directly to a MapLibre map.
+Next, you'll probably want to call [ThreeDManager.createlayer](api/index.md#createlayer). It also has various [optional paramaters](api/index.md#createlayeroptions). It returns a [ThreeLayer](api/index.md#threelayer), which can be added directly to a MapLibre map.
 
 ```js
 const threeLayer = threeDManager.createLayer();

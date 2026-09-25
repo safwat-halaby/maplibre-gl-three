@@ -4,7 +4,7 @@ To glue MapLibre and Three.JS's cameras, we play around with 4 different coordin
 
 ## Terminology
 
-- `Origin`: the (0,0,0) point in the Three.js world.
+- `Origin`: the `[0,0,0]` point in the Three.js world.
 - `Anchor4326`: a geographical point close to the camera center, longitude and latitude in the MapLibre world. Format: (longitude, latitude, altitude). Internally, MapLibre uses the Web Mercator for all its geographical points, and like other points this is projected and becomes what we call `AnchorWM`.
 - `AnchorWM`: the Web Mercator-projected version of `Anchor4326`.
 - `EcefAnchor`: the point in the 3D Tiles world which corresponds to `Anchor4326`. Format (x, y, z) in meters from the Earth's core.
@@ -16,12 +16,12 @@ This library always renders those points at the same spot on the screen. The pro
 
 - Derive `Anchor4326` from `mapLibre.getCenter()`
 - Calculate the coordinates of `EcefAnchor` from the coordinates of `Anchor4326` using proj4js.
-- Calculate a transformation matrix (`ecefToLocal`) which moves the ECEF world such that `EcefAnchor` is now at 0,0,0. We call this LocalSpace.
-- Calculate a transformation matrix (`localToMap`) which manipulates the Three.js camera such that this 0,0,0 renders at the same `AnchorWM` coordinate which `Anchor4326` is translated to internally in MapLibre.
+- Calculate a transformation matrix (`ecefToLocal`) which moves the ECEF world such that `EcefAnchor` is now at `[0,0,0]`. We call this LocalSpace.
+- Calculate a transformation matrix (`localToMap`) which manipulates the Three.js camera such that this `[0,0,0]` renders at the same `AnchorWM` coordinate which `Anchor4326` is translated to internally in MapLibre.
 
 The naive approach to glue MapLibre with an ECEF world is to transform every single ECEF coordinate to a MapLibre-friendly Web Mercator coordinate. But it this is an O(N) geographical calculation where N is every vertex in Three.JS. Expensive!
 
-The main clever trick in this library is to ONLY geographically translate the `EcefAnchor` point. The rest of the ECEF points are translated by the same transformation matrix and are relative to 0,0,0 in meters as if the world is flat. Since it's a linear transformation, it's essentially instant in today's GPUs and it doesn't get more expensive with more vertices added. This is very accurate locally. But since we are assuming a flat earth, if we move away from the anchor we begin to lose precision. So we recalculate the (`ecefToLocal`) matrix on each MapLibre camera move.
+The main clever trick in this library is to ONLY geographically translate the `EcefAnchor` point. The rest of the ECEF points are translated by the same transformation matrix and are relative to `[0,0,0]` in meters as if the world is flat. Since it's a linear transformation, it's essentially instant in today's GPUs and it doesn't get more expensive with more vertices added. This is very accurate locally. But since we are assuming a flat earth, if we move away from the anchor we begin to lose precision. So we recalculate the (`ecefToLocal`) matrix on each MapLibre camera move.
 
 ## ECEF (EPSG:4978) coordinate system (home of `EcefAnchor`)
 
@@ -29,18 +29,18 @@ The coordinate system native to 3D Tiles and many other Geographical 3d construc
 
 The objects in the Three.JS scene use the ECEF coordinate system.
 
-- [0,0,0] is the center point in the Earth's core.
-- [1,0,0] points to Null Island (longitude 0, latitude 0). In a typical 2D map this is "towards the viewer".
-- [0,0,1] points to the North Pole.
-- [0,1,0] points to (longitude 90, latitude 0). In a typical 2D map this is to the right.
-- ECEF units are in meters. [0,0,3] is 3 meters towards the North Pole and away from the center point in the Earth's core.
+- `[0,0,0]` is the center point in the Earth's core.
+- `[1,0,0]` points to Null Island (longitude 0, latitude 0). In a typical 2D map this is "towards the viewer".
+- `[0,0,1]` points to the North Pole.
+- `[0,1,0]` points to (longitude 90, latitude 0). In a typical 2D map this is to the right.
+- ECEF units are in meters. `[0,0,3]` is 3 meters towards the North Pole and away from the center point in the Earth's core.
 
 ## LocalSpace coordinate system (home of `Origin`)
 
-- [0,0,0] is where `EcefAnchor` is after transformations and datum corrections, it is also (orthometric height / sea-level height / the "0" height in MapLibre). Whenever the MapLibre camera moves, LocalSpace moves with it. [0,0,0] moves and follows the camera center.
-- [1,0,0] points "right" - we want this aligned with MapLibre's east
-- [0,1,0] points up
-- [0,0,1] points Z+ - we want this aligned with MapLibre's south.
+- `[0,0,0]` is where `EcefAnchor` is after transformations and datum corrections, it is also (orthometric height / sea-level height / the "0" height in MapLibre). Whenever the MapLibre camera moves, LocalSpace moves with it. `[0,0,0]` moves and follows the camera center.
+- `[1,0,0]` points "right" - we want this aligned with MapLibre's east
+- `[0,1,0]` points up
+- `[0,0,1]` points Z+ - we want this aligned with MapLibre's south.
 - The units are whatever we want them to be. In this project we choose meters.
 
 ## WGS84 (EPSG:4326) coordinate system (home of `Anchor4326`)
@@ -50,7 +50,7 @@ The objects in the Three.JS scene use the ECEF coordinate system.
 - Latitude is between -90 and +90
 - Longitude 0 is the prime meridian crossing the Royal Observatory in London.
 - Latitude 0 is the equator
-- [0,0] is known as "Null Island", and is a place on the equator in the Pacific Ocean.
+- `[0,0]` is known as "Null Island", and is a place on the equator in the Pacific Ocean.
 - MapLibre uses this coordinate system in its API, but it internally projects to Web Mercator (EPSG:3857).
 
 ## Web Mercator (EPSG:3857) coordinate system (home of `AnchorWM`)
@@ -67,7 +67,7 @@ The objects in the Three.JS scene use the ECEF coordinate system.
 
 ## EPSG codes for vertical datums
 
-This library uses the following:
+This library uses the EGM96 datum. Relevant EPSG codes:
 
 - EPSG:5773 - EGM96 height
 - EPSG:9707 (WGS84 + EGM96 height): Combines EPSG:4326 with EPSG:5773

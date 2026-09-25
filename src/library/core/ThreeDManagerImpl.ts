@@ -22,7 +22,7 @@ export class ThreeDManagerImpl {
     /** The MapLibre map instance. For the sake of a clean API, we "Steal" this from a layer when it's added to the map. */
     private mapInstance: MapLibreMap | null = null;
     /** The anchor matrices are responsible for converting between the different coordinate systems.
-     * The anchor is the main graphical trick of this library. See coordinate-systems.md and updateAnchor to make full sense of this.
+     * The anchor is the main graphical trick of this library. See https://maplibre-gl-three.readthedocs.io/en/latest/coordinate-systems/ and updateAnchor to make full sense of this.
      *
      * localToEcef and ecefToLocal convert points between ECEF and LocalSpace.
      * localToMap converts from LocalSpace to the Web Mercator (by default) point that corresponds to Anchor4326.

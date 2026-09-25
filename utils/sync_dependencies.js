@@ -184,7 +184,7 @@ async function updateFile(relativePath, callback) {
 
 async function updateAllDependenciesInFiles(versions) {
 	for (const relativePath of FILES_TO_UPDATE_ALL_VERSIONS) {
-		updateFile(relativePath, (text) => {
+		await updateFile(relativePath, (text) => {
 			text = replaceVersionPin(text, 'maplibre-gl', versions['maplibre-gl']);
 			text = replaceVersionPin(text, 'three', versions['three']);
 			text = replaceVersionPin(text, '3d-tiles-renderer', versions['3d-tiles-renderer']);
