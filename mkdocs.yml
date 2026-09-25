@@ -24,13 +24,17 @@ markdown_extensions:
       permalink: true
 
 nav:
-  - Home: index.md
+  - Introduction: index.md
+  - Installation: installation.md
+  - Features & limitations: features.md
   - Changelog: changelog.md
   - License: https://github.com/safwat-halaby/maplibre-gl-three/blob/master/LICENSE.txt
+  - Examples and demos: demos.md
+  - Principles:
+    - Core principles: principles.md 
+    - Coordinate systems and projections: coordinate-systems.md
   - API Reference:
     - Main classes and interfaces: api-quick.md
     - Full API Reference: api/index.md
-  - Guides:
-      - Coordinate systems and projections: coordinate-systems.md
   - Development:
     - Development: development.md
