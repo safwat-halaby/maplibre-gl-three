@@ -1,13 +1,13 @@
 import { MercatorCoordinate, type Map as MapLibreMap } from 'maplibre-gl';
 import proj4 from 'proj4';
-import type { LngLat, TransformParameters } from '../interfaces';
+import type { LngLat, AffineTransformation } from '../interfaces';
 
 const EPSG_WEB_MERCATOR = proj4.Proj("EPSG:3857");
 const EPSG_WGS84 = proj4.Proj("EPSG:4326");
 const WGS84_BOUND = 180;
 const EPSG3857_BOUND = 20037508.3427892;
 
-function getPlateCarreeTransformParameters(anchor4326: LngLat): TransformParameters {
+function getPlateCarreeTransformParameters(anchor4326: LngLat): AffineTransformation {
     const [lng, lat] = alignWithEquirectangularProjection(anchor4326);
     const mercatorCoordinate = MercatorCoordinate.fromLngLat([lng, lat], 0);
     const scales = getPlateCarreeMeterScales(anchor4326);
@@ -22,7 +22,10 @@ function getPlateCarreeTransformParameters(anchor4326: LngLat): TransformParamet
     };
 }
 
-function getPlateCarreeMeterScales([_lng, lat]: LngLat): Pick<TransformParameters, 'scaleEast' | 'scaleSouth' | 'scaleUp'> {
+/** A plate caree "meter" unit is not a real meter except on the equator. Given a longitude/latitude, this returns
+ * the conversion scales.
+*/
+function getPlateCarreeMeterScales([_lng, lat]: LngLat):  {scaleEast: number, scaleSouth: number, scaleUp: number} {
     const a = 6378137.0;
     const e2 = 6.69437999014e-3;
     const latRad = degToRad(lat);
@@ -72,4 +75,4 @@ function wgs84_to_equirectangular([lon, lat]: LngLat): LngLat {
 function equirectangular_to_wgs84([lon, lat]: LngLat): LngLat {
     return [(lon / EPSG3857_BOUND) * WGS84_BOUND, (lat / EPSG3857_BOUND) * WGS84_BOUND];
 }
-export const PlateCarreeTools = {alignWithEquirectangularProjection, getPlateCarreeTransformParameters, calculatePlateCarreeAnchorPoint};
+export const PlateCarreeTools = {reverse_alignWithEquirectangularProjection, alignWithEquirectangularProjection, getPlateCarreeTransformParameters, calculatePlateCarreeAnchorPoint};

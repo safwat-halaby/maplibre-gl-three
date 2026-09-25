@@ -26,5 +26,4 @@ Higher priority.
 
 Lower priority.
 
-* Support multiple 3d tiles
-* Support 3d models in addition to 3d tiles
+* Convenience loaders for standalone models (ordinary Object3Ds can already share a layer with multiple tilesets)

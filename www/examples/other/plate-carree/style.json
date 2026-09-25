@@ -5,9 +5,10 @@
   },
   "layers": [
     {
-      "id": "osm",
+      "id": "background-map",
       "type": "raster",
-      "source": "natural-earth-plate-carree"
+      "source": "natural-earth-plate-carree",
+      "maxzoom": 13
     },
     {
       "id": "rivers",

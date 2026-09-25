@@ -1,4 +1,4 @@
-This library brings [Three.JS](https://threejs.org/) capabilities into [Maplibre-gl-js](https://maplibre.org/). Currently focused on enabling [3DTiles](https://cesium.com/why-cesium/3d-tiles/) in MapLibre. It internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
+This library brings [Three.JS](https://threejs.org/) capabilities into [Maplibre-gl-js](https://maplibre.org/). It allows you to treat ThreeJS as MapLibre Custom Layer, rendering anything 3JS can render (inlcuding [3DTiles](https://cesium.com/why-cesium/3d-tiles/)!) along with the MapLibre Style Spec. For 3DTiles, the library internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
 Latest version: `maplibre-gl-three@0.0.10`
 
@@ -12,19 +12,14 @@ Latest version: `maplibre-gl-three@0.0.10`
 npm install three 3d-tiles-renderer maplibre-gl maplibre-gl-three 
 ```
 
-**Load 3dTiles:**
+**Create a layer and load 3D Tiles:**
 
 ```js
 import {ThreeDManager} from 'maplibre-gl-three';
 import {Map} from 'maplibre-gl';
 
-const threeDManager = new ThreeDManager();
-const agiHqTiles = await threeDManager.load3dTiles({
-    tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
-    layerId: 'agiHqTiles',
-    offset: { east: 0, up: -234, south: 0 },
-});
 const map = new Map({
+    terrainSkirtLength: 'none', // important if you are using a transparent maplibre terrain. Prevents vertical artifacts
     container: 'YOUR-HTML-MAPLIBRE-CONTAINER',
     zoom: 16,
     center: [-75.596, 40.038],
@@ -32,36 +27,110 @@ const map = new Map({
     bearing: -20,
     maxPitch: 85,
     style: 'YOUR-MAPLIBRE_STYLE',
-    terrainSkirtLength: 'none' // this is IMPORTANT if you are using a transparent maplibre terrain to prevent vertical artifacts
 });
-map.addLayer(agiHqTiles.getLayer());
+const threeDManager = new ThreeDManager();
+await threeDManager.init();
+const layer = threeDManager.createLayer();
+const tilesAsset = await layer.load3dTiles({
+    tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
+    layerId: 'agiHqTiles',
+    // Manually offset the 3dtiles down.
+    // Note: Datum corrections are automatically applied! Manual corrections are only needed when there are errors in the 3DTIles data. 
+    offset: { east: 0, up: -234, south: 0 }
+});
+map.on('load', () => map.addLayer(layer));
+map.on('remove', () => threeDManager.destroy());
 ```
 
-**Swapping to new tiles:**
+**Load ordinary threeJS objects**
+
+The scene accepts **WGS84 ECEF positions (EPSG:4978)**. Helper functions are supplied by `threeDManager` to convert to and from the more familiar `longitude, latitude, altitude` form. `altitude` is height in meters above sea level.   
 
 ```js
-tiles.destroy(); // will implicitly call map.removeLayer('agiHqTiles'); if needed
-const tiles2 = await threeDManager.load3dTiles({tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json'});
-map.addLayer(tiles2.getLayer());
+import * as THREE from 'three';
+
+const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(10, 32, 16),
+    new THREE.MeshStandardMaterial({ color: 0xff00ff }),
+);
+sphere.applyMatrix4(threeDManager.getEcefMatrix({ point: [-75.598, 40.040], height: 130 }));
+layer.getScene().add(marker);
 ```
 
-**Teardown:**
+## Principles
 
-```js
-threeDManager.destroy(); // will implicitly call destroy() on all assets not yet destroyed.
-```
+### Object hierarchy and lifecycle
 
-**ThreeDManager optional constructor options**:
+A `ThreeDManager` owns layers. Each layer owns "assets" and ThreeJS primitives (scene, camera, etc). The primitives allow direct ThreeJS access, while the "assets" are convenience wrappers, and they ultimately manipulate the same primitives. Currently the only asset type is the 3DTiles asset, created with `tilesAsset = await layer.load3dTiles(...)`.
+
+A `ThreeDManager` is associataed with one MapLibre map. On the rare occasion of using multipel MapLibre maps, you should use multiple `ThreedManager` ocjects, one for each map.
+
+### Lifecycle and destruction
+
+| Operation | Effect |
+| --- | --- |
+| `threeDManager.destroy()` | Destroys all managed layers, and all assets managed by those layers. |
+| `layer.destroy()` | Destroys the layer and destroys all its assets. |
+| `asset.destroy()` | Destroys a specific asset. If it's a 3DTiles asset, frees all internal data associated with the 3dTiles model.
+| `map.removeLayer(layer.id)` | Detaches the layer and disposes its renderer; preserves the scene and assets for reattachment |
+| `map.addLayer(layer)` Creates a new renderer and (re)attaches the existing content |
+
+A destroyed layer will call `scene.clear();`. Any additional disposals are caller-owned. You should take care of disposing any materials, textures, meshes etc that you created yourself.
+
+### Layer order and depth
+
+By default, the layers honor the MapLibre Style Spec layer order. Any layer below your layer renders below it, and any layer above renders above it. You can modify this using the layer's separator options when creating a layer.
+
+Within the layer itself, depth is ruled by distance from camera by default. Nearer objects can occlude further objects. This can be manipulated via the ThreeJS primitives.
+
+### Heights and datums
+
+*Before reading this, make sure you understand the difference between 3DTiles and MapLibre's 3d terrain.*
+
+`3DTiles` works in ECEF coordinates; a 3-number coordinate representing an offset from the earth's core. (0,0,0) is the Earth's center. ECEF does not really care about the sea level.
+
+On the other hand, Maplibre uses `longitude, latitude`, and a MapLibre 3d terrain uses height above sea level (Orthometric height).
+
+As strange as it sounds, the sea level is [not uniform](https://en.wikipedia.org/wiki/Geoid), so converting from ECEF to MapLibre's height cannot happen with pure math alone, and requires a dataset known as a vertical datum. By default, this library loads the EGM96 datum from https://cdn.proj.org/us_nga_egm96_15.tif (2.6MiB) as soon as the `threeDManager` is initialized. More info about the file and the CDN used can be found [here](https://github.com/OSGeo/PROJ-data/tree/master). The vertical datum is used whenever you convert from `ECEF` to `lngLatAlt` or vice versa. You can configure a different URL to fetch from, or you can disable the vertical datum altogether, in which case any ECEF to `lngLatAlt` will yield ellipsoidal height, and not sea level height.
+
+Note that if the original data itself has vertical errors, the automatic datum corrections cannot fix those, and you would need to offset the objects manually.
+
+In terms of aligning 3DTiles, or other ECEF objects with MapLibre's height, you have two options.
+
+**If you have a 3d terrain (Terrain-RGB):**
+
+Load the 3d terrain to MapLibre and keep the vertical datum on. This will give you automatic alignment.
+
+If you are using the 3DTiles as a "background" on which you wish to draw style spec objects, consider making the MapLibre terrain *transparent*, as in, do not load any background tile to MapLibre. MapLibre will still use the height data to draw the vector features at their proper height above sea level, but the terrain itself wouldn't be visible, and instead you would render 3DTiles, which includes a rendering of a ground. Since the vertical datum is enabled, the 3dTiles's ground will very closely follow the transparent terrain, and the MapLibre objects will appear to be sitting properly on the 3DTiles.
+
+**If you do not wish to load a 3dterrain and have a relatively flat-grounded 3DTiles:**
+
+MapLibre will render all the features at 0 sea level since you have no terrain. In this case, you can disable the vertical datum, and manually offset the 3dtile until it sits at 0 sea level as well. This only works well with 3DTiles that have mostly flat ground, because the MapLibre features would all be at the same height of 0.
+
+**If you do not wish to load a 3dterrain and your 3DTiles are not flat-grounded:**
+
+You're out of luck. Your 3dtiles have slopes, but MapLibre does not have any ground data to work with since you did not load any terrain, and will render the features flat. This is impossible to align. In **THEORY** it is possible to derive terrain data from the 3DTiles model, but this is typically done server-side, in advance, to generate a terrain.
+
+### Network Dependencies
+
+`3d-tiles-renderer` has some network dependencies that are lazily fetched from `https://cdn.jsdelivr.net` when you call `layer.load3dTiles(...)`. You can fetch them from elsewhere by changing `ThreeDManager`'s `dracoPath` and `ktx2Path` options.
+
+A vertical datum is fetched from `https://cdn.proj.org` when `ThreedManager.init()` is called. This can be modified or disabled. See the height section above for more info.
+
+## Main API
+
+**ThreeDManager constructor options**:
 - `debugMode`: If true, will render the 3JS anchor point for debugging purposes.
-- `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/`.
+- `dracoPath`: The path to the Draco loader to be lazy loaded. Defaults to `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco
 - `ktx2Path`: The path to the ktx2 loader. Defaults to `https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/`.
 - `verticalDatum.enabled`: Optional flag controlling whether the vertical datum is loaded and applied. This will make the model have the proper height above sea level, and the ground will sit at a height matching the height of a Maplibre RGB Terrain. This entails loading a vertical datum file from the network. EGM96 height (EPSG:5773). Size: 2.6 MB. Default is `true`. Setting to `false` means no network request will take place, but means you likely need to apply a vertical offset to get the right height, using the `offset` option. Note that if the raw data has vertical errors, you may still need to apply an offset regardless of this flag. More info about the file and the CDN used can be found here: https://github.com/OSGeo/PROJ-data/tree/master
 - `verticalDatum.path`: Optional URL of the GeoTIFF vertical datum file. Defaults to `https://cdn.proj.org/us_nga_egm96_15.tif`. Ignored if the vertical datum corrections are disabled via `verticalDatum.enabled`. More info about the file and the CDN used can be found here: https://github.com/OSGeo/PROJ-data/tree/master  
 - Additionally, `calculateAnchorPoint(mapInstance)` and `getTransformParameters(anchor4326)` are advanced callbacks for overriding the calculation of the anchor point and the internal transform parameters, respectively. In the future the usage of these callbacks may be better documented. In the meantime see [www/examples/other/plate-carree/](www/examples/other/plate-carree/) for a usage example of the plate-carree projection. 
 
 **load3dTiles optional options**:
-- `offset`: Optional `{ east, up, south }` translation applied to the 3d tiles in meters.
-- `preprocessUrl(url)`: Optional callback used to rewrite asset URLs before `3d-tiles-renderer` fetches them.
+- `offset`: `{ east, up, south }` translation in meters at a fixed reference derived from the **root bounding-volume center**. Sphere/box transforms and geographic regions are resolved by the tiles renderer. Directions stay fixed as the map moves; the reference does not recenter the content. Use `asset.setOffset(...)` to change it and `asset.getOffset()` to read a copy.
+- `preprocessURL(url)`: Rewrites asset URLs before `3d-tiles-renderer` fetches them.
+- `maxDepth`: Maximum tileset traversal depth.
 
 ## Project status
 
@@ -71,7 +140,7 @@ The project aims to be minimally scoped by design, and it will always be glue co
 
 **List of improvements over the official example:**
 
-- A very simple and intuitive API that doesn't expose the internals.
+- Layer-based composition with direct access to Three.js scenes, cameras, and renderers.
 - Better anchoring algorithm, ensuring precision even when moving away from the model's center.
 - Supports any `root.transform` matrix. In contrast, the official example assumes a particular matrix so some models will not align in the proper place.
 

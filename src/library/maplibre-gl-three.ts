@@ -1,34 +1,37 @@
-import { ThreeDManager as CoreThreeDManager } from './core';
+import { ThreeDManager as CoreThreeDManager } from './core/ThreeDManager';
 import { PlateCarreeTools } from './helpers/plateCarreeTools';
 import { GeoTiffGeographicRaster } from './adapters/GeoTiffGeographicRaster';
 import { BilinearGeographicRaster } from './helpers/BilinearGeographicRaster';
 import type {
     Asset,
-    GetLayerOptions,
+    CreateLayerOptions,
     GetTransformParameters,
     Load3dTilesOptions,
     LngLat,
-    SeparatorAsset,
+    LngLatAlt,
     ThreeDManagerOptions,
     ThreeDTilesAsset,
-    ThreeDTilesOffset,
-    TransformParameters,
+    MetersOffset,
+    ThreeLayer,
+    AffineTransformation,
     VerticalDatumOptions,
     calculateAnchorPoint,
 } from './interfaces';
 
 export { PlateCarreeTools };
+export { getEcefOrientationMatrix } from './helpers/coordinates';
 export type {
     Asset,
-    GetLayerOptions,
+    CreateLayerOptions,
     GetTransformParameters,
     Load3dTilesOptions,
     LngLat,
-    SeparatorAsset,
+    LngLatAlt,
     ThreeDManagerOptions,
     ThreeDTilesAsset,
-    ThreeDTilesOffset,
-    TransformParameters,
+    MetersOffset as ThreeDTilesOffset,
+    ThreeLayer,
+    AffineTransformation as TransformParameters,
     VerticalDatumOptions,
     calculateAnchorPoint,
 };

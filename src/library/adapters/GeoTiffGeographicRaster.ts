@@ -1,11 +1,12 @@
 import { fromArrayBuffer, type GeoTIFFImage, type TypedArray } from "geotiff";
-import type { GeographicRaster, LngLat, VerticalDatumOptions } from '../interfaces';
+import type { GeographicRaster } from '../core/internal-interfaces';
+import type { LngLat, VerticalDatumOptions } from '../interfaces';
 
 const DEFAULT_VERTICAL_DATUM_PATH = 'https://cdn.proj.org/us_nga_egm96_15.tif';
 
 export class GeoTiffGeographicRaster implements GeographicRaster {
-	private readonly enabled: boolean;
-	private readonly path: string;
+	private enabled: boolean;
+	private path: string;
 	private image: GeoTIFFImage | undefined;
 	private wgs84ToPixelMatrix: number[] = [];
 	private raster: TypedArray | null = null;
@@ -55,6 +56,7 @@ export class GeoTiffGeographicRaster implements GeographicRaster {
 		return this.raster[x + y * this.width];
 	}
 	public wgs84ToPixels([lon, lat]: LngLat): [number, number] {
+		if (!this.enabled) return [0, 0];
 		const matrix = this.wgs84ToPixelMatrix
 		return [
 			matrix[0] + matrix[1] * lon + matrix[2] * lat,

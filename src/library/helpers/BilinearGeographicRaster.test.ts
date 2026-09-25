@@ -1,5 +1,6 @@
 import { expect, test, vi } from 'vitest';
-import type { GeographicRaster, LngLat } from '../interfaces';
+import type { GeographicRaster } from '../core/internal-interfaces';
+import type { LngLat } from '../interfaces';
 import { BilinearGeographicRaster } from './BilinearGeographicRaster';
 
 test('initializes the underlying raster and bilinearly interpolates its neighboring pixels', async () => {

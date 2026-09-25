@@ -10,22 +10,6 @@
       "source": "osm-tiles"
     },
     {
-      "id": "extrusion-before",
-      "type": "fill-extrusion",
-      "source": "test-polygons",
-      "filter": [
-        "==",
-        "order",
-        "before"
-      ],
-      "paint": {
-        "fill-extrusion-color": "rgba(255, 80, 40, 1)",
-        "fill-extrusion-height": 120,
-        "fill-extrusion-base": 0,
-        "fill-extrusion-opacity": 0.9
-      }
-    },
-    {
       "id": "rivers",
       "type": "line",
       "source": "osm-vectors",
@@ -65,22 +49,6 @@
       "paint": {
         "line-color": "rgba(255, 255, 255, 1)",
         "line-width": 4
-      }
-    },
-    {
-      "id": "extrusion-after",
-      "type": "fill-extrusion",
-      "source": "test-polygons",
-      "filter": [
-        "==",
-        "order",
-        "after"
-      ],
-      "paint": {
-        "fill-extrusion-color": "rgba(255, 80, 40, 1)",
-        "fill-extrusion-height": 120,
-        "fill-extrusion-base": 0,
-        "fill-extrusion-opacity": 0.9
       }
     }
   ],
@@ -868,81 +836,6 @@
                 [
                   -75.592126,
                   40.032307
-                ]
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "test-polygons": {
-      "type": "geojson",
-      "data": {
-        "type": "FeatureCollection",
-        "name": "test-polygons",
-        "features": [
-          {
-            "type": "Feature",
-            "properties": {
-              "order": "before"
-            },
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [
-                    -75.5982,
-                    40.0401
-                  ],
-                  [
-                    -75.5952,
-                    40.0401
-                  ],
-                  [
-                    -75.5952,
-                    40.0412
-                  ],
-                  [
-                    -75.5982,
-                    40.0412
-                  ],
-                  [
-                    -75.5982,
-                    40.0401
-                  ]
-                ]
-              ]
-            }
-          },
-          {
-            "type": "Feature",
-            "properties": {
-              "order": "after"
-            },
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [
-                    -75.6018,
-                    40.0401
-                  ],
-                  [
-                    -75.5988,
-                    40.0401
-                  ],
-                  [
-                    -75.5988,
-                    40.0412
-                  ],
-                  [
-                    -75.6018,
-                    40.0412
-                  ],
-                  [
-                    -75.6018,
-                    40.0401
-                  ]
                 ]
               ]
             }

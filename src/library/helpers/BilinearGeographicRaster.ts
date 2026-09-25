@@ -1,8 +1,9 @@
-import type { GeographicRaster, LngLat } from '../interfaces';
+import type { GeographicRaster } from '../core/internal-interfaces';
+import type { LngLat } from '../interfaces';
 
 /** Prevents rough jumps when transitioning from one pixel to the next via bilinear interpolation. */
 export class BilinearGeographicRaster implements GeographicRaster {
-	constructor(private readonly raster: GeographicRaster) {}
+	constructor(private raster: GeographicRaster) {}
 
 	public init(): Promise<void> {
 		return this.raster.init();

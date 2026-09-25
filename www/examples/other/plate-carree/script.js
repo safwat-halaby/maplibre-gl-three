@@ -17,13 +17,14 @@ const map = await (async () => {
     const style = await fetchJson('./style.json');
     alignGeoJSONWithPlateCarree(style.sources['osm-vectors'].data);
     const mapInstance = new maplibregl.Map({
+        terrainSkirtLength: 'none',
         container: 'map',
-        zoom: 16,
+        zoom: 12,
         center: PlateCarreeTools.alignWithEquirectangularProjection([-75.596, 40.038]),
         pitch: 55,
         bearing: -20,
         maxPitch: 85,
-        style,
+        style
     });
 
     mapInstance.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
@@ -35,17 +36,22 @@ map.on('load', async () => {
     const threeDManager = new ThreeDManager({
         dracoPath: "/dependencies/three@0.183.2/examples/jsm/libs/draco/",
         ktx2Path: "/dependencies/three@0.183.2/examples/jsm/libs/basis/",
+        verticalDatum: {
+            path: "/datasets/vertical-datum/us_nga_egm96_15.tif",
+        },
         calculateAnchorPoint: PlateCarreeTools.calculatePlateCarreeAnchorPoint,
         getTransformParameters: PlateCarreeTools.getPlateCarreeTransformParameters,
-
     });
-    const agiHqTiles = await threeDManager.load3dTiles({
-        tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
-        layerId: 'agi-hq-3d-tiles',
+    await threeDManager.init();
+    const layer = threeDManager.createLayer({ id: 'agi-hq-3d' });
+    await layer.load3dTiles({
+        tilesetUrl: '/datasets/agi-hq/tileset.json',
         offset: { east: 0, up: -234, south: 0 },
+        maxDepth: 5
     });
 
-    map.addLayer(agiHqTiles.getLayer(), "rivers");
+    map.addLayer(layer, 'rivers');
+    map.on('remove', () => threeDManager.destroy());
 });
 
 async function fetchJson(url) {

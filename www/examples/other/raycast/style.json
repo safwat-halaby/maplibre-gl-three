@@ -838,6 +838,81 @@
           }
         ]
       }
+    },
+    "test-polygons": {
+      "type": "geojson",
+      "data": {
+        "type": "FeatureCollection",
+        "name": "test-polygons",
+        "features": [
+          {
+            "type": "Feature",
+            "properties": {
+              "order": "before"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -75.5982,
+                    40.0401
+                  ],
+                  [
+                    -75.5952,
+                    40.0401
+                  ],
+                  [
+                    -75.5952,
+                    40.0412
+                  ],
+                  [
+                    -75.5982,
+                    40.0412
+                  ],
+                  [
+                    -75.5982,
+                    40.0401
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {
+              "order": "after"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -75.6018,
+                    40.0401
+                  ],
+                  [
+                    -75.5988,
+                    40.0401
+                  ],
+                  [
+                    -75.5988,
+                    40.0412
+                  ],
+                  [
+                    -75.6018,
+                    40.0412
+                  ],
+                  [
+                    -75.6018,
+                    40.0401
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      }
     }
   }
 }
