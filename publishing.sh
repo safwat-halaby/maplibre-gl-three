@@ -175,8 +175,7 @@ else
     git commit -m "$release_name"
 fi
 git tag "$release_name"
-git push origin master
-git push origin "$release_name"
+git push origin master "$release_name"
 set +x
 
 echoBold "Sleeping for 10 seconds to let the changes propogate"
