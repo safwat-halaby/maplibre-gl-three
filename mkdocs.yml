@@ -26,17 +26,20 @@ markdown_extensions:
 nav:
   - Introduction: index.md
   - Installation: installation.md
-  - Features & limitations: features.md
-  - Changelog: changelog.md
-  - License: https://github.com/safwat-halaby/maplibre-gl-three/blob/master/LICENSE.txt
+  - Features & Limitations: features.md
+  - Usage Guide:
+    - Getting started: getting-started.md
+    - Frequently Asked Questions: faq.md
   - Examples and demos:
     - Live Demos: examples/live.md
-    - Repository examples: examples/repo.md
+    - Repository Examples: examples/repo.md
   - Principles:
     - Core principles: principles.md 
-    - Coordinate systems and projections: coordinate-systems.md
-  - API Reference:
-    - Main classes and interfaces: api-quick.md
-    - Full API Reference: api/index.md
-  - Development:
+    - Coordinate Systems and Projections: coordinate-systems.md
+  - Other:
+    - Changelog: changelog.md
     - Development: development.md
+    - License: license.md
+  - API:
+    - API Reference: api/index.md
+    - External API references: external.md

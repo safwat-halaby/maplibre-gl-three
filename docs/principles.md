@@ -20,7 +20,9 @@ A destroyed layer will call `scene.clear();`. Any additional disposals are calle
 
 By default, the layers honor the MapLibre Style Spec layer order. Any layer below your layer renders below it, and any layer above renders above it. You can modify this using the layer's separator options when creating a layer.
 
-Within the layer itself, depth is ruled by distance from camera by default. Nearer objects can occlude further objects. This can be manipulated via the Three.js primitives.
+You can also create multiple layers to control depth in a finegrained way.
+
+Within a layer itself, depth is ruled by distance from camera by default. Nearer objects can occlude further objects. This can be manipulated via the Three.js primitives.
 
 ### Heights and datums
 
@@ -54,6 +56,15 @@ You're out of luck. Your 3D Tiles have slopes, but MapLibre does not have any gr
 
 `3d-tiles-renderer` has some network dependencies that are lazily fetched from `https://cdn.jsdelivr.net` when you call `layer.load3dTiles(...)`. You can fetch them from elsewhere by changing `ThreeDManager`'s `dracoPath` and `ktx2Path` options.
 
-A vertical datum is fetched from `https://cdn.proj.org` when `ThreeDManager.init()` is called. This can be modified or disabled. See the height section above for more info.
+By default a vertical datum is fetched from `https://cdn.proj.org` when `ThreeDManager.init()` is called. This can be modified or disabled via the constructor. Here are the default options:
 
- See the next section.
+```js
+const threeDManager = new ThreeDManager({
+    dracoPath: 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/',
+    ktx2Path: 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/',
+    verticalDatum: {
+        enabled: true,
+        path: 'https://cdn.proj.org/us_nga_egm96_15.tif'
+    }
+});
+```

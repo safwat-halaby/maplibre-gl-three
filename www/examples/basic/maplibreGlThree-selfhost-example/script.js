@@ -31,6 +31,9 @@ map.on('load', async () => {
         offset: { east: 0, up: -234, south: 0 },
         maxDepth: 5
     });
+    // You can also try the following open datasets, without any vertical offsets:
+    // https://tiles.arcgis.com/tiles/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Utrecht_3D_Tiles_Integrated_Mesh/3DTilesServer/tileset.json
+    // https://s3.eu-west-2.wasabisys.com/ems-sgct-photomaillage/ODACIT/EMS_PM2022/tileset.json
 
     // an individual pink sphere.
     const marker = new THREE.Mesh(

@@ -8,6 +8,7 @@
     "test": "vitest run",
     "docs:api": "typedoc",
     "docs": "npm run docs:api && mkdocs build --strict",
+    "docs:serve": "npm run docs && mkdocs serve",
     "pack:dry-run": "npm pack --dry-run",
     "syncDeps": "node utils/sync_dependencies.js"
   },
