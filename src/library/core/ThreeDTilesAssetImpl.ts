@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { TilesRenderer } from '3d-tiles-renderer';
+import { GLTFCesiumRTCExtension } from '3d-tiles-renderer/plugins';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
@@ -59,7 +60,8 @@ export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
             this.ktx2Loader = new KTX2Loader(this.tiles.manager).setTranscoderPath(this.services.ktx2Path);
             this.gltfLoader = new GLTFLoader(this.tiles.manager)
                 .setDRACOLoader(this.dracoLoader)
-                .setKTX2Loader(this.ktx2Loader);
+                .setKTX2Loader(this.ktx2Loader)
+                .register(() => new GLTFCesiumRTCExtension());
         }
         this.ktx2Loader!.detectSupport(renderer);
         this.tiles.manager.removeHandler(this.loaderPattern);

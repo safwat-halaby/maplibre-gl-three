@@ -53,6 +53,7 @@ const DEPENDENCIES = {
 		'examples/jsm/loaders/KTX2Loader.js',
 		'examples/jsm/loaders/DRACOLoader.js',
 		'examples/jsm/loaders/GLTFLoader.js',
+		'examples/jsm/postprocessing/Pass.js',
 		'examples/jsm/math/ColorSpaces.js',
 		'examples/jsm/libs/zstddec.module.js',
 		'examples/jsm/libs/ktx-parse.module.js',

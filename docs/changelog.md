@@ -1,3 +1,7 @@
+## NEXT
+
+- Support for the CESIUM RTC extension in `3d-tiles-renderer`
+
 ## 1.0.2 - 2026-09-26
 
 - Update package dependencies
