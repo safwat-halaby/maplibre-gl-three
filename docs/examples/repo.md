@@ -1,4 +1,4 @@
-## Repository examples
+# Repository examples
 
 The [code repository](https://github.com/safwat-halaby/maplibre-gl-three) includes some examples in `www/examples/`. Clone it to run them yourself, or have a look at the code online below.
 

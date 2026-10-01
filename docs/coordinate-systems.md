@@ -1,4 +1,4 @@
-## Coordinate systems and projections
+# Coordinate systems and projections
 
 To glue MapLibre and Three.JS's cameras, we play around with 4 different coordinate systems. This document explains the details.
 
@@ -9,8 +9,7 @@ To glue MapLibre and Three.JS's cameras, we play around with 4 different coordin
 - `AnchorWM`: the Web Mercator-projected version of `Anchor4326`.
 - `EcefAnchor`: the point in the 3D Tiles world which corresponds to `Anchor4326`. Format (x, y, z) in meters from the Earth's core.
 
-
-### The process
+## The process
 
 This library always renders those points at the same spot on the screen. The process of gluing MapLibre to Three.js is as foolows this. On each MapLibre camera move:
 

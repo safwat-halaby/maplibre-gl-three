@@ -1,3 +1,5 @@
+# Frequently asked questions
+
 ## My 3D Tiles dataset is vertically misaligned with MapLibre. What do I do?
 
 *See also the [Heights and datums principles](principles.md#heights-and-datums) page*

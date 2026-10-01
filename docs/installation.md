@@ -1,3 +1,5 @@
+# Installation
+
 ## NPM installation
 
 The npm method is described in the [introduction](index.md).

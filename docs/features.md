@@ -1,3 +1,5 @@
+# Features & Limitations
+
 ## Features
 
 - Load a geographically synced Three.js scene as a layer in MapLibre.

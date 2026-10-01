@@ -1,8 +1,15 @@
+# Getting Started
+
+This page assumes you've [installed](installation.md) `maplibre-gl-three` and that you have a MapLibre map object. If not, see the [introduction](introduction.md) first.
+
 ## ThreeDManager
 
 You always start with a [ThreeDManager](api/index.md#threedmanager). It has various [constructor options](api/index.md#threedmanageroptions), all optional. You'll probably want to call the [init method](api/index.md#init) immediately.
 
 ```js
+import {ThreeDManager} from 'maplibre-gl-three';
+
+const threeDManager = new ThreeDManager();
 await threeDManager.init();
 ```
 
