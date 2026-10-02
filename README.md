@@ -60,7 +60,7 @@ map.on('remove', () => threeDManager.destroy());
 
 **Load ordinary Three.js objects**
 
-The scene accepts **WGS84 ECEF positions (EPSG:4978)**. Helper functions are supplied by `threeDManager` to convert to and from the more familiar longitude/latitude form. `height` is height in meters above sea level (orthometric).
+The Three.JS scene expects **ECEF positions**. Helper functions convert to and from the more familiar longitude/latitude form. `height` is in meters above sea level.
 
 ```js
 import * as THREE from 'three';

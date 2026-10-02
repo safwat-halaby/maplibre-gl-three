@@ -264,8 +264,8 @@ test('all layers rebase together with one listener, including ordinary ECEF obje
     expect(b.getScene().matrix.equals(a.getScene().matrix)).toBe(true);
     expect(object.position.equals(ecef)).toBe(true);
     const world = object.getWorldPosition(new THREE.Vector3());
-    expect(manager.ecefToLocalVector(ecef).distanceTo(world)).toBeLessThan(1e-8);
-    const roundTrip = manager.localVectorToEcef(world);
+    expect(manager.ecefToLocalSpace(ecef).distanceTo(world)).toBeLessThan(1e-8);
+    const roundTrip = manager.localSpaceToEcef(world);
     expect(roundTrip.distanceTo(object.position)).toBeLessThan(1e-7);
     const axes = a.getScene().getObjectByName('debug-local-axes')!;
     expect(axes.getWorldPosition(new THREE.Vector3()).length()).toBeLessThan(1e-7);
@@ -284,8 +284,8 @@ test('caches the inverse anchor matrix for repeated local-to-ECEF conversions', 
     map.addLayer(layer);
 
     const point = new THREE.Vector3(1, 2, 3);
-    manager.localVectorToEcef(point);
-    manager.localVectorToEcef(point);
+    manager.localSpaceToEcef(point);
+    manager.localSpaceToEcef(point);
 
     expect(invert).toHaveBeenCalledOnce();
 });

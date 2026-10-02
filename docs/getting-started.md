@@ -1,6 +1,6 @@
 # Getting Started
 
-This page assumes you've [installed](installation.md) `maplibre-gl-three` and that you have a MapLibre map object. If not, see the [introduction](introduction.md) first.
+This page assumes you've [installed](installation.md) `maplibre-gl-three` and that you have a MapLibre map object. If not, see the [introduction](index.md) first.
 
 ## ThreeDManager
 
@@ -18,8 +18,8 @@ await threeDManager.init();
 Next, you'll probably want to call [ThreeDManager.createlayer](api/index.md#createlayer). It also has various [optional paramaters](api/index.md#createlayeroptions). It returns a [ThreeLayer](api/index.md#threelayer), which can be added directly to a MapLibre map.
 
 ```js
-const threeLayer = threeDManager.createLayer();
-map.on('load', () => map.addLayer(threeLayer));
+const layer = threeDManager.createLayer();
+map.on('load', () => map.addLayer(layer));
 ```
 
 Now you can use ThreeLayer's various [methods](api/index.md#methods_3) to get access to ThreeJS primitives or to produce 3D tiles.
@@ -44,7 +44,7 @@ const tilesAsset = await layer.load3dTiles({
 
 Suppose you want to load a regular Three.JS object.  
 
-[ThreeDManager](api/index.md#threedmanager) has various [methods](api/index.md#methods) to help you with coordinate system conversions. In the following example, we use `getEcefMatrix` to convert from the typical EPSG:4326 longitude/latitude coordinates to ECEF: 
+[ThreeDManager](api/index.md#threedmanager) has various [methods](api/index.md#methods) to help you with coordinate system conversions. In the following example, we use `getEcefMatrix` to convert from the typical longitude/latitude(`EPSG:4326`) coordinates to ECEF(`EPSG:4978`): 
 
 ```js
 import * as THREE from 'three';
@@ -59,12 +59,12 @@ layer.getScene().add(sphere);
 
 ### Programmatically calculating terrain height
 
-Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [map.queryTerrainElevation](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#queryterrainelevation) to determine an object's height rather than hardcoding a 130.
+Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [map.queryTerrainElevation()](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#queryterrainelevation) to determine an object's height rather than hardcoding a 130.
 
 
 ## Acessing 3d-tiles-renderer / Centering the map on load
 
-You can use the Tile Asset's [gettilesrenderer method](api/index.md#gettilesrenderer) to get access to the underlying 3d-tiles-renderer object. In this example, we use an event listener to zoom into the 3D Tiles once they are loaded.
+You can use the Tile Asset's [getTilesRenderer()](api/index.md#gettilesrenderer) to get access to the underlying 3d-tiles-renderer object. In this example, we use an event listener to zoom into the 3D Tiles once they are loaded.
 
 ```js
 tiles3d.getTilesRenderer().addEventListener('load-root-tileset', () => {

@@ -6,7 +6,7 @@ A `ThreeDManager` owns layers. Each layer owns "assets" and Three.js primitives 
 
 A `ThreeDManager` is associated with one MapLibre map. On the rare occasion of using multiple MapLibre maps, you should use multiple `ThreeDManager` objects, one for each map.
 
-### Lifecycle and destruction
+**Lifecycle related functions:**
 
 - `threeDManager.destroy()` Destroys all managed layers, and all assets managed by those layers.
 - `layer.destroy()` Destroys the layer and destroys all its assets.
@@ -28,9 +28,9 @@ Within a layer itself, depth is ruled by distance from camera by default. Nearer
 
 *Before reading this, make sure you understand the difference between 3D Tiles and MapLibre's 3D terrain.*
 
-`3D Tiles` works in ECEF coordinates; a 3-number coordinate representing an offset from the Earth's core. (0,0,0) is the Earth's center. ECEF does not really care about sea level.
+3D Tiles works in ECEF coordinates; a 3-number coordinate representing an offset from the Earth's core. (0,0,0) is the Earth's center. ECEF does not really care about sea level.
 
-On the other hand, MapLibre uses `longitude, latitude`, and MapLibre 3D terrain uses height above sea level (orthometric height).
+On the other hand, MapLibre uses longitude/latitude, and MapLibre 3D terrain uses height above sea level (orthometric height).
 
 As strange as it sounds, sea level is [not uniform](https://en.wikipedia.org/wiki/Geoid), so converting from ECEF to MapLibre's height cannot happen with pure math alone, and requires a dataset known as a vertical datum. By default, this library loads the EGM96 datum from https://cdn.proj.org/us_nga_egm96_15.tif (2.6MiB) as soon as the `threeDManager` is initialized. More info about the file and the CDN used can be found [here](https://github.com/OSGeo/PROJ-data/tree/master). The vertical datum is used whenever you convert from `ECEF` to `lngLatAlt` or vice versa. You can configure a different URL to fetch from, or you can disable the vertical datum altogether, in which case any ECEF to `lngLatAlt` will yield ellipsoidal height, and not sea-level height.
 
@@ -54,7 +54,7 @@ You're out of luck. Your 3D Tiles have slopes, but MapLibre does not have any gr
 
 ### Network Dependencies
 
-`3d-tiles-renderer` has some network dependencies that are lazily fetched from `https://cdn.jsdelivr.net` when you call `layer.load3dTiles(...)`. You can fetch them from elsewhere by changing `ThreeDManager`'s `dracoPath` and `ktx2Path` options.
+3d-tiles-renderer has some network dependencies that are lazily fetched from `https://cdn.jsdelivr.net` when you call `layer.load3dTiles(...)`. You can fetch them from elsewhere by changing `ThreeDManager`'s `dracoPath` and `ktx2Path` options.
 
 By default a vertical datum is fetched from `https://cdn.proj.org` when `ThreeDManager.init()` is called. This can be modified or disabled via the constructor. Here are the default options:
 

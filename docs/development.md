@@ -28,14 +28,7 @@ Install the Python documentation dependencies, then generate the API reference a
 
 ```sh
 python -m pip install -r docs/requirements.txt
-npm run docs:api
-mkdocs serve
-```
-
-For a production-style validation build:
-
-```sh
-npm run docs
+npm run docs:serve
 ```
 
 The TypeDoc output is generated in `docs/api/` and is not committed to the repository.

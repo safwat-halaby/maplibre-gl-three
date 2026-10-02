@@ -11,9 +11,7 @@ import type {
 const DEFAULT_DRACO_PATH = 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/';
 const DEFAULT_KTX2_PATH = 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/';
 
-/** This class is the entry point of this library. It manages a MapLibre map's 3D layers.
- * If you have multiple MapLibre maps, you should use a separate ThreeDManager for each.
-*/
+
 export class ThreeDManagerImpl {
     /** All of our layers, whether attached to a MapLibre map or not */
     private layers = new Map<string, ThreeLayerImpl>();
@@ -22,7 +20,7 @@ export class ThreeDManagerImpl {
     /** The MapLibre map instance. For the sake of a clean API, we "Steal" this from a layer when it's added to the map. */
     private mapInstance: MapLibreMap | null = null;
     /** The anchor matrices are responsible for converting between the different coordinate systems.
-     * The anchor is the main graphical trick of this library. See https://maplibre-gl-three.readthedocs.io/en/latest/coordinate-systems/ and updateAnchor to make full sense of this.
+     * The anchor is the main graphical trick of this library. See https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ and updateAnchor to make full sense of this.
      *
      * localToEcef and ecefToLocal convert points between ECEF and LocalSpace.
      * localToMap converts from LocalSpace to the Web Mercator (by default) point that corresponds to Anchor4326.
@@ -72,6 +70,8 @@ export class ThreeDManagerImpl {
 
     /** Must call this before using threeDManager. Initializes services that are shared by all layers.
      * If vertical datums are enabled (default yes), will trigger a network request for fetching the vertical datum.
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies and how to disable them}
     */
     async init(): Promise<void> {
         if (this.status === 'destroyed') {
@@ -118,9 +118,15 @@ export class ThreeDManagerImpl {
     }
 
     /** Convert longitude/latitude (degrees) and altitude above sea level (meters) to ECEF.
-     * - Source coordinates: EPSG:9707 (which is a WGS84 (EPSG:4326) point with orthometric height (EGM96 EPSG:5773))
-     * - Used vertical datum: EGM96 EPSG:5773
-     * - Output coordinates: EPSG:4978
+     * 
+     * Consider {@link ThreeDManager.getEcefMatrix} as an alternative.
+     * 
+     * 
+     * - Source coordinates: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
+     * - Used vertical datum: `EGM96 EPSG:5773`
+     * - Output coordinates: `EPSG:4978`
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ | More info about the coordinate systems}
     */
     lngLatAltToEcef(lngLatAlt: LngLatAlt): THREE.Vector3 {
         this.assertReady();
@@ -132,9 +138,13 @@ export class ThreeDManagerImpl {
     }
 
     /** Convert ECEF to longitude/latitude and height above sea level.
-     * - Source coordinates: EPSG:4978
-     * - Used vertical datum: EGM96 EPSG:5773
-     * - Output coordinates: EPSG:9707 (which is a WGS84 (EPSG:4326) point with orthometric height (EGM96 EPSG:5773))
+     * 
+     * 
+     * - Source coordinates: `EPSG:4978`
+     * - Used vertical datum: `EGM96 EPSG:5773`
+     * - Output coordinates: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ | More info about the coordinate systems}
      */
     ecefToLngLatAlt(point: THREE.Vector3): LngLatAlt {
         this.assertReady();
@@ -145,40 +155,60 @@ export class ThreeDManagerImpl {
         };
     }
 
-    /** Convert a Three.js LocalSpace point (e.g. a raycast hit) to an ECEF Vector3.
-     * ATTENTION: This assumes the camera has not yet moved since the LocalSpace point was generated.
-     * If the camera has moved, you should not use the LocalSpace point anymore.
-     * If raycasting, the best way to avoid trouble is to immediately convert any calculated LocalSpace point using localVectorToEcef or localVectorToLngLatAlt.
+    /** Convert a LocalSpace point (e.g. a Three.js raycast hit) to an ECEF point.
      * 
-     * Output coordinates: EPSG:4978
+     * ATTENTION: LocalSpace is camera-dependant. If you convert something to LocalSpace, and convert it back after camera move, the point will not land on its original spot.
+     * The best way to avoid trouble is to immediately convert any calculated LocalSpace point to something else.
+     * 
+     * If raycasting, using {@link ThreeDManager.getAnchorEcefToLocalMatrix} and {@link ThreeDManager.getAnchorLocalToEcefMatrix} is probably cleaner.
+     * 
+     * 
+     * - Source coordinates: `LocalSpace`
+     * - Output coordinates: `EPSG:4978`
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ | More info about the coordinate systems}
      */
-    localVectorToEcef(point: THREE.Vector3): THREE.Vector3 {
+    localSpaceToEcef(point: THREE.Vector3): THREE.Vector3 {
         this.assertReady();
         if (!this.anchorMatrices) throw new Error('Attach a layer before converting LocalSpace coordinates');
         return point.clone().applyMatrix4(this.anchorMatrices.localToEcef);
     }
-    /** Convert an ECEF point to a Three.js LocalSpace point. You should probably not use this function unless you know what you're doing.
-     * ATTENTION: Once the camera moves, you should not use the generated LocalSpace point anymore.
+    /** Convert an ECEF point to a LocalSpace point.
+     * 
+     * ATTENTION: LocalSpace is camera-dependant. If you convert something to LocalSpace, and convert it back after camera move, the point will not land on its original spot.
+     * The best way to avoid trouble is to immediately convert any calculated LocalSpace point to something else.
+     * 
+     * If raycasting, using {@link ThreeDManager.getAnchorEcefToLocalMatrix} and {@link ThreeDManager.getAnchorLocalToEcefMatrix} is probably cleaner.
+     * 
+     * 
+     * - Source coordinates: `EPSG:4978`
+     * - Output coordinates: `LocalSpace`
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ | More info about the coordinate systems}
      */
-    ecefToLocalVector(point: THREE.Vector3): THREE.Vector3 {
+    ecefToLocalSpace(point: THREE.Vector3): THREE.Vector3 {
         this.assertReady();
         if (!this.anchorMatrices) throw new Error('Attach a layer before converting LocalSpace coordinates');
         return point.clone().applyMatrix4(this.anchorMatrices.ecefToLocal);
     }
 
-    /** Convert a Three.js LocalSpace point (e.g. a raycast hit) to a longitude, latitude, and height above sea level.
-     * * ATTENTION: This assumes the camera has not yet moved since the LocalSpace point was generated.
-     * If the camera has moved, you should not use the LocalSpace point anymore.
-     * If raycasting, the best way to avoid trouble is to immediately convert any calculated LocalSpace point using localVectorToEcef or localVectorToLngLatAlt.
+    /** Convert a LocalSpace point (e.g. a Three.js raycast hit) to a longitude, latitude, and height above sea level.
      * 
-     * Output coordinates: EPSG:9707 (which is a WGS84 (EPSG:4326) point with orthometric height (EGM96 EPSG:5773))
+     * ATTENTION: LocalSpace is camera-dependant. If you convert something to LocalSpace, and convert it back after camera move, the point will not land on its original spot.
+     * The best way to avoid trouble is to immediately convert any calculated LocalSpace point to something else.
+     * 
+     * - Source coordinates: `LocalSpace`
+     * - Output coordinates:  `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ | More info about the coordinate systems}
      */
-    localVectorToLngLatAlt(point: THREE.Vector3): LngLatAlt {
-        return this.ecefToLngLatAlt(this.localVectorToEcef(point));
+    localSpaceToLngLatAlt(point: THREE.Vector3): LngLatAlt {
+        return this.ecefToLngLatAlt(this.localSpaceToEcef(point));
     }
     
-    lngLatAltToLocal(point: LngLatAlt): THREE.Vector3 {
-        return this.ecefToLocalVector(this.lngLatAltToEcef(point))
+    /** The inverse of {Three} */
+    lngLatAltToLocalSpace(point: LngLatAlt): THREE.Vector3 {
+        return this.ecefToLocalSpace(this.lngLatAltToEcef(point))
     }
 
 
@@ -186,24 +216,47 @@ export class ThreeDManagerImpl {
      * Returns a matrix which, when applied to a Three.js object, places the object at the given location in ECEF space,
      * rotating it such that local +X points east, +Y points up, and +Z points south.
      * 
-     * Typical usage: threeObject.applyMatrix4(threeDManager.getEcefMatrix(lngLatAlt));
+     * This is often the simplest way to convert from lngLatAlt to ECEF, and is an alternative to {@link ThreeDManager.lngLatAltToEcef}
      * 
-     * This is very useful on a Three.js group. The children of the group's positions would be given as an offset from lngLatLat in meters.
+     * Typical usage: 
+     * 
+     * ```js
+     * threeObject.applyMatrix4(threeDManager.getEcefMatrix(lngLatAlt));
+     * ```
+     * 
+     * This method is also very useful on a Three.js group. The children of the group's positions can be manipulated
+     * as an offset from lngLatLat in meters.
      * 
      * This is equivalent to:
-     *  - threeObject.position.copy(threeDManager.lngLatAltToEcef(lngLatAlt));
-     *  - threeObject.quaternion.copy(getEcefOrientationMatrix(lngLatAlt));
+     * 
+     * ```js
+     * threeObject.position.copy(threeDManager.lngLatAltToEcef(lngLatAlt));
+     * threeObject.quaternion.copy(getEcefOrientationMatrix(lngLatAlt));
+     * ```
      */
     getEcefMatrix(point: LngLatAlt): THREE.Matrix4 {
         return ecefToLocalMatrix(point.point, point.height + this.getGeoidUndulation(point.point))
             .invert();
     }
 
-    /** Returns a matrix which transforms ECEF coordinates to the LocalSpace coordinates of the current anchor.
+    /** Returns a matrix which transforms ECEF coordinates to the LocalSpace coordinates of the current anchor (the current camera position)
      * 
-     * This is most useful to set on a raycaster with `raycaster.ray.applyMatrix4(threeDManager.getEcefMatrix())`.
+     * This is most useful to set on a raycaster:
+     *  
+     * ```js
+     * raycaster.ray.applyMatrix4(threeDManager.getAnchorEcefToLocalMatrix())
+     * ```
+     * 
      * Afterwards the rays can be fed into it in ECEF coordinates. 
-     * The raycaster output would still be in LocalSpace, and can be converted to ECEF with vector.applyMatrix4(threeDManager.getAnchorLocalToEcefMatrix()).
+     * The raycaster output would still be in LocalSpace,
+     * and can be converted back to ECEF with: 
+     * 
+     * ```js
+     * vector.applyMatrix4(threeDManager.getAnchorLocalToEcefMatrix())
+     * ```
+     * 
+     * ATTENTION: LocalSpace is camera-dependant. If you convert something to LocalSpace, and convert it back after camera move, the point will not land on its original spot.
+     * The best way to avoid trouble is to immediately convert any calculated LocalSpace point to something else. Therefore you should call the second line above immediately after raycasting.
      * */
     getAnchorEcefToLocalMatrix(): THREE.Matrix4 {
         if (!this.anchorMatrices) {
@@ -212,7 +265,7 @@ export class ThreeDManagerImpl {
         return this.anchorMatrices.ecefToLocal;
     }
 
-    /** The inverse of `getAnchorEcefToLocalMatrix`. See that function for docs. */
+    /** The inverse of {@link ThreeDManager.getAnchorEcefToLocalMatrix}. */
     getAnchorLocalToEcefMatrix(): THREE.Matrix4 {
         if (!this.anchorMatrices) {
             throw new Error('called getAnchorEcefMatrix before an anchor point was created.')
@@ -220,6 +273,11 @@ export class ThreeDManagerImpl {
         return this.anchorMatrices.localToEcef;
     }
 
+    /** 
+     * Destroys the manager. This also recursively destroys all layers created by the manager and all assets created by those layers.
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#object-hierarchy-and-lifecycle | More info about hierarchy and lifecycle}
+     */
     destroy(): void {
         if (this.isDestroyed()) return;
         for (const layer of [...this.layers.values()]) layer.destroy();

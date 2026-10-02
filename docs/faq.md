@@ -74,7 +74,7 @@ const map = new Map({
 });
 ```
 
-## I loaded some 3D Tiles and I see nothing. What do I do?
+## I loaded some 3D Tiles and I see nothing. What do I do? 
 
 - Check the browser console for errors.
 - Make sure MapLibre is centered where the data is at. You can do this programmatically like so:
@@ -90,3 +90,6 @@ tiles3d.getTilesRenderer().addEventListener('load-root-tileset', () => {
 
 - It could also be an extention issue (this should appear in the console). Currently, not all 3D Tiles extensions are supported. Sorry :( - When time permits I will document which extensions are supported and expose more 3d-tiles-renderer configuration to allow you to add any extension.
 
+## How do I center the map on the 3D Tiles?
+
+See the previous question.

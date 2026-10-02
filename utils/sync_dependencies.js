@@ -28,6 +28,7 @@ const FILES_TO_UPDATE_ALL_VERSIONS = [
 	'www/examples/other/plate-carree/script.js',
 
 	'src/library/maplibre-gl-three.ts',
+	'src/library/interfaces.ts',
 	'README.md'
 ];
 

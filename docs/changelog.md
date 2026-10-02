@@ -1,6 +1,18 @@
+## NEXT
+
+**No behavioural changes.** The major version is due to the renaming of some helper functions.
+
+- Documentation improvements
+- Rename and normalize the ThreeDManager coordinate conversion functions:
+    - `localVectorToEcef` => `localSpaceToEcef`
+    - `ecefToLocalVector` => `ecefToLocalSpace`
+    - `localVectorToLngLatAlt` => `localSpaceToLngLatAlt`
+    - `lngLatAltToLocal` => `lngLatAltToLocalSpace`
+
+
 ## 1.1.0 - 2026-10-01
 
-- Support for the CESIUM RTC extension in `3d-tiles-renderer`
+- Support for the CESIUM RTC extension in 3d-tiles-renderer
 
 ## 1.0.2 - 2026-09-26
 

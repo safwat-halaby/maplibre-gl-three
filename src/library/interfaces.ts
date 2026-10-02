@@ -4,10 +4,12 @@ import type { TilesRenderer } from '3d-tiles-renderer';
 
 export type LngLat = [longitude: number, latitude: number];
 /** A WGS84 (EPSG:4326) point with height included.
-Normally, height is assumed to be above mean sea level. Also known as orthometric height.
-
-If you've disabled vertical datum conversions, the orthometric height will be approximated to always equal the ellipsoidal height.
-This may cause vertical offset issues if you're using 3D Tiles or other ECEF-based/ellipsoidal-height-based data sources along with MapLibre 3D terrain, which uses orthometric height. */
+ * Normally, height is assumed to be above mean sea level. Also known as orthometric height.
+ * If you've disabled vertical datum conversions, the orthometric height will be approximated to always equal the ellipsoidal height.
+ * This may cause vertical offset issues if you're using 3D Tiles or other ECEF-based/ellipsoidal-height-based data sources along with MapLibre 3D terrain, which uses orthometric height.
+ * 
+ * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#heights-and-datums | More info about height handling}
+*/
 export interface LngLatAlt {
     point: LngLat;
     height: number;
@@ -33,9 +35,9 @@ export interface MetersOffset {
     south: number;
 }
 
-/** See ThreeDManagerOptions for an explanation */
+/** See {@link ThreeDManagerOptions} for an explanation. */
 export type calculateAnchorPoint = (mapInstance: MapLibreMap) => LngLat;
-/** See ThreeDManagerOptions for an explanation */
+/** See {@link ThreeDManagerOptions} for an explanation. */
 export type GetTransformParameters = (anchor4326: LngLat) => AffineTransformation;
 
 export interface VerticalDatumOptions {
@@ -44,8 +46,9 @@ export interface VerticalDatumOptions {
      * Ignored if the vertical datum corrections are disabled via
      * {@link VerticalDatumOptions.enabled}
      * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#heights-and-datums | More info about vertical datums in this library}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies}
      * @see {@link https://github.com/OSGeo/PROJ-data/tree/master | More info about the datum file and the CDN}
-     * @see {@link https://maplibre-gl-three.readthedocs.io/en/latest/principles/#heights-and-datums | More info about vertical datums in this library}
      * @defaultValue `https://cdn.proj.org/us_nga_egm96_15.tif`
      */
     path?: string;
@@ -53,13 +56,14 @@ export interface VerticalDatumOptions {
      * Whether to load and apply the vertical datum. When disabled, uses a
      * zero-undulation approximation.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/en/latest/principles/#heights-and-datums | More info about vertical datums in this library}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#heights-and-datums | More info about vertical datums in this library}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies}
      * @defaultValue true
      */
     enabled?: boolean;
 }
 
-/** Options for configuring maplibre-gl-three. */
+/** Constructor options for {@link ThreeDManager} */
 export interface ThreeDManagerOptions {
     /**
      * If true, renders the Three.js anchor point for debugging.
@@ -69,20 +73,25 @@ export interface ThreeDManagerOptions {
     /**
      * Path to the Draco loader to be lazy loaded if needed.
      * This is used internally by 3d-tiles-renderer to decompress Draco-compressed 3D Tiles.
-     * @defaultValue https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/
+     * @defaultValue https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/draco/
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies}
      */
     dracoPath?: string;
     /**
      * Path to the KTX2 loader to be lazy loaded if needed.
      * This is used internally by 3d-tiles-rendrer.
-     * @defaultValue https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/
+     * @defaultValue https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/basis/
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies}
      */
     ktx2Path?: string;
     /**
      * Configuration for loading and applying a vertical datum, necessary for accurate above-sea-level calculations.
      * 
-     * @see {@link VerticalDatumOptions}
-     * @see {@link https://github.com/OSGeo/PROJ-data/tree/master | More info about the vertical datum}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#heights-and-datums | More info about height handling}
+     * @see {@link https://github.com/OSGeo/PROJ-data/tree/master | More info about the vertical datum file}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies}
      */
     verticalDatum?: VerticalDatumOptions;
     /**
@@ -106,15 +115,18 @@ export interface ThreeDManagerOptions {
      * 
      * If not supplied, the default transformation assumes MapLibre's internal coordinate system, Web Mercator.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/en/latest/examples/repo/ | the repo example which uses a Plate Carree projection}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/examples/repo/ | the repo example which uses a Plate Carree projection}
      */
     getTransformParameters?: GetTransformParameters;
 }
 
+/** Options for {@link ThreeLayer.load3dTiles} */
 export interface Load3dTilesOptions {
     tilesetUrl: string;
     /**
-     * Offset in meters along east/up/south.
+     * Offset in meters along east/up/south. Useful for correcting vertical errors.
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#heights-and-datums | More info about height handling}
      */
     offset?: MetersOffset;
     /**
@@ -127,19 +139,24 @@ export interface Load3dTilesOptions {
     maxDepth?: number;
 }
 
+/** Options for {@link ThreeDManager.createLayer} */
 export interface CreateLayerOptions {
     /** The layer id as it would appear in MapLibre. If no id is supplied, an id will be auto-generated. */
     id?: string;
     /** Clear depth before this layer's entire scene. Defaults to true.
      * If true, the MapLibre layers that came before will be below this layer.
      * If false, the MapLibre layers that came before will be interlaced, meaning visibility at each pixel is determined by whatever is closer to the camera. 
-     * If both separatorBefore and separatorAfter are true (default), the depth is dictated solely by MapLibre layer order. 
+     * If both separatorBefore and separatorAfter are true (default), the depth is dictated solely by MapLibre layer order.
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#layer-order-and-depth | More info about depth and layer order} 
      */
     separatorBefore?: boolean;
     /** Clear depth after this layer's entire scene. Defaults to true.
      * If true, the MapLibre layers that come after will cover this layer.
      * If false, the MapLibre layers that come after will be interlaced, meaning visibility at each pixel is determined by whatever is closer to the camera. 
-     * If both separatorBefore and separatorAfter are true (default), the depth is dictated solely by MapLibre layer order. 
+     * If both separatorBefore and separatorAfter are true (default), the depth is dictated solely by MapLibre layer order.
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#layer-order-and-depth | More info about depth and layer order} 
      */
     separatorAfter?: boolean;
 }
@@ -148,20 +165,30 @@ export interface CreateLayerOptions {
  * Currently the only supported asset type is ThreeDTilesAsset. */
 export interface Asset {
     /** Returns whether or not the asset has been destroyed. 
-     * An asset may be manually destroyed with destroy(), but is also automatically destroyed if its parent ThreeLayer is destroyed.
+     * An asset may be manually destroyed with {@link Asset.destroy}, but is also automatically destroyed if its parent ThreeLayer is destroyed.
     */
     isDestroyed(): boolean;
-    /** Live content object. Placement owned by the library is on its parent. */
+    /** Returns the underlying Three.JS Object3D.
+     * 
+     * @see {@link https://threejs.org/docs/ | Three.JS docs}
+    */
     getObject3D(): Object3D;
-    /** Removes and disposes this asset, leaving its layer and siblings alive. */
+    /** Removes and disposes this asset, leaving its layer and siblings alive.
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#object-hierarchy-and-lifecycle | More info about hierarchy and lifecycle}
+    */
     destroy(): void;
 }
 
 /** A 3D Tiles asset that is loaded to a layer and rendered on the map.
- * The asset is a thin wrapper around the "3d-tiles-renderer" library.
+ * The asset is a thin wrapper around the 3d-tiles-renderer library.
 */
 export interface ThreeDTilesAsset extends Asset {
-    /** Returns the underlying TilesRenderer object of the 3d-tiles-renderer library. */
+    /** Returns the underlying TilesRenderer object of the 3d-tiles-renderer library.
+     *  
+     * @see {@link https://github.com/NASA-AMMOS/3DTilesRendererJS/blob/master/src/core/renderer/API.md  | 3d-tiles-renderer API} 
+     * @see {@link https://github.com/NASA-AMMOS/3DTilesRendererJS/blob/master/src/three/renderer/API.md | 3d-tiles-renderer Three.js API}
+    */
     getTilesRenderer(): TilesRenderer;
     /** Returns the offset. See setOffset for details. */
     getOffset(): MetersOffset;
@@ -189,32 +216,52 @@ export interface ThreeDTilesAsset extends Asset {
 export interface ThreeLayer extends CustomLayerInterface {
     id: string;
     type: 'custom';
+    /** MapLibre's renderingMode property. In the case of a ThreeLayer this is always "3d" */
     renderingMode: '3d';
     /** Returns whether or not the layer has been destroyed. 
-     * A layer may be manually destroyed with destroy(), but is also automatically destroyed if its parent ThreeDManager is destroyed.
+     * A layer may be manually destroyed with {@link ThreeLayer.destroy}, but is also automatically destroyed if its parent {@link ThreeDManager} is destroyed.
     */
     isDestroyed(): boolean;
     /** Returns the Three.js scene. Objects within the scene are expected to have ECEF Vector3 coordinates.
-     * The simplest way for achieving this is with ThreeDManager.getEcefMatrix.
-     * Note: The library owns and updates the scene matrix. Do not touch the scene matrix.
+     * The simplest way for achieving this is with {@link ThreeDManager.getEcefMatrix}
+     * 
+     * ATTENTION:  Do not touch the scene matrix because it is owned and manipulated by the library.
      * Other than this, you may use the scene as you normally would use it in Three.js.
+     * 
+     * @see {@link https://threejs.org/docs/ | Three.JS docs}
     */
     getScene(): Scene;
     /** Returns the library-controlled Three.js camera in LocalSpace coordinates, updated during render.
-     * Updating the camera is not advised. But it can be used for querying. E.g. raycasting.
+     * 
+     * ATTENTION: Updating the camera is not advised because it is library-controlled. But it can be used for querying. E.g. raycasting.
+     * 
+     * @see {@link https://threejs.org/docs/ | Three.JS docs}
      */
     getCamera(): PerspectiveCamera;
-    /** Returns the Three.js WebGLRenderer. Returns null while the layer is detached from a map. */
+    /** Returns the Three.js WebGLRenderer. Returns null while the layer is detached from a map. 
+     * 
+     * @see {@link https://threejs.org/docs/ | Three.JS docs}
+    */
     getRenderer(): WebGLRenderer | null;
-    /** Adds 3D Tiles to the map and returns the controlling asset. Resolves after asset setup, not after streaming finishes.
-     * The asset is a thin wrapper around the "3d-tiles-renderer" library.
+    /** Adds 3D Tiles to the layer and returns the controlling asset. Resolves after asset setup (not after streaming finishes).
+     * The asset is a thin wrapper around the 3d-tiles-renderer library. 
      * 
      * If the current Three.JS scene is empty, automatically adds an ambient light as a sane default before adding the 3D Tiles.
      * To prevent this behaviour, add your own lighting or any object to the scene before calling load3dTiles.
+     * 
+     * May lazily load some loaders from the network either immediately or when the layer is added a MapLibre map. This can be modified.
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies and how to disable them}
      */
     load3dTiles(options: Load3dTilesOptions): Promise<ThreeDTilesAsset>;
     /** Calls MapLibre's triggerRepaint(). */
     requestRepaint(): void;
-    /** Permanently removes the layer and destroys all child assets. */
+    /** Permanently removes the layer and destroys all child assets.
+     * 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#object-hierarchy-and-lifecycle | More info about hierarchy and lifecycle}
+    */
     destroy(): void;
 }
+
+
+ 
