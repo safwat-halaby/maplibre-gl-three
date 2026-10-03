@@ -73,10 +73,9 @@ sphere.applyMatrix4(threeDManager.getEcefMatrix({ point: [-75.598, 40.040], heig
 layer.getScene().add(sphere);
 ```
 
-**More resources:**
+## Quick links
 
 - [Getting started guide](getting-started.md)
-- [Live demos](examples/live.md)
 - [Core principles](principles.md)
 
 ## Design philosophy

@@ -18,7 +18,7 @@ Individual objects in the Three.JS scene use the ECEF coordinate system, but the
 
 A coordinate system where 
 
-- `[0,0,0]` is the origin, a point roughly at the point that is in the middle of the current MapLibre camera scene. It sits point sits at orthometric height / sea-level height / the "0" height in MapLibre. Whenever the MapLibre camera moves, LocalSpace moves with it. `[0,0,0]` moves and follows the camera center sticking to height 0.
+- `[0,0,0]` is the origin, a point, after gluing this point sits at orthometric height / sea-level height / the "0" height in MapLibre, and its longitude/latitude in the MapLibre world is `map.getCenter()`. Whenever the MapLibre camera moves, The entire LocalSpace moves with it such that `[0,0,0]` is always the camera center sticking to height 0.
 - `[1,0,0]` points "right" - we want this aligned with MapLibre's east
 - `[0,1,0]` points up
 - `[0,0,1]` points Z+ - we want this aligned with MapLibre's south.
@@ -67,8 +67,8 @@ First, some terminology regarding our anchor points. This library always renders
 
 The process of gluing MapLibre to Three.js is as follows. On each MapLibre camera move:
 
-- Derive `Anchor4326` from `mapLibre.getCenter()`. Internally, MapLibre is rendering `Anchor4326` at its web mercator projected version which we call `AnchorWM`.
-- Convert `anchor4326` to `EcefAnchor` using proj4js.
+- Derive `Anchor4326`'s langitude and latitude from `mapLibre.getCenter()`. Internally, MapLibre is rendering `Anchor4326` at its web mercator projected version which we call `AnchorWM`, the height of `Anchor4326` is chosen to be 0 above sea level (orthometric).
+- Use the EGM96 (EPSG:5773) vertical datum to the `anchor4326` ellipsoidal height then convert `anchor4326` to `EcefAnchor` using proj4js.  
 - Calculate a transformation matrix (`ecefToLocal`) which moves the ECEF coordinate system such that `EcefAnchor` is at `[0,0,0]` in LocalSpace. This matrix is applied to the Three.JS scene.
 - Calculate a transformation matrix (`localToMap`) which manipulates the Three.js camera such that `[0,0,0]` renders at `AnchorWM`. This matrix is applied to the Three.JS camera.
 

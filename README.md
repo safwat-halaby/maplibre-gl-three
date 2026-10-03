@@ -1,7 +1,5 @@
 This library brings [Three.js](https://threejs.org/) capabilities into [MapLibre GL JS](https://maplibre.org/). It allows you to treat Three.js as a MapLibre custom layer, rendering anything Three.js can render (including [3D Tiles](https://cesium.com/why-cesium/3d-tiles/)) along with the MapLibre Style Spec. For 3D Tiles, the library internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
-Have a look at the **[docs website](https://maplibre-gl-three.readthedocs.io/)** for more info!
-
 **This project is not officially affiliated with MapLibre**
 
 ## Installation and basic usage
@@ -73,6 +71,13 @@ sphere.applyMatrix4(threeDManager.getEcefMatrix({ point: [-75.598, 40.040], heig
 layer.getScene().add(sphere);
 ```
 
+## Quick links
+
+From the [docs website](https://maplibre-gl-three.readthedocs.io/):
+
+- [Getting started guide](https://maplibre-gl-three.readthedocs.io/stable/getting-started/)
+- [Core principles](https://maplibre-gl-three.readthedocs.io/stable/principles/)
+
 ## Design philosophy
 
 - **Thin wrapper only:** The library glues between Three.js and MapLibre, then gets out of the way and lets the developer use the two libraries as natively as possible.
@@ -82,4 +87,8 @@ layer.getScene().add(sphere);
 
 ## License
 
-See [LICENSE.txt](LICENSE.txt).
+MIT license. Full license is in [LICENSE.txt](LICENSE.txt).
+
+## Source code
+
+[https://github.com/safwat-halaby/maplibre-gl-three](https://github.com/safwat-halaby/maplibre-gl-three)
