@@ -6,7 +6,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { getEcefCompassVectors } from '../helpers/coordinates';
 import { Asset, type AssetServices } from './asset';
-import type { LngLat, Load3dTilesOptions, ThreeDTilesAsset, MetersOffset, LngLatAlt } from '../interfaces';
+import type { Load3dTilesOptions, ThreeDTilesAsset, MetersOffset, LngLatAlt } from '../interfaces';
 
 export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
     placementRoot = new THREE.Group();
@@ -16,7 +16,9 @@ export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
     private gltfLoader: GLTFLoader | null = null;
     private abortController = new AbortController();
     private loaderPattern = /\.(gltf|glb)(\?.*)?$/i;
-    /** A single point representing the location of the 3D Tiles. Currently the center of the containing sphere. */
+    /** The unshifted ECEF center of the containing sphere, used as the fixed offset origin. */
+    private referenceOriginal: THREE.Vector3 | null = null;
+    /** A single point representing the current location of the 3D Tiles. */
     private reference: LngLatAlt | null = null;
     /** Configurable offset from the original reference point */
     private offset: MetersOffset;
@@ -101,24 +103,28 @@ export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
     }
 
     private rootLoaded = (): void => {
-        if (this.destroyed || this.reference) return;
+        if (this.destroyed || this.referenceOriginal) return;
         // calculate bounding sphere and designated its center as our reference point.
         const sphere = new THREE.Sphere();
         if (!this.tiles.getBoundingSphere(sphere)) {
             throw new Error('Failed to calculate 3D Tiles bounding sphere');
         }
-        this.reference = this.services.ecefToLngLatAlt(sphere.center);
+        this.referenceOriginal = sphere.center.clone();
         // apply offset (if needed) relative to the reference point.
         this.applyOffset();
     };
 
     private applyOffset(): void {
-        if (!this.reference) return;
-        const { east, up, south } = getEcefCompassVectors(...this.reference.point);
+        if (!this.referenceOriginal) return;
+        const referenceOriginalLngLat = this.services.ecefToLngLatAlt(this.referenceOriginal);
+        const { east, up, south } = getEcefCompassVectors(...referenceOriginalLngLat.point);
         this.placementRoot.position.set(0, 0, 0)
             .addScaledVector(east, this.offset.east)
             .addScaledVector(up, this.offset.up)
             .addScaledVector(south, this.offset.south);
+        this.reference = this.services.ecefToLngLatAlt(
+            this.referenceOriginal.clone().add(this.placementRoot.position),
+        );
         this.placementRoot.updateWorldMatrix(true, true);
         this.requestRepaint();
     }

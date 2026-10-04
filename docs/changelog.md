@@ -1,3 +1,7 @@
+## NEXT
+
+- Bugfix: A tile asset's `getReference()` function now takes tile offset into account.
+
 ## 2.0.0 - 2026-10-02
 
 **No behavioural changes.** The major version is due to the renaming of some helper functions.
