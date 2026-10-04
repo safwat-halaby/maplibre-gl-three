@@ -75,8 +75,8 @@ layer.getScene().add(sphere);
 
 From the [docs website](https://maplibre-gl-three.readthedocs.io/):
 
-- [Getting started guide](https://maplibre-gl-three.readthedocs.io/stable/getting-started/)
-- [Core principles](https://maplibre-gl-three.readthedocs.io/stable/principles/)
+- [Getting started guide](https://maplibre-gl-three.readthedocs.io/latest/getting-started/)
+- [Core principles](https://maplibre-gl-three.readthedocs.io/latest/principles/)
 
 ## Design philosophy
 

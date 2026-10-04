@@ -20,7 +20,7 @@ export class ThreeDManagerImpl {
     /** The MapLibre map instance. For the sake of a clean API, we "Steal" this from a layer when it's added to the map. */
     private mapInstance: MapLibreMap | null = null;
     /** The anchor matrices are responsible for converting between the different coordinate systems.
-     * The anchor is the main graphical trick of this library. See https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ and updateAnchor to make full sense of this.
+     * The anchor is the main graphical trick of this library. See https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ and updateAnchor to make full sense of this.
      *
      * localToEcef and ecefToLocal convert points between ECEF and LocalSpace.
      * localToMap converts from LocalSpace to the Web Mercator (by default) point that corresponds to Anchor4326.
@@ -71,7 +71,7 @@ export class ThreeDManagerImpl {
     /** Must call this before using threeDManager. Initializes services that are shared by all layers.
      * If vertical datums are enabled (default yes), will trigger a network request for fetching the vertical datum.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies and how to disable them}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies and how to disable them}
     */
     async init(): Promise<void> {
         if (this.status === 'destroyed') {
@@ -126,7 +126,7 @@ export class ThreeDManagerImpl {
      * - Used vertical datum: `EGM96 EPSG:5773`
      * - Output coordinates: `EPSG:4978`
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ | More info about the coordinate systems}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
     */
     lngLatAltToEcef(lngLatAlt: LngLatAlt): THREE.Vector3 {
         this.assertReady();
@@ -144,7 +144,7 @@ export class ThreeDManagerImpl {
      * - Used vertical datum: `EGM96 EPSG:5773`
      * - Output coordinates: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ | More info about the coordinate systems}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
      */
     ecefToLngLatAlt(point: THREE.Vector3): LngLatAlt {
         this.assertReady();
@@ -166,7 +166,7 @@ export class ThreeDManagerImpl {
      * - Source coordinates: `LocalSpace`
      * - Output coordinates: `EPSG:4978`
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ | More info about the coordinate systems}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
      */
     localSpaceToEcef(point: THREE.Vector3): THREE.Vector3 {
         this.assertReady();
@@ -184,7 +184,7 @@ export class ThreeDManagerImpl {
      * - Source coordinates: `EPSG:4978`
      * - Output coordinates: `LocalSpace`
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ | More info about the coordinate systems}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
      */
     ecefToLocalSpace(point: THREE.Vector3): THREE.Vector3 {
         this.assertReady();
@@ -200,7 +200,7 @@ export class ThreeDManagerImpl {
      * - Source coordinates: `LocalSpace`
      * - Output coordinates:  `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/coordinate-systems/ | More info about the coordinate systems}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
      */
     localSpaceToLngLatAlt(point: THREE.Vector3): LngLatAlt {
         return this.ecefToLngLatAlt(this.localSpaceToEcef(point));
@@ -276,7 +276,7 @@ export class ThreeDManagerImpl {
     /** 
      * Destroys the manager. This also recursively destroys all layers created by the manager and all assets created by those layers.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#object-hierarchy-and-lifecycle | More info about hierarchy and lifecycle}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#object-hierarchy-and-lifecycle | More info about hierarchy and lifecycle}
      */
     destroy(): void {
         if (this.isDestroyed()) return;

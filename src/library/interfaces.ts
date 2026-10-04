@@ -8,7 +8,7 @@ export type LngLat = [longitude: number, latitude: number];
  * If you've disabled vertical datum conversions, the orthometric height will be approximated to always equal the ellipsoidal height.
  * This may cause vertical offset issues if you're using 3D Tiles or other ECEF-based/ellipsoidal-height-based data sources along with MapLibre 3D terrain, which uses orthometric height.
  * 
- * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#heights-and-datums | More info about height handling}
+ * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#heights-and-datums | More info about height handling}
 */
 export interface LngLatAlt {
     point: LngLat;
@@ -46,8 +46,8 @@ export interface VerticalDatumOptions {
      * Ignored if the vertical datum corrections are disabled via
      * {@link VerticalDatumOptions.enabled}
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#heights-and-datums | More info about vertical datums in this library}
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#heights-and-datums | More info about vertical datums in this library}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies}
      * @see {@link https://github.com/OSGeo/PROJ-data/tree/master | More info about the datum file and the CDN}
      * @defaultValue `https://cdn.proj.org/us_nga_egm96_15.tif`
      */
@@ -56,8 +56,8 @@ export interface VerticalDatumOptions {
      * Whether to load and apply the vertical datum. When disabled, uses a
      * zero-undulation approximation.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#heights-and-datums | More info about vertical datums in this library}
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#heights-and-datums | More info about vertical datums in this library}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies}
      * @defaultValue true
      */
     enabled?: boolean;
@@ -75,7 +75,7 @@ export interface ThreeDManagerOptions {
      * This is used internally by 3d-tiles-renderer to decompress Draco-compressed 3D Tiles.
      * @defaultValue https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/draco/
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies}
      */
     dracoPath?: string;
     /**
@@ -83,15 +83,15 @@ export interface ThreeDManagerOptions {
      * This is used internally by 3d-tiles-rendrer.
      * @defaultValue https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/basis/
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies}
      */
     ktx2Path?: string;
     /**
      * Configuration for loading and applying a vertical datum, necessary for accurate above-sea-level calculations.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#heights-and-datums | More info about height handling}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#heights-and-datums | More info about height handling}
      * @see {@link https://github.com/OSGeo/PROJ-data/tree/master | More info about the vertical datum file}
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies}
      */
     verticalDatum?: VerticalDatumOptions;
     /**
@@ -115,7 +115,7 @@ export interface ThreeDManagerOptions {
      * 
      * If not supplied, the default transformation assumes MapLibre's internal coordinate system, Web Mercator.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/examples/repo/ | the repo example which uses a Plate Carree projection}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/examples/repo/ | the repo example which uses a Plate Carree projection}
      */
     getTransformParameters?: GetTransformParameters;
 }
@@ -126,7 +126,7 @@ export interface Load3dTilesOptions {
     /**
      * Offset in meters along east/up/south. Useful for correcting vertical errors.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#heights-and-datums | More info about height handling}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#heights-and-datums | More info about height handling}
      */
     offset?: MetersOffset;
     /**
@@ -148,7 +148,7 @@ export interface CreateLayerOptions {
      * If false, the MapLibre layers that came before will be interlaced, meaning visibility at each pixel is determined by whatever is closer to the camera. 
      * If both separatorBefore and separatorAfter are true (default), the depth is dictated solely by MapLibre layer order.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#layer-order-and-depth | More info about depth and layer order} 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#layer-order-and-depth | More info about depth and layer order} 
      */
     separatorBefore?: boolean;
     /** Clear depth after this layer's entire scene. Defaults to true.
@@ -156,7 +156,7 @@ export interface CreateLayerOptions {
      * If false, the MapLibre layers that come after will be interlaced, meaning visibility at each pixel is determined by whatever is closer to the camera. 
      * If both separatorBefore and separatorAfter are true (default), the depth is dictated solely by MapLibre layer order.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#layer-order-and-depth | More info about depth and layer order} 
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#layer-order-and-depth | More info about depth and layer order} 
      */
     separatorAfter?: boolean;
 }
@@ -175,7 +175,7 @@ export interface Asset {
     getObject3D(): Object3D;
     /** Removes and disposes this asset, leaving its layer and siblings alive.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#object-hierarchy-and-lifecycle | More info about hierarchy and lifecycle}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#object-hierarchy-and-lifecycle | More info about hierarchy and lifecycle}
     */
     destroy(): void;
 }
@@ -251,14 +251,14 @@ export interface ThreeLayer extends CustomLayerInterface {
      * 
      * May lazily load some loaders from the network either immediately or when the layer is added a MapLibre map. This can be modified.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#network-dependencies | More info about network dependencies and how to disable them}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies and how to disable them}
      */
     load3dTiles(options: Load3dTilesOptions): Promise<ThreeDTilesAsset>;
     /** Calls MapLibre's triggerRepaint(). */
     requestRepaint(): void;
     /** Permanently removes the layer and destroys all child assets.
      * 
-     * @see {@link https://maplibre-gl-three.readthedocs.io/stable/principles/#object-hierarchy-and-lifecycle | More info about hierarchy and lifecycle}
+     * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#object-hierarchy-and-lifecycle | More info about hierarchy and lifecycle}
     */
     destroy(): void;
 }
