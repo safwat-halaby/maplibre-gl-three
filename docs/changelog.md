@@ -20,6 +20,9 @@
     - `threeDmanager.createLayer({three: {rendererOptions: WebGLRendererParameters}})` 
 - `load3dTiles` now has an [autoLoaders](api/index.md#autoloaders) boolean which can be set to false to control the loaders and extensions directly.
 
+**Security:**
+
+- Local dev server now only binds to localhost.
 
 ## 2.0.0 - 2026-10-02
 

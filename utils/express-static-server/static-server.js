@@ -7,6 +7,6 @@ const PORT = parseInt(process.argv[2]);
 const app = express();
 app.use(express.static('www'));
 app.use('/library', express.static('dist'));
-app.listen(PORT, () => {
+app.listen(PORT, '127.0.0.1', () => {
     console.log(`Listening on port ${PORT}.\nBrowse to http://localhost:${PORT}/ to run the non-npm examples.`);
 });
