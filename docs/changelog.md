@@ -1,4 +1,4 @@
-## NEXT
+## Next version
 
 - Bugfix: A tile asset's `getReference()` function now takes tile offset into account.
 - Minor API breakage. The Three.JS getters are now under a namespace:
