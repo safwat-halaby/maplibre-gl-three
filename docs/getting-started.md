@@ -67,8 +67,8 @@ Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [map
 You can use the Tile Asset's [getTilesRenderer()](api/index.md#gettilesrenderer) to get access to the underlying 3d-tiles-renderer object. In this example, we use an event listener to zoom into the 3D Tiles once they are loaded.
 
 ```js
-tiles3d.getTilesRenderer().addEventListener('load-root-tileset', () => {
-    const tilesPosition = tiles3d.getReference();
+tilesAsset.getTilesRenderer().addEventListener('load-root-tileset', () => {
+    const tilesPosition = tilesAsset.getReference();
     map.flyTo({center: tilesPosition.point, zoom: 16});
 });
 ```
