@@ -136,6 +136,9 @@ export class ThreeLayerImpl implements ThreeLayer {
 
     render(_gl: WebGLRenderingContext | WebGL2RenderingContext, args: CustomRenderMethodInput): void {
         if (this.destroyed || !this.renderer || !this.mapInstance) return;
+        if (args.defaultProjectionData.projectionTransition > 0) {
+            return;
+        }
         this.services.updateAnchor(); // triggers threeDManager's updateAnchor which in turn may trigger this.applyAnchor
         this.cameraSync.update(this.camera, args, this.localToMap);
         this.scene.updateMatrixWorld(true);

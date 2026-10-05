@@ -12,7 +12,7 @@
 - `new ThreeDManager({..., dracoPath,ktx2Path});` became `new ThreeDManager({..., tilesRendererConfig: { dracoPath, ktx2Path }});`
 - `ThreeDTilesOffset` was renamed to `MetersOffset`.
 
-**Nonbreaking API additions:**
+**Nonbreaking additions:**
 
 - It is now possible to pass raw Three.JS options when calling [ThreeDManager.createLayer()](api/index.md#createlayer). Example:
     - `threeDmanager.createLayer({three: {rendererOptions: WebGLRendererParameters}})` 
@@ -24,6 +24,7 @@
 - Local dev server now only binds to localhost.
 - Bilinear interpolation now works properly on the edges of the raster (wraps around longitude, clamps latitude).
 - Bilenear interpolation unit test does not make CDN network calls anymore.
+- Hide `ThreeLayer` on low zooms in globe projection to prevent rendering the scene with the wrong projection.
 
 ## 2.0.0 - 2026-10-02
 

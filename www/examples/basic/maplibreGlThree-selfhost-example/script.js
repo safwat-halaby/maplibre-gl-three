@@ -29,7 +29,7 @@ map.on('load', async () => {
     await threeDManager.init();
     const layer = threeDManager.createLayer();
     const tilesAsset = await layer.load3dTiles({
-        tilesetUrl: 'https://tiles.arcgis.com/tiles/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Utrecht_3D_Tiles_Integrated_Mesh/3DTilesServer/tileset.json',
+        tilesetUrl: '/datasets/agi-hq/tileset.json',
         offset: { east: 0, up: -234, south: 0 },
         tilesRendererOptions: { maxDepth: 5 }
     });
