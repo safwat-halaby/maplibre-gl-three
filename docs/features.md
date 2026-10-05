@@ -16,8 +16,8 @@
 
 ## Known issues / bugs
 
-- On extreme zoom-outs from a 3d tile or Three.js scene, once the map center leaves the scene boundaries, the scene will become progressively more misaligned with MapLibre the more you pan away from it.
-- Globe projections are supported partially. The ThreeLayer is hidden on low zoom levels but is shown correctly on high zoom.
+- On extreme zoom-outs from a 3D Tiles model or Three.js scene, once the map center leaves the scene boundaries, the scene will become progressively more misaligned with MapLibre the more you pan away from it.
+- Globe projections are supported partially. The `ThreeLayer` is hidden on low zoom levels but is shown correctly on high zoom.
 
 ## Inherent limitations
 

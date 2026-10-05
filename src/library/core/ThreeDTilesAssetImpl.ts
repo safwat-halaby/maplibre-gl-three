@@ -61,7 +61,7 @@ export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
         this.applyOffset();
     }
 
-    /** Called by ThreeDTilesAssetImpl */
+    /** Called by `ThreeLayerImpl` */
     attach(camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer): void {
         if (this.autoLoaders) {
             if (!this.gltfLoader) {
@@ -80,12 +80,12 @@ export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
         this.tilesRenderer.setResolutionFromRenderer(camera, renderer);
     }
 
-    /** Called by ThreeDTilesAssetImpl */
+    /** Called by `ThreeLayerImpl` */
     detach(camera: THREE.PerspectiveCamera): void {
         this.tilesRenderer.deleteCamera(camera);
     }
 
-    /** Called by ThreeDTilesAssetImpl's "render" function. */
+    /** Called by `ThreeLayerImpl`'s `render` function. */
     update(camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer): void {
         if (this.destroyed) return;
         const canvas = renderer.domElement;

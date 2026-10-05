@@ -44,7 +44,7 @@ export type {
 };
 
 /** This class is the entry point of this library. It manages a MapLibre map's 3D layers.
- * If you have multiple MapLibre maps, you should use a separate ThreeDManager for each.
+ * If you have multiple MapLibre maps, you should use a separate `ThreeDManager` for each.
  * */
 export class ThreeDManager extends ThreeDManagerImpl {
     /** @see {@link ThreeDManagerOptions} */

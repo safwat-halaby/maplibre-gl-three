@@ -4,7 +4,7 @@ This page assumes you've [installed](installation.md) `maplibre-gl-three` and th
 
 ## ThreeDManager
 
-You always start with a [ThreeDManager](api/index.md#threedmanager). It has various [constructor options](api/index.md#threedmanageroptions), all optional. You'll probably want to call the [init method](api/index.md#init) immediately.
+You always start with a [`ThreeDManager`](api/index.md#threedmanager). It has various [constructor options](api/index.md#threedmanageroptions), all optional. You'll probably want to call the [`init()`](api/index.md#init) method immediately.
 
 ```js
 import {ThreeDManager} from 'maplibre-gl-three';
@@ -15,18 +15,18 @@ await threeDManager.init();
 
 ## ThreeLayer
 
-Next, you'll probably want to call [ThreeDManager.createLayer](api/index.md#createlayer). It also has various [optional parameters](api/index.md#createlayeroptions). It returns a [ThreeLayer](api/index.md#threelayer), which can be added directly to a MapLibre map.
+Next, you'll probably want to call [`ThreeDManager.createLayer()`](api/index.md#createlayer). It also has various [optional parameters](api/index.md#createlayeroptions). It returns a [`ThreeLayer`](api/index.md#threelayer), which can be added directly to a MapLibre map.
 
 ```js
 const layer = threeDManager.createLayer();
 map.on('load', () => map.addLayer(layer));
 ```
 
-MapLibre layer order is honored by default. [addLayer](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#addlayer) adds the layer last by default. You can control depth by adding the layer elsewhere.
+MapLibre layer order is honored by default. [`addLayer()`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#addlayer) adds the layer last by default. You can control depth by adding the layer elsewhere.
 
 ## 3D Tiles Asset
 
-You can call [ThreeLayer.load3dTiles](api/index.md#load3dtiles) with various [options](api/index.md#load3dtilesoptions) to create a [ThreeDTilesAsset](api/index.md#threedtilesasset).
+You can call [`ThreeLayer.load3dTiles()`](api/index.md#load3dtiles) with various [options](api/index.md#load3dtilesoptions) to create a [`ThreeDTilesAsset`](api/index.md#threedtilesasset).
 
 ```js
 const tilesAsset = await layer.load3dTiles({
@@ -42,9 +42,9 @@ const tilesAsset = await layer.load3dTiles({
 
 Suppose you want to load a regular Three.js object.  
 
-[ThreeDManager](api/index.md#threedmanager) has various methods to help you with coordinate system conversions. In the following example, we use `getEcefMatrix` to convert from the typical longitude/latitude(`EPSG:4326`) coordinates to ECEF(`EPSG:4978`).
+[`ThreeDManager`](api/index.md#threedmanager) has various methods to help you with coordinate system conversions. In the following example, we use `getEcefMatrix()` to convert from the typical longitude/latitude (`EPSG:4326`) coordinates to ECEF (`EPSG:4978`).
 
-Additionally, you can use [ThreeLayer.three](api/index.md#threelayergetters) to access the raw ThreeJS objects like the camera, scene, and so on. Putting it all together:
+Additionally, you can use [`ThreeLayer.three`](api/index.md#threelayergetters) to access the raw Three.js objects like the camera, scene, and so on. Putting it all together:
 
 ```js
 import * as THREE from 'three';
@@ -59,12 +59,12 @@ layer.three.getScene().add(sphere);
 
 ### Programmatically calculating terrain height
 
-Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [map.queryTerrainElevation()](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#queryterrainelevation) to determine an object's height rather than hardcoding a 130.
+Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [`map.queryTerrainElevation()`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#queryterrainelevation) to determine an object's height rather than hardcoding a `130`.
 
 
 ## Accessing 3d-tiles-renderer / Centering the map on load
 
-You can use the Tile Asset's [getTilesRenderer()](api/index.md#gettilesrenderer) to get access to the underlying 3d-tiles-renderer object. In this example, we use an event listener to zoom into the 3D Tiles once they are loaded.
+You can use the Tile Asset's [`getTilesRenderer()`](api/index.md#gettilesrenderer) to get access to the underlying 3d-tiles-renderer object. In this example, we use an event listener to zoom into the 3D Tiles once they are loaded.
 
 ```js
 tilesAsset.getTilesRenderer().addEventListener('load-root-tileset', () => {
@@ -77,16 +77,16 @@ tilesAsset.getTilesRenderer().addEventListener('load-root-tileset', () => {
 
 **Occlusion / interlacing**
 
-You can also add `{separatorAfter: false}` to the `createLayer` options. It means:
+You can also add `{separatorAfter: false}` to the [`ThreeDManager.createLayer()`](api/index.md#createlayer) options. It means:
 
-- All layers before the ThreeLayer are unaffected (MapLibre layer order still honored).
-- All layers after the ThreeLayer may occlude or be occluded by the ThreeLayer, depending on what's closer to the camera.
+- All layers before the `ThreeLayer` are unaffected (MapLibre layer order still honored).
+- All layers after the `ThreeLayer` may occlude or be occluded by the `ThreeLayer`, depending on what's closer to the camera.
 
-`{separatorBefore: false}` performs the same logic for the layers before. Both options can be disabled at once. By default, both options are true.
+`{separatorBefore: false}` performs the same logic for the layers before. Both options can be disabled at once. By default, both options are `true`.
 
-**Multiple ThreeLayers**
+**Multiple `ThreeLayer` instances**
 
-For ultimate depth control, feel free to use as many ThreeLayer instances as you want. You can put regular MapLibre layers in between them / before them / after them in any order. Note that each ThreeLayer has its own underlying Three.js instance.
+For ultimate depth control, feel free to use as many `ThreeLayer` instances as you want. You can put regular MapLibre layers in between them / before them / after them in any order. Note that each `ThreeLayer` has its own underlying Three.js instance.
 
 ## End
 

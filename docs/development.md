@@ -1,6 +1,6 @@
 # Development
 
-The code is currently hosted at [Github](https://github.com/safwat-halaby/maplibre-gl-three). The TypeScript source code lives in `src/library`. To generate the library in the `dist/` folder:
+The code is currently hosted at [GitHub](https://github.com/safwat-halaby/maplibre-gl-three). The TypeScript source code lives in `src/library`. To generate the library in the `dist/` folder:
 
 ```
 npm install
@@ -14,11 +14,11 @@ For subsequent runs, `npm run build:watch` is enough as long as dependencies are
 
 You probably also want to run a basic browser frontend project in parallel, which uses your local version of the `dist/` folder as a dependency. There are 2 methods:
 
-1. Use [www/examples/basic/maplibreGlThree-npm-example](https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/basic/maplibreGlThree-npm-example).
+1. Use [`www/examples/basic/maplibreGlThree-npm-example`](https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/basic/maplibreGlThree-npm-example).
   - Point that project to the local `dist` files rather than the npm registry by running `npm run local_dependency`
   - Then run that project according to its readme.
 
-2. Use [maplibreGlThree-selfhost-example](https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/basic/maplibreGlThree-selfhost-example). Run `./node-static-server.sh` and browse to `http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html`.
+2. Use [`maplibreGlThree-selfhost-example`](https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/basic/maplibreGlThree-selfhost-example). Run `./node-static-server.sh` and browse to `http://localhost:6153/examples/basic/maplibreGlThree-selfhost-example/index.html`.
 
 In either case refresh your page after changing things in the library's source code.
 
@@ -44,9 +44,9 @@ python -m uv pip compile --python-version 3.12 --output-file docs/requirements.t
 
 Use ordinary text for library display names, geographic concepts, and measurements: Three.js, Web Mercator, 
 
-Use inline code (backticks) for exact identifiers and code: `ThreeDManager`, `height`, `true`, `layer.load3dTiles()`.
+Use inline code (backticks) for exact identifiers and code: `ThreeDManager`, `height`, `true`, `layer.load3dTiles()`. If it's a function call, always have `()`.
 
-Use inline code for EPSG codes, package names, paths, commands, and version strings: `EPSG:4326`, `maplibre-gl-three`, `docs/index.md`, `npm run build`, `2.0.0`.
+Use inline code for EPSG codes, package names, paths, commands, and version strings: `EPSG:4326`, `maplibre-gl-three`, `docs/index.md`, `npm run build`, `2.0.0`. Exceptions: Version numbers in the changelog titles. Version numbers not involving semantic versioning e.g. "MapLibre 6" in prose.
 
 Write exact geographical numbers with backticks, e.g. `-20037508.3427892`.
 
@@ -58,7 +58,7 @@ API links in markdown use backticks and link to `api/index.md`:
 See [`ThreeDManager`](api/index.md#threedmanager)
 ```
 
-API links in TsDoc use `@link` e.g.
+API links in TSDoc use `@link` e.g.
 
 ```text
 {@link ThreeDManager}
@@ -75,13 +75,13 @@ Whether to use a link or not for classes/methods is context dependant. Apply jud
   - 3d-tiles-renderer
   - GeoTIFF.js
 - Data formats
-  - 3D Tiles, GeoJSON, GeoTIFF, gLTF, GLB, KTX2
+  - 3D Tiles, GeoJSON, GeoTIFF, glTF, GLB, KTX2
 - Runtime, development related stuff:
-  - npm, Node.js, Javascript, TypeScript, GitHub, Read the Docs, jsDelivr, WebGL
+  - npm, Node.js, JavaScript, TypeScript, GitHub, Read the Docs, jsDelivr, WebGL
 - Coordinate systems and EPSG codes:
-  - WGS 84 (`EPSG:4326`)
+  - WGS84 (`EPSG:4326`)
   - ECEF (`EPSG:4978`)
   - Web Mercator (`EPSG:3857`)
   - EGM96 height (`EPSG:5773`)
-  - WGS 84 + EGM96 height (`EPSG:9707`)
+  - WGS84 + EGM96 height (`EPSG:9707`)
   - One doesn't always have to specify both the display name and EPSG. apply common sense.

@@ -1,6 +1,6 @@
-As of MapLibre 6, using non-Web Mercator background tiles is very tricky, but this demo demonstrates that it is possible with enough hacks. We demonstrate a Plate Carree background map (sometimes referred to as unprojected EPSG:4326 / unprojected WGS84 / Equirectangular projection) in MapLibre, along with a MapLibre Style Spec and 3D Tiles.
+As of MapLibre 6, using non-Web Mercator background tiles is very tricky, but this demo demonstrates that it is possible with enough hacks. We demonstrate a Plate Carree background map (sometimes referred to as unprojected `EPSG:4326` / unprojected WGS84 / Equirectangular projection) in MapLibre, along with a MapLibre Style Spec and 3D Tiles.
 
-Normally, MapLibre expects the background maps to be projected using the Web Mercator (EPSG:3857) projection.
+Normally, MapLibre expects the background maps to be projected using the Web Mercator (`EPSG:3857`) projection.
 
 This demo "lies" to MapLibre by using a Plate Carree projection for the background map in `style.json`. To visually see the difference, observe that when zooming out, Greenland is "squashed" in this example, while in the rest of the examples, Greenland is stretched (Web Mercator). The squashing is one indicator of a Plate Carree background map.
 

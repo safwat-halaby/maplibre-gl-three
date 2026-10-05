@@ -47,7 +47,7 @@ const threeDManager = new ThreeDManager({
     }
 });
 ```
-This has consequences if you're using additional externally sourced ECEF coordinates; they will not sit correctly on your 3D tiles or MapLibre map.
+This has consequences if you're using additional externally sourced ECEF coordinates; they will not sit correctly on your 3D Tiles or MapLibre map.
 
 ## I am seeing weird vertical lines on the edges of terrain tiles
 
@@ -83,7 +83,7 @@ const map = new Map({
 
 ```js
 // map is the MapLibre map
-// tilesAsset is the object returned from `load3dTiles`
+// tilesAsset is the object returned from `load3dTiles()`
 tilesAsset.getTilesRenderer().addEventListener('load-root-tileset', () => {
     const tilesPosition = tilesAsset.getReference();
     map.flyTo({center: tilesPosition.point, zoom: 16});
@@ -92,7 +92,7 @@ tilesAsset.getTilesRenderer().addEventListener('load-root-tileset', () => {
 
 **If it's a missing 3D Tiles extension issue:**
 
-If the console reports a missing extension or loader, you should probably set [threeLayer.load3dTiles({autoLoaders: false})](api/index.md#load3dtilesoptions) and then add the proper loaders yourself. If I missed a very common loader, I should add it to the `autoLoaders` list. [Contact me](contact.md).
+If the console reports a missing extension or loader, you should probably set [`threeLayer.load3dTiles({autoLoaders: false})`](api/index.md#load3dtilesoptions) and then add the proper loaders yourself. If I missed a very common loader, I should add it to the `autoLoaders` list. [Contact me](contact.md).
 
 ## How do I center the map on the 3D Tiles?
 

@@ -33,4 +33,4 @@ We then use a simple web server to serve the generated `www/dependencies/` direc
 
 If you are making changes to `maplibre-gl-three`, this example can be used as a testing ground mock project, since it directly imports the compiled library. For convenience can run the library compilation in watch mode with `npm run build:watch`. You still have to manually refresh the html page on each change.
 
-Alternatively, the NPM example can be used for the same purpose.
+Alternatively, the npm example can be used for the same purpose.

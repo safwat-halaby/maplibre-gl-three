@@ -28,11 +28,11 @@ Within a layer itself, depth is ruled by distance from camera by default. Nearer
 
 *Before reading this, make sure you understand the difference between 3D Tiles and MapLibre's 3D terrain.*
 
-Georeferenced 3D Tiles work in ECEF coordinates; a 3-number coordinate representing an offset from the Earth's core. (0,0,0) is the Earth's center. ECEF does not really care about sea level.
+Georeferenced 3D Tiles work in ECEF coordinates; a 3-number coordinate representing an offset from the Earth's core. `[0, 0, 0]` is the Earth's center. ECEF does not really care about sea level.
 
 On the other hand, MapLibre uses longitude/latitude, and MapLibre 3D terrain uses height above sea level (orthometric height).
 
-As strange as it sounds, sea level is [not uniform](https://en.wikipedia.org/wiki/Geoid), so converting from ECEF to MapLibre's height cannot happen with pure math alone, and requires a dataset known as a vertical datum. By default, this library loads the EGM96 datum from https://cdn.proj.org/us_nga_egm96_15.tif (2.6MiB) as soon as the `threeDManager` is initialized. More info about the file and the CDN used can be found [here](https://github.com/OSGeo/PROJ-data/tree/master). The vertical datum is used whenever you convert from `ECEF` to `lngLatAlt` or vice versa. You can configure a different URL to fetch from, or you can disable the vertical datum altogether, in which case any ECEF to `lngLatAlt` will yield ellipsoidal height, and not sea-level height.
+As strange as it sounds, sea level is [not uniform](https://en.wikipedia.org/wiki/Geoid), so converting from ECEF to MapLibre's height cannot happen with pure math alone, and requires a dataset known as a vertical datum. By default, this library loads the EGM96 datum from https://cdn.proj.org/us_nga_egm96_15.tif (2.6MiB) as soon as the `threeDManager` is initialized. More info about the file and the CDN used can be found [here](https://github.com/OSGeo/PROJ-data/tree/master). The vertical datum is used whenever you convert from ECEF to `lngLatAlt` or vice versa. You can configure a different URL to fetch from, or you can disable the vertical datum altogether, in which case any ECEF to `lngLatAlt` will yield ellipsoidal height, and not sea-level height.
 
 Note that if the original data itself has vertical errors, the automatic datum corrections cannot fix those, and you would need to offset the objects manually.
 
@@ -46,7 +46,7 @@ If you are using 3D Tiles as a "background" on which you wish to draw MapLibre S
 
 **If you do not wish to load 3D terrain and have relatively flat-grounded 3D Tiles:**
 
-MapLibre will render all the features at sea level (0) since you have no terrain. In this case, you can disable the vertical datum, and manually offset the 3D Tiles model until it sits at sea level (0) as well. This only works well with 3D Tiles that have mostly flat ground, because the MapLibre features would all be at the same height of 0.
+MapLibre will render all the features at sea level (`0`) since you have no terrain. In this case, you can disable the vertical datum, and manually offset the 3D Tiles model until it sits at sea level (`0`) as well. This only works well with 3D Tiles that have mostly flat ground, because the MapLibre features would all be at the same height of `0`.
 
 **If you do not wish to load 3D terrain and your 3D Tiles are not flat-grounded:**
 

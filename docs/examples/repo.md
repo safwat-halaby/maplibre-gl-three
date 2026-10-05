@@ -12,5 +12,5 @@ The [code repository](https://github.com/safwat-halaby/maplibre-gl-three) includ
 ## Installation examples
 
 - [Sanity test](https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/basic/maplibreGlThree-selfhost-example). A "selfhost" direct browser import example. All the assets are in the repository. Renders 3D Tiles, MapLibre Style Spec, and a fox model.
-- [NPM example](https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/basic/maplibreGlThree-npm-example). An npm skeleton project. Renders 3D Tiles (from a CDN) and a MapLibre Style Spec.
+- [npm example](https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/basic/maplibreGlThree-npm-example). An npm skeleton project. Renders 3D Tiles (from a CDN) and a MapLibre Style Spec.
 - [CDN example](https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/basic/maplibreGlThree-cdn-example). A direct browser import from a CDN. Renders 3D Tiles and a MapLibre Style Spec.

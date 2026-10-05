@@ -5,18 +5,18 @@ import type { GetTransformParameters, LngLat, LngLatAlt } from '../interfaces';
 proj4.defs('EPSG:4978', '+proj=geocent +datum=WGS84 +units=m +no_defs');
 
 
-/** Convert from EPSG:4978 to EPSG:4979 
- * - EPSG:4979: WGS84 (EPSG:4326) + height above the ellipsoid
- * - EPSG:4978: ECEF
+/** Convert from `EPSG:4979` to `EPSG:4978`
+ * - `EPSG:4979`: WGS84 (`EPSG:4326`) + height above the ellipsoid
+ * - `EPSG:4978`: ECEF
  */
 export function wgs84WithEllipsoidalHeightToEcef(lngLatAlt: LngLatAlt): Vector3 {
     const [x, y, z] = proj4('EPSG:4326', 'EPSG:4978', [...lngLatAlt.point, lngLatAlt.height]) as [number, number, number];
     return new Vector3(x, y, z);
 }
 
-/** Convert from EPSG:4978 to EPSG:4979
- * - EPSG:4978: ECEF
- * - EPSG:4979: WGS84 (EPSG:4326) + height above the ellipsoid */
+/** Convert from `EPSG:4978` to `EPSG:4979`
+ * - `EPSG:4978`: ECEF
+ * - `EPSG:4979`: WGS84 (`EPSG:4326`) + height above the ellipsoid */
 export function ecefToWgs84WithEllipsoidalHeight(point: Vector3): LngLatAlt {
     const [longitude, latitude, height] = proj4('EPSG:4978', 'EPSG:4326', point.toArray()) as [number, number, number];
     return { point: [longitude, latitude], height };
@@ -46,7 +46,7 @@ export function getEcefCompassVectors(lng: number, lat: number) {
 }
 
 /** Orient model-local X/Y/Z along east/up/south at a longitude/latitude in degrees.
- * You should probably prefer ThreeDManager's getEcefMatrix which also includes translation, unless you're doing advanced stuff.
+ * You should probably prefer {@link ThreeDManager.getEcefMatrix} which also includes translation, unless you're doing advanced stuff.
  */
 export function getEcefOrientationMatrix(lngLat: LngLat | LngLatAlt): Quaternion {
     const [lng, lat] = Array.isArray(lngLat) ? lngLat : lngLat.point;
@@ -88,8 +88,8 @@ export function ecefToLocalMatrix(anchor: LngLat, ellipsoidalHeight: number): Ma
 }
 
 /** Returns an affine-transformation on anchor-relative coordinates. The specific transformation
- * is determined by getTransformParameters. We use the returned matrix to translate LocalSpace coordinates where the anchor is 0,0,0
- * to the coordinates which the map needs. The default getTransformParameters passed from ThreeDManager assumes a Web Mercator MapLibre map.
+ * is determined by `getTransformParameters`. We use the returned matrix to translate LocalSpace coordinates where the anchor is `[0, 0, 0]`
+ * to the coordinates which the map needs. The default `getTransformParameters` passed from {@link ThreeDManager} assumes a Web Mercator MapLibre map.
  */
 export function affineTransformation(anchor: LngLat, getTransformParameters: GetTransformParameters): Matrix4 {
     const transform = getTransformParameters(anchor);

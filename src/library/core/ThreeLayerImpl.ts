@@ -8,8 +8,8 @@ import type { CreateLayerOptions, Load3dTilesOptions, LngLatAlt, ThreeDTilesAsse
 
 /** Dependency inversion interface for the layer.
  * Manager knows layer.
- * Manager supplies LayerServices to layer.
- * Layer calls layerServices and does not know manager directly.
+ * Manager supplies `LayerServices` to layer.
+ * Layer calls `layerServices` and does not know manager directly.
  */
 export interface LayerServices {
     debugMode: boolean;
@@ -94,7 +94,7 @@ export class ThreeLayerImpl implements ThreeLayer {
 
     requestRepaint = (): void => { this.mapInstance?.triggerRepaint(); };
 
-    /** Called by ThreeDManager's updateAnchor */
+    /** Called by `ThreeDManager`'s `updateAnchor` */
     applyAnchor(anchor: AnchorMatrices): void {
         this.scene.matrix.copy(anchor.ecefToLocal);
         this.localToMap.copy(anchor.localToMap);

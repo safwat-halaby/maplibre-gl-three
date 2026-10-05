@@ -2,78 +2,78 @@
 
 To glue MapLibre and Three.js's cameras, we play around with 4 different coordinate systems. This document explains what each coordinate system is and then explains the gluing process.
 
-## ECEF (EPSG:4978) coordinate system (home of `EcefAnchor`)
+## ECEF (`EPSG:4978`) coordinate system (home of `EcefAnchor`)
 
-The coordinate system native to 3D Tiles and many other Geographical 3d constructs.
+The coordinate system native to 3D Tiles and many other Geographical 3D constructs.
 
 Individual objects in the Three.js scene use the ECEF coordinate system, but the whole scene is transformed to LocalSpace. (the `scene` object has an ecef-to-local transform matrix).
 
-- `[0,0,0]` is the center point in the Earth's core.
-- `[1,0,0]` points to Null Island (longitude 0, latitude 0). In a typical 2D map this is "towards the viewer".
-- `[0,0,1]` points to the North Pole.
-- `[0,1,0]` points to (longitude 90, latitude 0). In a typical 2D map this is to the right.
-- ECEF units are in meters. `[0,0,3]` is 3 meters towards the North Pole and away from the center point in the Earth's core.
+- `[0, 0, 0]` is the center point in the Earth's core.
+- `[1, 0, 0]` points to Null Island (longitude `0`, latitude `0`). In a typical 2D map this is "towards the viewer".
+- `[0, 0, 1]` points to the North Pole.
+- `[0, 1, 0]` points to (longitude `90`, latitude `0`). In a typical 2D map this is to the right.
+- ECEF units are in meters. `[0, 0, 3]` is 3 meters towards the North Pole and away from the center point in the Earth's core.
 
 ## LocalSpace coordinate system (home of `Origin`)
 
 A coordinate system where 
 
-- `[0,0,0]` is the origin, a point, after gluing this point sits at orthometric height / sea-level height / the "0" height in MapLibre, and its longitude/latitude in the MapLibre world is `map.getCenter()`. Whenever the MapLibre camera moves, The entire LocalSpace moves with it such that `[0,0,0]` is always the camera center sticking to height 0.
-- `[1,0,0]` points "right" - we want this aligned with MapLibre's east
-- `[0,1,0]` points up
-- `[0,0,1]` points Z+ - we want this aligned with MapLibre's south.
+- `[0, 0, 0]` is the origin, a point, after gluing this point sits at orthometric height / sea-level height / the `0` height in MapLibre, and its longitude/latitude in the MapLibre world is `map.getCenter()`. Whenever the MapLibre camera moves, The entire LocalSpace moves with it such that `[0, 0, 0]` is always the camera center sticking to height `0`.
+- `[1, 0, 0]` points "right" - we want this aligned with MapLibre's east
+- `[0, 1, 0]` points up
+- `[0, 0, 1]` points Z+ - we want this aligned with MapLibre's south.
 - The units are meters.
 
 The Three.js raycaster works in LocalSpace, so we need to transform input coordinates from ECEF to local, and output coordinates from local to ECEF. This is demonstrated in the [raycaster demo](https://github.com/safwat-halaby/maplibre-gl-three/tree/master/www/examples/other/raycast) (live version coming soon).
 
-## WGS84 (EPSG:4326) coordinate system (home of `Anchor4326`)
+## WGS84 (`EPSG:4326`) coordinate system (home of `Anchor4326`)
 
-- This is the universally used "GPS coordinate" format. [longitude, latitude] in degrees.
-- Longitude is between -180 and +180
-- Latitude is between -90 and +90
-- Longitude 0 is the prime meridian crossing the Royal Observatory in London.
-- Latitude 0 is the equator
-- `[0,0]` is known as "Null Island", and is a place on the equator in the Pacific Ocean.
-- MapLibre uses this coordinate system in its API, but it internally projects it to Web Mercator (EPSG:3857).
+- This is the universally used "GPS coordinate" format. `[longitude, latitude]` in degrees.
+- Longitude is between `-180` and `+180`
+- Latitude is between `-90` and `+90`
+- Longitude `0` is the prime meridian crossing the Royal Observatory in London.
+- Latitude `0` is the equator
+- `[0, 0]` is known as "Null Island", and is a place on the equator in the Pacific Ocean.
+- MapLibre uses this coordinate system in its API, but it internally projects it to Web Mercator (`EPSG:3857`).
 
-## Web Mercator (EPSG:3857) coordinate system (home of `AnchorWM`)
+## Web Mercator (`EPSG:3857`) coordinate system (home of `AnchorWM`)
 
 - WGS84 is not flat and a flat world is more convenient. WGS84 is therefore often projected to some flat plane. Web Mercator is such a flat plane.
 - The Web Mercator plane is a square whose units are "meters" (but not really; I call them pseudo-meters).
 - On the equator, pseudo-meters equal meters. The higher north or south we go, the shorter the pseudo-meters get. MapLibre's `meterInMercatorCoordinateUnits()` converts between the two.
-- The square -20037508.3427892 to +20037508.3427892, making it ~40,075,016 in width and height. This is the Earth's circumference. Some implementations treat it as a -1 to 1 span or a 0 to 1 span. MapLibre treats it as a 0 to 1.
-- The longitude is simply linearly mapped. Longitude 0 is 0, longitude 180 is +20037508.3427892. Null Island sits in the middle of the square.
-- The latitude mapping is complex. The farther from the equator we get, the more stretched the map gets. At latitude 90 the stretch spans infinity.
-  To avoid this and to achieve a perfect square, Web Mercator is capped at about -85.05 to +85.05 latitude.
-- Not to be confused with the very similar but more geodetically faithful EPSG:3395 Mercator projection, used for maritime navigation among other things.
-- In MapLibre, web mercator coordinates also have a Z component. Quoting the docs of `MercatorCoordinate.fromLngLat`: "The z dimension of MercatorCoordinate is conformal. A cube in the mercator coordinate space would be rendered as a cube." - this is very relevant for stretching the Three.js up axis properly, namely in `getWebMercatorTransformParameters`.
+- The square `-20037508.3427892` to `+20037508.3427892`, making it ~40,075,016 in width and height. This is the Earth's circumference. Some implementations treat it as a `-1` to `1` span or a `0` to `1` span. MapLibre treats it as a `0` to `1`.
+- The longitude is simply linearly mapped. Longitude `0` is `0`, longitude `180` is `+20037508.3427892`. Null Island sits in the middle of the square.
+- The latitude mapping is complex. The farther from the equator we get, the more stretched the map gets. At latitude `90` the stretch spans infinity.
+  To avoid this and to achieve a perfect square, Web Mercator is capped at about `-85.05` to `+85.05` latitude.
+- Not to be confused with the very similar but more geodetically faithful `EPSG:3395` Mercator projection, used for maritime navigation among other things.
+- In MapLibre, Web Mercator coordinates also have a Z component. Quoting the docs of `MercatorCoordinate.fromLngLat()`: "The z dimension of `MercatorCoordinate` is conformal. A cube in the mercator coordinate space would be rendered as a cube." - this is very relevant for stretching the Three.js up axis properly, namely in `getWebMercatorTransformParameters()`.
 
 ## EPSG codes for vertical datums
 
 This library uses the EGM96 datum. Relevant EPSG codes:
 
-- EPSG:5773 - EGM96 height
-- EPSG:9707 (WGS84 + EGM96 height): Combines EPSG:4326 with EPSG:5773
-- EPSG:4979 - WGS84 + height above ellipsoid
+- `EPSG:5773` - EGM96 height
+- `EPSG:9707` (WGS84 + EGM96 height): Combines `EPSG:4326` with `EPSG:5773`
+- `EPSG:4979` - WGS84 + height above ellipsoid
 
 ## The gluing process
 
 First, some terminology regarding our anchor points. This library always renders the following points at the same spot on the screen. The gluing process is about making sure these points are essentially the same point, only in the different coordinate systems.
 
-- `Origin`: the `[0,0,0]` point in the Three.js world.
-- `Anchor4326`: a geographical point close to the camera center, longitude and latitude in the MapLibre world. Format: (longitude, latitude, altitude). Internally, MapLibre uses the Web Mercator for all its geographical points, and like other points this is projected and becomes what we call `AnchorWM`.
-- `AnchorWM`: the Web Mercator-projected version of `Anchor4326`. MapLibre works with Web mercator internally.
-- `EcefAnchor`: the point in the 3D Tiles world which corresponds to `Anchor4326`. Format (x, y, z) in meters from the Earth's core.
+- `Origin`: the `[0, 0, 0]` point in the Three.js world.
+- `Anchor4326`: a geographical point close to the camera center, longitude and latitude in the MapLibre world. Format: `[longitude, latitude, altitude]`. Internally, MapLibre uses the Web Mercator for all its geographical points, and like other points this is projected and becomes what we call `AnchorWM`.
+- `AnchorWM`: the Web Mercator-projected version of `Anchor4326`. MapLibre works with Web Mercator internally.
+- `EcefAnchor`: the point in the 3D Tiles world which corresponds to `Anchor4326`. Format `[x, y, z]` in meters from the Earth's core.
 
 The process of gluing MapLibre to Three.js is as follows. On each MapLibre camera move:
 
-- Derive `Anchor4326`'s longitude and latitude from `mapLibre.getCenter()`. Internally, MapLibre is rendering `Anchor4326` at its web mercator projected version which we call `AnchorWM`, the height of `Anchor4326` is chosen to be 0 above sea level (orthometric).
-- Use the EGM96 (EPSG:5773) vertical datum to calculate `anchor4326`'s ellipsoidal height then convert `anchor4326` to `EcefAnchor` using proj4js.  
-- Calculate a transformation matrix (`ecefToLocal`) which moves the ECEF coordinate system such that `EcefAnchor` is at `[0,0,0]` in LocalSpace. This matrix is applied to the Three.js scene.
-- Calculate a transformation matrix (`localToMap`) which manipulates the Three.js camera such that `[0,0,0]` renders at `AnchorWM`. This matrix is applied to the Three.js camera.
+- Derive `Anchor4326`'s longitude and latitude from `mapLibre.getCenter()`. Internally, MapLibre is rendering `Anchor4326` at its Web Mercator projected version which we call `AnchorWM`, the height of `Anchor4326` is chosen to be `0` above sea level (orthometric).
+- Use the EGM96 (`EPSG:5773`) vertical datum to calculate `anchor4326`'s ellipsoidal height then convert `anchor4326` to `EcefAnchor` using proj4js.  
+- Calculate a transformation matrix (`ecefToLocal`) which moves the ECEF coordinate system such that `EcefAnchor` is at `[0, 0, 0]` in LocalSpace. This matrix is applied to the Three.js scene.
+- Calculate a transformation matrix (`localToMap`) which manipulates the Three.js camera such that `[0, 0, 0]` renders at `AnchorWM`. This matrix is applied to the Three.js camera.
 
 Done!
 
 The naive approach to glue MapLibre with an ECEF world is to transform every single ECEF coordinate to a MapLibre-friendly Web Mercator coordinate. But this is an O(N) geographical calculation where N is every vertex in Three.js. Expensive!
 
-The main clever trick in this library is to ONLY geographically translate the `EcefAnchor` point. The rest of the ECEF points are translated by the same transformation matrix and are relative to `[0,0,0]` in meters as if the world is flat. Since it's a linear transformation, it's essentially instant in today's GPUs and it doesn't get more expensive with more vertices added. This is very accurate locally. But since we are assuming a flat earth, if we move away from the anchor we begin to lose precision. So we recalculate the (`ecefToLocal`) matrix on each MapLibre camera move.
+The main clever trick in this library is to ONLY geographically translate the `EcefAnchor` point. The rest of the ECEF points are translated by the same transformation matrix and are relative to `[0, 0, 0]` in meters as if the world is flat. Since it's a linear transformation, it's essentially instant in today's GPUs and it doesn't get more expensive with more vertices added. This is very accurate locally. But since we are assuming a flat earth, if we move away from the anchor we begin to lose precision. So we recalculate the (`ecefToLocal`) matrix on each MapLibre camera move.

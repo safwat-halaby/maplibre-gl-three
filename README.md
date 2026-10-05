@@ -4,7 +4,7 @@ This library brings [Three.js](https://threejs.org/) capabilities into [MapLibre
 
 ## Installation and basic usage
 
-**NPM install**:
+**npm install**:
 
 ```sh
 npm install three 3d-tiles-renderer maplibre-gl maplibre-gl-three 
@@ -88,7 +88,7 @@ From the [docs website](https://maplibre-gl-three.readthedocs.io/):
 
 ## License
 
-MIT license. Full license is in [LICENSE.txt](LICENSE.txt).
+MIT license. Full license is in [`LICENSE.txt`](LICENSE.txt).
 
 ## Source code
 

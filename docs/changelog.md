@@ -2,11 +2,11 @@
 
 **Breaking API changes:** The way raw parameters are passed to the underlying libraries was tweaked and namespaced.
 
-- The Three.js raw getters are now grouped under [ThreeLayer.three](api/index.md#three-1):
+- The Three.js raw getters are now grouped under [`ThreeLayer.three`](api/index.md#three-1):
     - `threeLayer.getScene()` => `threeLayer.three.getScene()`
     - `threeLayer.getRenderer()` => `threeLayer.three.getRenderer()`
     - `threeLayer.getCamera()` => `threeLayer.three.getCamera()`
--  Changes to [ThreeLayer.load3dTiles()](api/index.md#load3dtiles):
+-  Changes to [`ThreeLayer.load3dTiles()`](api/index.md#load3dtiles):
      - Previously: `threeLayer.load3dTiles({tilesetUrl, ..., maxDepth, preprocessURL})`
      - New API: `threeLayer.load3dTiles({tilesetUrl, ..., tilesRendererOptions: {maxDepth, preprocessURL}})`
 - `new ThreeDManager({..., dracoPath,ktx2Path});` became `new ThreeDManager({..., tilesRendererConfig: { dracoPath, ktx2Path }});`
@@ -14,9 +14,9 @@
 
 **Nonbreaking additions:**
 
-- It is now possible to pass raw Three.js options when calling [ThreeDManager.createLayer()](api/index.md#createlayer). Example:
+- It is now possible to pass raw Three.js options when calling [`ThreeDManager.createLayer()`](api/index.md#createlayer). Example:
     - `threeDManager.createLayer({three: {rendererOptions: {...}}})` 
-- `load3dTiles` now has an [autoLoaders](api/index.md#autoloaders) boolean which can be set to false to control the loaders and extensions directly.
+- `load3dTiles()` now has an [`autoLoaders`](api/index.md#autoloaders) boolean which can be set to `false` to control the loaders and extensions directly.
 
 **Bug fixes:**
 
@@ -31,11 +31,11 @@
 **No behavioural changes.** The major version is due to the renaming of some helper functions.
 
 - Documentation improvements
-- Rename and normalize the ThreeDManager coordinate conversion functions:
-    - `localVectorToEcef` => `localSpaceToEcef`
-    - `ecefToLocalVector` => `ecefToLocalSpace`
-    - `localVectorToLngLatAlt` => `localSpaceToLngLatAlt`
-    - `lngLatAltToLocal` => `lngLatAltToLocalSpace`
+- Rename and normalize the `ThreeDManager` coordinate conversion functions:
+    - `localVectorToEcef()` => `localSpaceToEcef()`
+    - `ecefToLocalVector()` => `ecefToLocalSpace()`
+    - `localVectorToLngLatAlt()` => `localSpaceToLngLatAlt()`
+    - `lngLatAltToLocal()` => `lngLatAltToLocalSpace()`
 
 
 ## 1.1.0 - 2026-10-01
@@ -74,12 +74,12 @@ The concept of a layer is now separate from the concept of a 3D Tiles asset. A l
 
 ## 0.0.9 - 2026-09-06
 
-- Migration to maplibre-gl 6
+- Migration to `maplibre-gl-js` version 6
 
 ## 0.0.8 - 2026-07-29
 
 - Rendering depth updates. The default behavior is now exactly MapLibre-style-like where the layer order in the style dictates the depth. Exposed depth controls; the user can now optionally render "interlaced" layers if they want to:
-  - on `getLayer`, one can optionally specify whether to clear the depth before/after the current layer (both default to true).
+  - on `getLayer()`, one can optionally specify whether to clear the depth before/after the current layer (both default to `true`).
   - exposed a "separator" custom layer that renders nothing and clears the depth. 
 
 ## 0.0.7 - 2026-07-22
@@ -88,7 +88,7 @@ The concept of a layer is now separate from the concept of a 3D Tiles asset. A l
 
 ## 0.0.6 - 2026-07-19
 
-- Exposed `maxDepth` in `load3dTiles`.
+- Exposed `maxDepth` in `load3dTiles()`.
 - Fixed typos in "Plate Carree".
 - Various DX tweaks
   - Restrict OSM maxzoom in examples
@@ -99,6 +99,6 @@ The concept of a layer is now separate from the concept of a 3D Tiles asset. A l
 ## 0.0.5 - 2026-07-16
 
 - TypeScript support.
-- Exposed an optional `preprocessUrl` callback for `load3dTiles`, allowing the user to modify the URLs before 3D Tiles resources are requested.
+- Exposed an optional `preprocessUrl` callback for `load3dTiles()`, allowing the user to modify the URLs before 3D Tiles resources are requested.
 - Added some support for Plate Carree slippy tiles, with some caveats that will be better documented later.
-- Internally, we now call `clearDepth` before rendering to resolve some visual artifacts.
+- Internally, we now call `clearDepth()` before rendering to resolve some visual artifacts.

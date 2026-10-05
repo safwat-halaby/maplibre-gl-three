@@ -20,17 +20,17 @@ export class ThreeDManagerImpl {
     /** The MapLibre map instance. For the sake of a clean API, we "Steal" this from a layer when it's added to the map. */
     private mapInstance: MapLibreMap | null = null;
     /** The anchor matrices are responsible for converting between the different coordinate systems.
-     * The anchor is the main graphical trick of this library. See https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ and updateAnchor to make full sense of this.
+     * The anchor is the main graphical trick of this library. See https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ and `updateAnchor` to make full sense of this.
      *
-     * localToEcef and ecefToLocal convert points between ECEF and LocalSpace.
-     * localToMap converts from LocalSpace to the Web Mercator (by default) point that corresponds to Anchor4326.
-     * (MapLibre's internal coordinate system is Web Mercator EPSG:3857, not WGS84 EPSG:4326).
+     * `localToEcef` and `ecefToLocal` convert points between ECEF and LocalSpace.
+     * `localToMap` converts from LocalSpace to the Web Mercator (by default) point that corresponds to `Anchor4326`.
+     * (MapLibre's internal coordinate system is Web Mercator (`EPSG:3857`), not WGS84 (`EPSG:4326`)).
      *
-     * The calculation of matrices is performed in updateAnchor(). The "input" is an Anchor4326 returned by the callback `calculateAnchorPoint`.
+     * The calculation of matrices is performed in `updateAnchor()`. The "input" is an `Anchor4326` returned by the callback `calculateAnchorPoint`.
      */
     private anchorMatrices: AnchorMatrices | null = null;
     private anchorDirty = true;
-    /** If true, will render some debug markers. Currently a LocalSpace axis system. */
+    /** If `true`, will render some debug markers. Currently a LocalSpace axis system. */
     private debugMode: boolean;
     private status : 'not_initialized' | 'initializing' | 'ready' | 'destroyed' = 'not_initialized';
     // CONSTRUCTOR PARAMETERS
@@ -38,7 +38,7 @@ export class ThreeDManagerImpl {
     private ktx2Path: string;
     private calculateAnchorPoint: calculateAnchorPoint;
     private getTransformParameters: GetTransformParameters;
-    /** The raster representing the geoid undulation. See this.getGeoidUndulation for more info. */
+    /** The raster representing the geoid undulation. See `this.getGeoidUndulation` for more info. */
     private verticalDatum: GeographicRaster;
     
 
@@ -70,7 +70,7 @@ export class ThreeDManagerImpl {
 
     isDestroyed(): boolean { return this.status === 'destroyed'; }
 
-    /** Must call this before using threeDManager. Initializes services that are shared by all layers.
+    /** Must call this before using `ThreeDManager`. Initializes services that are shared by all layers.
      * If vertical datums are enabled (default yes), will trigger a network request for fetching the vertical datum.
      * 
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies and how to disable them}
@@ -92,10 +92,10 @@ export class ThreeDManagerImpl {
         this.status = 'ready';
     }
 
-    /** Creates a new layer which implements the MapLibre customLayer interface and can be added to a MapLibre map.
+    /** Creates a new layer which implements the MapLibre `CustomLayerInterface` and can be added to a MapLibre map.
      * The layer exposes convenience functions for creating common assets such as 3D Tiles,
      * as well as lower-level Three.js primitives for rendering anything Three.js can render on a MapLibre custom layer.
-     * If no id is supplied, an id will be auto-generated.
+     * If no `id` is supplied, an `id` will be auto-generated.
     */
     createLayer(options?: CreateLayerOptions): ThreeLayer {
         if (!options) {
@@ -126,9 +126,9 @@ export class ThreeDManagerImpl {
      * If the vertical datum is enabled via {@link VerticalDatumOptions} (default yes), the input height is expected to be orthometric above sea level. 
      * Otherwise, the height is expected to be ellipsoidal. 
      * 
-     * - Source coordinates with vertical datum enabled: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
-     * - Source coordinates with vertical datum disabled: `EPSG:4979` (which is a `WGS84 (EPSG:4326)` point with ellipsoidal height)
-     * - Used vertical datum: `EGM96 EPSG:5773`
+     * - Source coordinates with vertical datum enabled: `EPSG:9707` (which is a WGS84 (`EPSG:4326`) point with orthometric EGM96 height (`EPSG:5773`))
+     * - Source coordinates with vertical datum disabled: `EPSG:4979` (which is a WGS84 (`EPSG:4326`) point with ellipsoidal height)
+     * - Used vertical datum: EGM96 (`EPSG:5773`)
      * - Output coordinates: `EPSG:4978`
      * 
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
@@ -148,9 +148,9 @@ export class ThreeDManagerImpl {
      * Otherwise, the height is ellipsoidal.
      * 
      * - Source coordinates: `EPSG:4978`
-     * - Used vertical datum: `EGM96 EPSG:5773`
-     * - Output coordinates with vertical datum enabled: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
-     * - Output coordinates with vertical datum disabled: `EPSG:4979` (which is a `WGS84 (EPSG:4326)` point with ellipsoidal height)
+     * - Used vertical datum: EGM96 (`EPSG:5773`)
+     * - Output coordinates with vertical datum enabled: `EPSG:9707` (which is a WGS84 (`EPSG:4326`) point with orthometric EGM96 height (`EPSG:5773`))
+     * - Output coordinates with vertical datum disabled: `EPSG:4979` (which is a WGS84 (`EPSG:4326`) point with ellipsoidal height)
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
      */
     ecefToLngLatAlt(point: THREE.Vector3): LngLatAlt {
@@ -170,7 +170,7 @@ export class ThreeDManagerImpl {
      * If raycasting, using {@link ThreeDManager.getAnchorEcefToLocalMatrix} and {@link ThreeDManager.getAnchorLocalToEcefMatrix} is probably cleaner.
      * 
      * 
-     * - Source coordinates: `LocalSpace`
+     * - Source coordinates: LocalSpace
      * - Output coordinates: `EPSG:4978`
      * 
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
@@ -189,7 +189,7 @@ export class ThreeDManagerImpl {
      * 
      * 
      * - Source coordinates: `EPSG:4978`
-     * - Output coordinates: `LocalSpace`
+     * - Output coordinates: LocalSpace
      * 
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
      */
@@ -207,9 +207,9 @@ export class ThreeDManagerImpl {
      * If the vertical datum is enabled via {@link VerticalDatumOptions} (default yes), the output height is orthometric above sea level. 
      * Otherwise, the height is ellipsoidal.
      * 
-     * - Source coordinates: `LocalSpace`
-     * - Output coordinates with vertical datum enabled: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
-     * - Output coordinates with vertical datum disabled: `EPSG:4979` (which is a `WGS84 (EPSG:4326)` point with ellipsoidal height)
+     * - Source coordinates: LocalSpace
+     * - Output coordinates with vertical datum enabled: `EPSG:9707` (which is a WGS84 (`EPSG:4326`) point with orthometric EGM96 height (`EPSG:5773`))
+     * - Output coordinates with vertical datum disabled: `EPSG:4979` (which is a WGS84 (`EPSG:4326`) point with ellipsoidal height)
      * 
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
      */
@@ -227,7 +227,7 @@ export class ThreeDManagerImpl {
      * Returns a matrix which, when applied to a Three.js object, places the object at the given location in ECEF space,
      * rotating it such that local +X points east, +Y points up, and +Z points south.
      * 
-     * This is often the simplest way to convert from lngLatAlt to ECEF, and is an alternative to {@link ThreeDManager.lngLatAltToEcef}
+     * This is often the simplest way to convert from `lngLatAlt` to ECEF, and is an alternative to {@link ThreeDManager.lngLatAltToEcef}
      * 
      * Typical usage: 
      * 
@@ -236,7 +236,7 @@ export class ThreeDManagerImpl {
      * ```
      * 
      * This method is also very useful on a Three.js group. The children of the group's positions can be manipulated
-     * as an offset from lngLatLat in meters.
+     * as an offset from `lngLatAlt` in meters.
      * 
      * This is equivalent to:
      * 
@@ -304,8 +304,8 @@ export class ThreeDManagerImpl {
     /** Ideally, the mean sea level follows the ellipsoid perfectly. In the real world the sea goes up and down because Earth's 
      * gravity is not perfectly uniform. (metalic density, etc). The actual mean sea level follows what's known as the geoid.
      * The geoid can be up to 100 meters higher/lower than the ellipsoid. The difference between the two is known as the geoid undulation.
-     * If the geoid is 30 meters below the ellipsoid at a certain point, this would return -30.
-     * This is calculated using the EGM96 (EPSG:5773) vertical datum.
+     * If the geoid is 30 meters below the ellipsoid at a certain point, this would return `-30`.
+     * This is calculated using the EGM96 (`EPSG:5773`) vertical datum.
      */
     private getGeoidUndulation(point: LngLat): number {
         return this.verticalDatum.getPixelValue(this.verticalDatum.wgs84ToPixels([...point]));
@@ -330,20 +330,20 @@ export class ThreeDManagerImpl {
             this.mapInstance?.off('move', this.moveHandler);
         }
     }
-    /** Update the geographical location of the anchor if it's dirty. What makes an anchor dirty is camera movement. See this.moveHandler.
+    /** Update the geographical location of the anchor if it's dirty. What makes an anchor dirty is camera movement. See `this.moveHandler`.
      * This is called by an attached layer when it needs to render itself.
      * It may be called multiple times in a frame if we have multiple layers, but only the first call would perform a calculation.
-     * Once an anchor is updated, the LocalSpace reference frame shifts. A Three.js 0,0,0 point is always where the anchor is.
+     * Once an anchor is updated, the LocalSpace reference frame shifts. A Three.js `[0, 0, 0]` point is always where the anchor is.
      */
     private updateAnchor(): void {
         if (!this.anchorDirty || !this.mapInstance) return;
-        // calculate the anchor point. The default calculation is "calculateWebMercatorAnchorPoint" but is user-overridable.
+        // calculate the anchor point. The default calculation is `calculateWebMercatorAnchorPoint` but is user-overridable.
         const anchor4326 = this.calculateAnchorPoint(this.mapInstance);
         const ecefToLocal = ecefToLocalMatrix(anchor4326, this.getGeoidUndulation(anchor4326));
         // The Three.js objects have ECEF coordinates, but they are children of the scene.
-        // and the scene's matrix will end up being "ecefToLocal" in ThreeLayerImpl,
+        // and the scene's matrix will end up being `ecefToLocal` in `ThreeLayerImpl`,
         // so the final WorldMatrix/world coordinates of the Three.js objects
-        // will be in LocalSpace, around the 0,0,0 anchor.
+        // will be in LocalSpace, around the `[0, 0, 0]` anchor.
         this.anchorMatrices = {
             ecefToLocal,
             localToEcef: ecefToLocal.clone().invert(),
@@ -354,13 +354,13 @@ export class ThreeDManagerImpl {
     }
 }
 
-/** The default calculateAnchorPoint. See the ThreeDManager public interface docs for more info. */
+/** The default `calculateAnchorPoint`. See the {@link ThreeDManagerOptions} for more info. */
 function calculateWebMercatorAnchorPoint(map: MapLibreMap): LngLat {
     const { lng, lat } = map.getCenter();
     return [lng, lat];
 }
 
-/** The default getTransformParameters function. See the ThreeDManager public interface docs for more info. */
+/** The default `getTransformParameters` function. See the {@link ThreeDManagerOptions} for more info. */
 function getWebMercatorTransformParameters(anchor4326: LngLat): AffineTransformation {
     const anchorWM = MercatorCoordinate.fromLngLat(anchor4326);
     // A Web Mercator "meter" unit is not a real meter except on the equator. Given a longitude/latitude, this returns the needed scaling.
