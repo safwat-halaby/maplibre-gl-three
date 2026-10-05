@@ -34,11 +34,11 @@ map.on('load', async () => {
 	map.addLayer(layer, 'rivers');
 
 	// #### Setup raycasting
-	const scene = layer.getScene();
+	const scene = layer.three.getScene();
 	const raycaster = new THREE.Raycaster();
 	const pointer = new THREE.Vector2();
-	const camera = layer.getCamera();
-	const renderer = layer.getRenderer();
+	const camera = layer.three.getCamera();
+	const renderer = layer.three.getRenderer();
 	const statusElement = document.getElementById('status');
 	const rayArrow = new THREE.ArrowHelper(
 		new THREE.Vector3(0, 0, -1),

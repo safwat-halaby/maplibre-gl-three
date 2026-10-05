@@ -54,7 +54,7 @@ const sphere = new THREE.Mesh(
     new THREE.MeshStandardMaterial({ color: 0xff00ff }),
 );
 sphere.applyMatrix4(threeDManager.getEcefMatrix({ point: [-75.598, 40.040], height: 130 }));
-layer.getScene().add(sphere);
+layer.three.getScene().add(sphere);
 ```
 
 ### Programmatically calculating terrain height

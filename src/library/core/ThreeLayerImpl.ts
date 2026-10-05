@@ -39,6 +39,11 @@ export class ThreeLayerImpl implements ThreeLayer {
     private renderer: THREE.WebGLRenderer | null = null;
     private mapInstance: MapLibreMap | null = null;
     private debugAxes: THREE.AxesHelper | null;
+    readonly three = {
+        getScene: (): THREE.Scene => this.scene,
+        getCamera: (): THREE.PerspectiveCamera => this.camera,
+        getRenderer: (): THREE.WebGLRenderer | null => this.renderer,
+    };
 
     constructor(options: CreateLayerOptions, private services: LayerServices) {
         this.id = options.id || ThreeLayerImpl.autoGenerateId();
@@ -61,9 +66,6 @@ export class ThreeLayerImpl implements ThreeLayer {
     }
 
     isDestroyed(): boolean { return this.destroyed; }
-    getScene(): THREE.Scene { return this.scene; }
-    getCamera(): THREE.PerspectiveCamera { return this.camera; }
-    getRenderer(): THREE.WebGLRenderer | null { return this.renderer; }
 
     async load3dTiles(options: Load3dTilesOptions): Promise<ThreeDTilesAsset> {
         this.assertAlive();

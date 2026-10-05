@@ -1,6 +1,10 @@
 ## NEXT
 
 - Bugfix: A tile asset's `getReference()` function now takes tile offset into account.
+- Minor API breakage. The Three.JS getters are now under a namespace:
+    - `threeLayer.getScene()` => `threeLayer.three.getScene()`
+    - `threeLayer.getRenderer()` => `threeLayer.three.getRenderer()`
+    - `threeLayer.getCamera()` => `threeLayer.three.getCamera()`
 
 ## 2.0.0 - 2026-10-02
 

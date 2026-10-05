@@ -41,7 +41,7 @@ map.on('load', async () => {
         new THREE.MeshStandardMaterial({ color: 0xff00ff }),
     );
     marker.applyMatrix4(threeDManager.getEcefMatrix({ point: [-75.598, 40.040], height: 130 }));
-    layer.getScene().add(marker);
+    layer.three.getScene().add(marker);
 
     // A group of four spheres. Their offset is in meters relative to a single geographical placement.
     const placement = new THREE.Group();
@@ -79,6 +79,6 @@ map.on('load', async () => {
     placement.add(east);
     placement.add(west);
     placement.add(model.scene);
-    layer.getScene().add(placement);
+    layer.three.getScene().add(placement);
     map.addLayer(layer, 'rivers');
 });

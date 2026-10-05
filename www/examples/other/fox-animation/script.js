@@ -41,7 +41,7 @@ map.on('load', async () => {
         height: 140
     }));
     placement.add(model.scene);
-    layer.getScene().add(placement);
+    layer.three.getScene().add(placement);
 
     const mixer = new THREE.AnimationMixer(model.scene);
     const clip = model.animations.find(({ name }) => name === 'Walk') ?? model.animations[0];

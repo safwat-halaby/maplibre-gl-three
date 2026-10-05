@@ -167,23 +167,23 @@ test('loading tiles adds one ambient light only to an initially empty scene', as
     await manager.init();
     const layer = manager.createLayer({ id: 'deferred-light' });
 
-    expect(layer.getScene().children).toHaveLength(0);
+    expect(layer.three.getScene().children).toHaveLength(0);
     await layer.load3dTiles({ tilesetUrl: 'https://example.test/tiles.json' });
 
-    expect(layer.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(1);
+    expect(layer.three.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(1);
     await layer.load3dTiles({ tilesetUrl: 'https://example.test/other.json' });
-    expect(layer.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(1);
+    expect(layer.three.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(1);
 });
 
 test('loading tiles does not add ambient light to a non-empty scene', async () => {
     const manager = createManager();
     await manager.init();
     const layer = manager.createLayer({ id: 'existing-object' });
-    layer.getScene().add(new THREE.Object3D());
+    layer.three.getScene().add(new THREE.Object3D());
 
     await layer.load3dTiles({ tilesetUrl: 'https://example.test/tiles.json' });
 
-    expect(layer.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(0);
+    expect(layer.three.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(0);
 });
 
 test('multiple assets share one scene, renderer, camera and depth pass', async () => {
@@ -194,20 +194,20 @@ test('multiple assets share one scene, renderer, camera and depth pass', async (
         layer.load3dTiles({ tilesetUrl: 'https://example.test/a.json', maxDepth: 3 }),
         layer.load3dTiles({ tilesetUrl: 'https://example.test/b.json' }),
     ]);
-    expect(layer.getRenderer()).toBeNull();
-    expect(a.getObject3D().parent?.parent).toBe(layer.getScene());
-    expect(b.getObject3D().parent?.parent).toBe(layer.getScene());
+    expect(layer.three.getRenderer()).toBeNull();
+    expect(a.getObject3D().parent?.parent).toBe(layer.three.getScene());
+    expect(b.getObject3D().parent?.parent).toBe(layer.three.getScene());
     expect(a.getTilesRenderer().maxDepth).toBe(3);
     const { map, gl } = createMap();
     map.addLayer(layer);
-    const renderer = layer.getRenderer()!;
+    const renderer = layer.three.getRenderer()!;
     const updateA = vi.spyOn(a.getTilesRenderer(), 'update').mockImplementation(() => {});
     const updateB = vi.spyOn(b.getTilesRenderer(), 'update').mockImplementation(() => {});
     layer.render(gl, renderInput());
     expect(updateA).toHaveBeenCalledOnce();
     expect(updateB).toHaveBeenCalledOnce();
-    expect(a.getTilesRenderer().cameras).toEqual([layer.getCamera()]);
-    expect(b.getTilesRenderer().cameras).toEqual([layer.getCamera()]);
+    expect(a.getTilesRenderer().cameras).toEqual([layer.three.getCamera()]);
+    expect(b.getTilesRenderer().cameras).toEqual([layer.three.getCamera()]);
     const loaderA = a.getTilesRenderer().manager.getHandler('model.glb') as GLTFLoader;
     const loaderB = b.getTilesRenderer().manager.getHandler('model.glb') as GLTFLoader;
     expect(loaderA).not.toBe(loaderB);
@@ -215,7 +215,7 @@ test('multiple assets share one scene, renderer, camera and depth pass', async (
     expect(loaderB.manager).toBe(b.getTilesRenderer().manager);
     expect(loaderA.dracoLoader).not.toBe(loaderB.dracoLoader);
     expect(loaderA.ktx2Loader).not.toBe(loaderB.ktx2Loader);
-    expect(renderer.render).toHaveBeenCalledExactlyOnceWith(layer.getScene(), layer.getCamera());
+    expect(renderer.render).toHaveBeenCalledExactlyOnceWith(layer.three.getScene(), layer.three.getCamera());
     expect(renderer.clearDepth).toHaveBeenCalledTimes(2);
     expect(updateA.mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(renderer.render).mock.invocationCallOrder[0]);
 });
@@ -231,10 +231,10 @@ test('loading into an already-mounted empty layer initializes loaders before til
     const resolution = vi.spyOn(asset.getTilesRenderer(), 'setResolution');
     canvas.width = 1600;
     layer.render(gl, renderInput());
-    expect(asset.getTilesRenderer().hasCamera(layer.getCamera())).toBe(true);
+    expect(asset.getTilesRenderer().hasCamera(layer.three.getCamera())).toBe(true);
     expect(asset.getTilesRenderer().manager.getHandler('model.glb?token=value')).not.toBeNull();
-    expect(resolution).toHaveBeenLastCalledWith(layer.getCamera(), 1600, 600);
-    expect(layer.getRenderer()!.clearDepth).not.toHaveBeenCalled();
+    expect(resolution).toHaveBeenLastCalledWith(layer.three.getCamera(), 1600, 600);
+    expect(layer.three.getRenderer()!.clearDepth).not.toHaveBeenCalled();
 });
 
 test('all layers rebase together with one listener, including ordinary ECEF objects', async () => {
@@ -246,28 +246,28 @@ test('all layers rebase together with one listener, including ordinary ECEF obje
     const object = new THREE.Object3D();
     const ecef = manager.lngLatAltToEcef({ point: [0, 0], height: 20 });
     object.position.copy(ecef);
-    a.getScene().add(object);
+    a.three.getScene().add(object);
     const { map, gl, move, moveHandlers } = createMap();
     map.addLayer(a);
     map.addLayer(b);
     expect(moveHandlers.size).toBe(1);
     expect(map.on).toHaveBeenCalledOnce();
     expect(object.getWorldPosition(new THREE.Vector3()).y).toBeCloseTo(20, 6);
-    const before = a.getScene().matrix.clone();
+    const before = a.three.getScene().matrix.clone();
     const samples = vi.mocked(raster.getPixelValue).mock.calls.length;
     move([0.01, 0.02]);
     move([0.02, 0.03]);
     a.render(gl, renderInput());
     b.render(gl, renderInput());
     expect(vi.mocked(raster.getPixelValue).mock.calls.length).toBe(samples + 1);
-    expect(a.getScene().matrix.equals(before)).toBe(false);
-    expect(b.getScene().matrix.equals(a.getScene().matrix)).toBe(true);
+    expect(a.three.getScene().matrix.equals(before)).toBe(false);
+    expect(b.three.getScene().matrix.equals(a.three.getScene().matrix)).toBe(true);
     expect(object.position.equals(ecef)).toBe(true);
     const world = object.getWorldPosition(new THREE.Vector3());
     expect(manager.ecefToLocalSpace(ecef).distanceTo(world)).toBeLessThan(1e-8);
     const roundTrip = manager.localSpaceToEcef(world);
     expect(roundTrip.distanceTo(object.position)).toBeLessThan(1e-7);
-    const axes = a.getScene().getObjectByName('debug-local-axes')!;
+    const axes = a.three.getScene().getObjectByName('debug-local-axes')!;
     expect(axes.getWorldPosition(new THREE.Vector3()).length()).toBeLessThan(1e-7);
     map.removeLayer(a.id);
     expect(moveHandlers.size).toBe(1);
@@ -364,8 +364,8 @@ test('asset destruction is isolated; detachment preserves content and permits re
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial());
     const geometryDispose = vi.spyOn(mesh.geometry, 'dispose');
     const materialDispose = vi.spyOn(mesh.material, 'dispose');
-    layer.getScene().add(mesh);
-    const scene = layer.getScene();
+    layer.three.getScene().add(mesh);
+    const scene = layer.three.getScene();
     const { map, move, moveHandlers } = createMap();
     map.addLayer(layer);
     const loaderA = a.getTilesRenderer().manager.getHandler('model.glb') as GLTFLoader;
@@ -384,19 +384,19 @@ test('asset destruction is isolated; detachment preserves content and permits re
     expect(map.getLayer(layer.id)).toBe(layer);
     expect(b.isDestroyed()).toBe(false);
     expect(a.getObject3D().parent).toBeNull();
-    const renderer = layer.getRenderer()!;
+    const renderer = layer.three.getRenderer()!;
     map.removeLayer(layer.id);
     expect(renderer.dispose).toHaveBeenCalledOnce();
-    expect(layer.getRenderer()).toBeNull();
+    expect(layer.three.getRenderer()).toBeNull();
     expect(disposeB).not.toHaveBeenCalled();
     expect(b.getTilesRenderer().cameras).toEqual([]);
     expect(layer.isDestroyed()).toBe(false);
     move([10, 20]);
     map.addLayer(layer);
-    expect(layer.getScene()).toBe(scene);
+    expect(layer.three.getScene()).toBe(scene);
     expect(scene.children).toContain(mesh);
-    expect(layer.getRenderer()).not.toBe(renderer);
-    expect(b.getTilesRenderer().cameras).toEqual([layer.getCamera()]);
+    expect(layer.three.getRenderer()).not.toBe(renderer);
+    expect(b.getTilesRenderer().cameras).toEqual([layer.three.getCamera()]);
     expect(b.getTilesRenderer().manager.getHandler('model.glb')).toBe(loaderB);
     manager.destroy();
     expect(moveHandlers.size).toBe(0);
@@ -449,7 +449,7 @@ test('late root metadata cannot reattach a destroyed asset or trigger its callba
     });
     await loaded;
     expect(bounds).not.toHaveBeenCalled();
-    expect(layer.getScene().children).toHaveLength(1); // Default ambient light only.
+    expect(layer.three.getScene().children).toHaveLength(1); // Default ambient light only.
     expect(asset.getObject3D().parent).toBeNull();
 });
 

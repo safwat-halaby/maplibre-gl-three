@@ -222,27 +222,29 @@ export interface ThreeLayer extends CustomLayerInterface {
      * A layer may be manually destroyed with {@link ThreeLayer.destroy}, but is also automatically destroyed if its parent {@link ThreeDManager} is destroyed.
     */
     isDestroyed(): boolean;
-    /** Returns the Three.js scene. Objects within the scene are expected to have ECEF Vector3 coordinates.
-     * The simplest way for achieving this is with {@link ThreeDManager.getEcefMatrix}
-     * 
-     * ATTENTION:  Do not touch the scene matrix because it is owned and manipulated by the library.
-     * Other than this, you may use the scene as you normally would use it in Three.js.
-     * 
-     * @see {@link https://threejs.org/docs/ | Three.JS docs}
-    */
-    getScene(): Scene;
-    /** Returns the library-controlled Three.js camera in LocalSpace coordinates, updated during render.
-     * 
-     * ATTENTION: Updating the camera is not advised because it is library-controlled. But it can be used for querying. E.g. raycasting.
-     * 
-     * @see {@link https://threejs.org/docs/ | Three.JS docs}
-     */
-    getCamera(): PerspectiveCamera;
-    /** Returns the Three.js WebGLRenderer. Returns null while the layer is detached from a map. 
-     * 
-     * @see {@link https://threejs.org/docs/ | Three.JS docs}
-    */
-    getRenderer(): WebGLRenderer | null;
+    readonly three: {
+        /** Returns the Three.js scene. Objects within the scene are expected to have ECEF Vector3 coordinates.
+         * The simplest way for achieving this is with {@link ThreeDManager.getEcefMatrix}
+         *
+         * ATTENTION: Do not touch the scene matrix because it is owned and manipulated by the library.
+         * Other than this, you may use the scene as you normally would use it in Three.js.
+         *
+         * @see {@link https://threejs.org/docs/ | Three.JS docs}
+         */
+        getScene(): Scene;
+        /** Returns the library-controlled Three.js camera in LocalSpace coordinates, updated during render.
+         * 
+         * ATTENTION: Updating the camera is not advised because it is library-controlled. But it can be used for querying. E.g. raycasting.
+         * 
+         * @see {@link https://threejs.org/docs/ | Three.JS docs}
+         */
+        getCamera(): PerspectiveCamera;
+        /** Returns the Three.js WebGLRenderer. Returns null while the layer is detached from a map.
+         *
+         * @see {@link https://threejs.org/docs/ | Three.JS docs}
+         */
+        getRenderer(): WebGLRenderer | null;
+    };
     /** Adds 3D Tiles to the layer and returns the controlling asset. Resolves after asset setup (not after streaming finishes).
      * The asset is a thin wrapper around the 3d-tiles-renderer library. 
      * 
@@ -264,4 +266,3 @@ export interface ThreeLayer extends CustomLayerInterface {
 }
 
 
- 
