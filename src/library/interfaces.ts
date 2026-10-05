@@ -150,6 +150,9 @@ export interface Load3dTilesOptions {
     /**
      * Offset in meters along east/up/south. Useful for correcting vertical errors.
      * 
+     * If you need more advanced transformations like rotating or stretching your dataset, you should probably fix the dataset itself, typically by
+     * modifying its the `root.transform` matrix found in `tileset.json`. You can use a visual tool such as the {@link https://community.cesium.com/t/a-tileset-location-editor/45331 | Tileset Location Editor}
+     * 
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#heights-and-datums | More info about height handling}
      */
     offset?: MetersOffset;
