@@ -68,10 +68,10 @@ map.on('load', async () => {
 		if (!destination) {
 			throw new Error("could not obtain the 3D Tiles reference")
 		}
-		// The ray starts 10 meters above the reference point, heading straight down.
+		// The ray starts 100 meters above the reference point, heading straight down.
 		const origin = { 
 			point: destination.point,
-			height: destination.height + 10
+			height: destination.height + 100
 		};
 		// Convert to the ECEF coordinate system.
 		const ecef_origin = threeDManager.lngLatAltToEcef(origin);
