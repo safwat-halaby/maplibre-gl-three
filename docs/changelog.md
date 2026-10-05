@@ -1,11 +1,25 @@
 ## Next version
 
-- **Minor API change:** The Three.JS getters are now under a namespace:
+
+- Bugfix: A tile asset's `getReference()` function now takes tile offset into account.
+
+**Breaking API changes:** The way raw parameters are passed to the underlying libraries was tweaked and namespaced.
+
+- The Three.JS getters are now under a namespace:
     - `threeLayer.getScene()` => `threeLayer.three.getScene()`
     - `threeLayer.getRenderer()` => `threeLayer.three.getRenderer()`
     - `threeLayer.getCamera()` => `threeLayer.three.getCamera()`
-- Bugfix: A tile asset's `getReference()` function now takes tile offset into account.
-- Allow advanced users to pass raw Three.JS options when creating a `ThreeLayer`
+- The `3d-tiles-renderer` options `maxDepth` and `preprocessURL` were namespaced for making it clear what's passed directly to 3d-tiles-renderer and what's library owned, when calling [ThreeLayer.load3dTiles()](api/index.md#load3dtiles). Example:
+    - `threeLayer.load3dTiles({tileSetUrl, offset, autoLoaders, tilesRendererOptions: {maxDepth, preprocessURL}})`
+    - `tilesetUrl` is so basic and typical that it was kept outside `tilesRendererOptions` despite being a tile renderer option. In many cases you'd still call `threeLayer.load3dTiles({tileSetUrl})` without additional parameters.
+
+
+**Nonbreaking API additions:**
+
+- Allow users to pass raw Three.JS options when calling [ThreeDManager.CreateLayer()](api/index.md#createlayer). Example:
+    - `threeDmanager.createLayer({three: {rendererOptions: WebGLRendererParameters}})` 
+- `load3dTile` now has an [autoLoaders](api/index.md#autoloaders) boolean which can be set to false to control the loaders and extensions directly.
+
 
 ## 2.0.0 - 2026-10-02
 

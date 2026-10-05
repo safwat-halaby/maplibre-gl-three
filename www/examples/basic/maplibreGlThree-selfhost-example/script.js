@@ -29,7 +29,7 @@ map.on('load', async () => {
     await layer.load3dTiles({
         tilesetUrl: '/datasets/agi-hq/tileset.json',
         offset: { east: 0, up: -234, south: 0 },
-        maxDepth: 5
+        tilesRendererOptions: { maxDepth: 5 }
     });
     // You can also try the following open datasets, without any vertical offsets:
     // https://tiles.arcgis.com/tiles/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Utrecht_3D_Tiles_Integrated_Mesh/3DTilesServer/tileset.json

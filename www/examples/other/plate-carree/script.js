@@ -47,7 +47,7 @@ map.on('load', async () => {
     await layer.load3dTiles({
         tilesetUrl: '/datasets/agi-hq/tileset.json',
         offset: { east: 0, up: -234, south: 0 },
-        maxDepth: 5
+        tilesRendererOptions: { maxDepth: 5 }
     });
 
     map.addLayer(layer, 'rivers');

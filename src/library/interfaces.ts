@@ -130,13 +130,43 @@ export interface Load3dTilesOptions {
      */
     offset?: MetersOffset;
     /**
-     * Optional callback used to transform URLs before 3d-tiles-renderer fetches them. Useful for authorization tokens.
+     * Whether to automatically add DRACOLoader, KTX2Loader, GLTFLoader, and GLTFCesiumRTCExtension to the tiles renderer.
+     * 
+     * If set to false, you should probably add them yourself by calling {@link ThreeDTilesAsset.getTilesRenderer} and manipulating the renderer before adding the {@link ThreeLayer} to the map.
+     * 
+     * Setting this to true (default) is equivalent to this:
+     * 
+     * ```js
+     * const tilesAsset = threeLayer.load3dTiles();
+     * const tilesRenderer = tilesAsset.getTilesRenderer();
+     * const dracoLoader = new DRACOLoader(tilesRenderer.manager).setDecoderPath(dracoPath);
+     * const ktx2Loader = new KTX2Loader(tilesRenderer.manager).setTranscoderPath(ktx2Path);
+     * const gltfLoader = new GLTFLoader(tilesRenderer.manager)
+     *  .setDRACOLoader(dracoLoader)
+     *  .setKTX2Loader(ktx2Loader)
+     *  .register(() => new GLTFCesiumRTCExtension());
+     * ```
+     * 
+     * The `dractPath` and `ktx2Path` parameters are obtained from TODO TODO TODO
+     * 
+     * @defaultValue true
      */
-    preprocessURL?: (url: string) => string;
+    autoLoaders?: boolean;
     /**
-     * Optional maximum traversal depth for the loaded tileset.
+     * Common options applied to the underlying 3d-tiles-renderer instance.
+     * If you want more control you can call {@link ThreeDTilesAsset.getTilesRenderer} and manipulate the tiles renderer directly.
+     * Depending on what you're doing, it may be better to do this manipulation before adding the {@link ThreeLayer} to the map.
      */
-    maxDepth?: number;
+    tilesRendererOptions?: {
+        /**
+         * Optional callback used to transform URLs before 3d-tiles-renderer fetches them. Useful for authorization tokens.
+         */
+        preprocessURL?: (url: string) => string;
+        /**
+         * Optional maximum traversal depth for the loaded tileset.
+         */
+        maxDepth?: number;
+    };
 }
 
 /** Options for {@link ThreeDManager.createLayer} */
@@ -192,6 +222,8 @@ export interface Asset {
 
 /** A 3D Tiles asset that is loaded to a layer and rendered on the map.
  * The asset is a thin wrapper around the 3d-tiles-renderer library.
+ * 
+ * You can create a ThreeDTilesAsset via {@link ThreeLayer.load3dTiles}
 */
 export interface ThreeDTilesAsset extends Asset {
     /** Returns the underlying TilesRenderer object of the 3d-tiles-renderer library.
@@ -222,6 +254,8 @@ export interface ThreeDTilesAsset extends Asset {
  * The scene can be manipulated just like any Three.js scene.
  * It exposes convenience functions for creating common assets such as 3D Tiles, as well as lower-level Three.js primitives for rendering
  * anything Three.js can render on a MapLibre custom layer. The camera is auto-synced with MapLibre's camera.
+ * 
+ * You can create a ThreeLayer via {@link ThreeDManager.createLayer} 
  * */
 export interface ThreeLayer extends CustomLayerInterface {
     id: string;
@@ -274,4 +308,3 @@ export interface ThreeLayer extends CustomLayerInterface {
     */
     destroy(): void;
 }
-

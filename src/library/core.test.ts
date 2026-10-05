@@ -224,7 +224,10 @@ test('multiple assets share one scene, renderer, camera and depth pass', async (
     await manager.init();
     const layer = manager.createLayer({ id: 'shared' });
     const [a, b] = await Promise.all([
-        layer.load3dTiles({ tilesetUrl: 'https://example.test/a.json', maxDepth: 3 }),
+        layer.load3dTiles({
+            tilesetUrl: 'https://example.test/a.json',
+            tilesRendererOptions: { maxDepth: 3 },
+        }),
         layer.load3dTiles({ tilesetUrl: 'https://example.test/b.json' }),
     ]);
     expect(layer.three.getRenderer()).toBeNull();
@@ -251,6 +254,29 @@ test('multiple assets share one scene, renderer, camera and depth pass', async (
     expect(renderer.render).toHaveBeenCalledExactlyOnceWith(layer.three.getScene(), layer.three.getCamera());
     expect(renderer.clearDepth).toHaveBeenCalledTimes(2);
     expect(updateA.mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(renderer.render).mock.invocationCallOrder[0]);
+});
+
+test('tiles renderer options are applied without automatic loaders', async () => {
+    const manager = createManager();
+    await manager.init();
+    const layer = manager.createLayer({ id: 'manual-loaders' });
+    const preprocessURL = (url: string): string => `${url}?token=value`;
+    const asset = await layer.load3dTiles({
+        tilesetUrl: 'https://example.test/tiles.json',
+        autoLoaders: false,
+        tilesRendererOptions: { maxDepth: 4, preprocessURL },
+    });
+    const tiles = asset.getTilesRenderer();
+    const plugins = (tiles as unknown as { plugins: object[] }).plugins;
+
+    expect(tiles.maxDepth).toBe(4);
+    expect(plugins).toHaveLength(1);
+    expect(plugins[0]).toMatchObject({ preprocessURL });
+    expect(tiles.manager.getHandler('model.glb')).toBeNull();
+
+    const { map } = createMap();
+    map.addLayer(layer);
+    expect(tiles.manager.getHandler('model.glb')).toBeNull();
 });
 
 test('loading into an already-mounted empty layer initializes loaders before tile traversal', async () => {
@@ -347,7 +373,8 @@ test('offset directions use the transformed root sphere and remain stable across
     await manager.init();
     const layer = manager.createLayer({ id: 'offsets' });
     const asset = await layer.load3dTiles({
-        tilesetUrl: 'https://example.test/tiles.json', offset: { east: 10, up: 20, south: 30 },
+        tilesetUrl: 'https://example.test/tiles.json',
+        offset: { east: 10, up: 20, south: 30 },
     });
     const transform = new THREE.Matrix4().makeTranslation(0, 6378137, 0).toArray();
     await loadRoot(asset, { sphere: [0, 0, 0, 10] }, transform);
@@ -375,7 +402,8 @@ test.each(['box', 'region'])('offsets resolve a root %s bounding volume in ECEF'
     await manager.init();
     const layer = manager.createLayer({ id: kind });
     const asset = await layer.load3dTiles({
-        tilesetUrl: `https://example.test/${kind}.json`, offset: { east: 10, up: 20, south: 30 },
+        tilesetUrl: `https://example.test/${kind}.json`,
+        offset: { east: 10, up: 20, south: 30 },
     });
     const boundingVolume = kind === 'box'
         ? { box: [0, 0, 0, 10, 0, 0, 0, 20, 0, 0, 0, 30] }

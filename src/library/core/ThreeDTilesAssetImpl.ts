@@ -10,12 +10,13 @@ import type { Load3dTilesOptions, ThreeDTilesAsset, MetersOffset, LngLatAlt } fr
 
 export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
     placementRoot = new THREE.Group();
-    private tiles: TilesRenderer;
+    private tilesRenderer: TilesRenderer;
     private dracoLoader: DRACOLoader | null = null;
     private ktx2Loader: KTX2Loader | null = null;
     private gltfLoader: GLTFLoader | null = null;
     private abortController = new AbortController();
     private loaderPattern = /\.(gltf|glb)(\?.*)?$/i;
+    private autoLoaders: boolean;
     /** The unshifted ECEF center of the containing sphere, used as the fixed offset origin. */
     private referenceOriginal: THREE.Vector3 | null = null;
     /** A single point representing the current location of the 3D Tiles. */
@@ -31,21 +32,26 @@ export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
         private onDestroy: (asset: ThreeDTilesAssetImpl) => void,
     ) {
         super(services);
+        this.autoLoaders = options.autoLoaders !== false;
         this.offset = { ...(options.offset ?? { east: 0, up: 0, south: 0 }) };
-        this.tiles = new TilesRenderer(options.tilesetUrl);
-        this.tiles.fetchOptions.signal = this.abortController.signal;
-        if (options.maxDepth !== undefined) this.tiles.maxDepth = options.maxDepth;
-        if (options.preprocessURL) this.tiles.registerPlugin({ preprocessURL: options.preprocessURL });
+        this.tilesRenderer = new TilesRenderer(options.tilesetUrl);
+        this.tilesRenderer.fetchOptions.signal = this.abortController.signal;
+        if (options.tilesRendererOptions?.maxDepth !== undefined) {
+            this.tilesRenderer.maxDepth = options.tilesRendererOptions.maxDepth;
+        }
+        if (options.tilesRendererOptions?.preprocessURL) {
+            this.tilesRenderer.registerPlugin({ preprocessURL: options.tilesRendererOptions.preprocessURL });
+        }
         this.placementRoot.name = 'tiles-offset';
         // Add the 3D Tiles as children of placementRoot. This allows us to offset the 3D Tiles by moving placementRoot.
-        this.placementRoot.add(this.tiles.group);
-        this.tiles.addEventListener('load-root-tileset', this.rootLoaded);
-        this.tiles.addEventListener('needs-update', this.requestRepaint);
+        this.placementRoot.add(this.tilesRenderer.group);
+        this.tilesRenderer.addEventListener('load-root-tileset', this.rootLoaded);
+        this.tilesRenderer.addEventListener('needs-update', this.requestRepaint);
     }
 
     isDestroyed(): boolean { return this.destroyed; }
-    getObject3D(): THREE.Object3D { return this.tiles.group; }
-    getTilesRenderer(): TilesRenderer { return this.tiles; }
+    getObject3D(): THREE.Object3D { return this.tilesRenderer.group; }
+    getTilesRenderer(): TilesRenderer { return this.tilesRenderer; }
     getOffset(): MetersOffset { return { ...this.offset }; }
     getReference(): LngLatAlt | null { return this.reference; }
     
@@ -57,46 +63,50 @@ export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
 
     /** Called by ThreeDTilesAssetImpl */
     attach(camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer): void {
-        if (!this.gltfLoader) {
-            this.dracoLoader = new DRACOLoader(this.tiles.manager).setDecoderPath(this.services.dracoPath);
-            this.ktx2Loader = new KTX2Loader(this.tiles.manager).setTranscoderPath(this.services.ktx2Path);
-            this.gltfLoader = new GLTFLoader(this.tiles.manager)
-                .setDRACOLoader(this.dracoLoader)
-                .setKTX2Loader(this.ktx2Loader)
-                .register(() => new GLTFCesiumRTCExtension());
+        if (this.autoLoaders) {
+            if (!this.gltfLoader) {
+                this.dracoLoader = new DRACOLoader(this.tilesRenderer.manager).setDecoderPath(this.services.dracoPath);
+                this.ktx2Loader = new KTX2Loader(this.tilesRenderer.manager).setTranscoderPath(this.services.ktx2Path);
+                this.gltfLoader = new GLTFLoader(this.tilesRenderer.manager)
+                    .setDRACOLoader(this.dracoLoader)
+                    .setKTX2Loader(this.ktx2Loader)
+                    .register(() => new GLTFCesiumRTCExtension());
+            }
+            this.ktx2Loader!.detectSupport(renderer);
+            this.tilesRenderer.manager.removeHandler(this.loaderPattern);
+            this.tilesRenderer.manager.addHandler(this.loaderPattern, this.gltfLoader);
         }
-        this.ktx2Loader!.detectSupport(renderer);
-        this.tiles.manager.removeHandler(this.loaderPattern);
-        this.tiles.manager.addHandler(this.loaderPattern, this.gltfLoader);
-        this.tiles.setCamera(camera);
-        this.tiles.setResolutionFromRenderer(camera, renderer);
+        this.tilesRenderer.setCamera(camera);
+        this.tilesRenderer.setResolutionFromRenderer(camera, renderer);
     }
 
     /** Called by ThreeDTilesAssetImpl */
     detach(camera: THREE.PerspectiveCamera): void {
-        this.tiles.deleteCamera(camera);
+        this.tilesRenderer.deleteCamera(camera);
     }
 
     /** Called by ThreeDTilesAssetImpl's "render" function. */
     update(camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer): void {
         if (this.destroyed) return;
         const canvas = renderer.domElement;
-        this.tiles.setResolution(camera, canvas.width, canvas.height);
-        this.tiles.update();
+        this.tilesRenderer.setResolution(camera, canvas.width, canvas.height);
+        this.tilesRenderer.update();
     }
 
     destroy(): void {
         if (this.destroyed) return;
         this.destroyed = true;
-        this.tiles.removeEventListener('load-root-tileset', this.rootLoaded);
-        this.tiles.removeEventListener('needs-update', this.requestRepaint);
+        this.tilesRenderer.removeEventListener('load-root-tileset', this.rootLoaded);
+        this.tilesRenderer.removeEventListener('needs-update', this.requestRepaint);
         this.abortController.abort();
         this.onDestroy(this);
         this.placementRoot.removeFromParent();
-        this.tiles.dispose();
-        this.tiles.manager.removeHandler(this.loaderPattern);
-        this.dracoLoader?.dispose();
-        this.ktx2Loader?.dispose();
+        this.tilesRenderer.dispose();
+        if (this.autoLoaders) {
+            this.tilesRenderer.manager.removeHandler(this.loaderPattern);
+            this.dracoLoader?.dispose();
+            this.ktx2Loader?.dispose();
+        }
         this.dracoLoader = null;
         this.ktx2Loader = null;
         this.gltfLoader = null;
@@ -106,7 +116,7 @@ export class ThreeDTilesAssetImpl extends Asset implements ThreeDTilesAsset {
         if (this.destroyed || this.referenceOriginal) return;
         // calculate bounding sphere and designated its center as our reference point.
         const sphere = new THREE.Sphere();
-        if (!this.tiles.getBoundingSphere(sphere)) {
+        if (!this.tilesRenderer.getBoundingSphere(sphere)) {
             throw new Error('Failed to calculate 3D Tiles bounding sphere');
         }
         this.referenceOriginal = sphere.center.clone();

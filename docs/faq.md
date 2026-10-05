@@ -88,7 +88,9 @@ tiles3d.getTilesRenderer().addEventListener('load-root-tileset', () => {
 });
 ```
 
-- It could also be an extention issue (this should appear in the console). Currently, not all 3D Tiles extensions are supported. Sorry :( - When time permits I will document which extensions are supported and expose more 3d-tiles-renderer configuration to allow you to add any extension.
+**If it's a misssing 3d tiles extension issue:**
+
+If the console reports a missing extension or loader, you should probably set [threeLayer.load3dTiles({autoLoaders: false})](api/index.md#load3dtilesoptions) and then add the proper loaders yourself.
 
 ## How do I center the map on the 3D Tiles?
 
