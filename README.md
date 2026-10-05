@@ -24,6 +24,7 @@ const map = new Map({
     bearing: -20,
     maxPitch: 85,
     style: {
+        "version": 8,
         "terrain": {
             "source": "mapterhorn"
         },
@@ -45,6 +46,8 @@ const map = new Map({
 const threeDManager = new ThreeDManager();
 await threeDManager.init();
 const layer = threeDManager.createLayer();
+map.on('load', () => map.addLayer(layer));
+map.on('remove', () => threeDManager.destroy());
 const tilesAsset = await layer.load3dTiles({
     tilesetUrl: 'https://pelican-public.s3.amazonaws.com/3dtiles/agi-hq/tileset.json',
     // Manually offset the 3D Tiles model downward.
@@ -52,13 +55,11 @@ const tilesAsset = await layer.load3dTiles({
     // Manual corrections are only needed when there are errors in the 3D Tiles data.
     offset: { east: 0, up: -234, south: 0 }
 });
-map.on('load', () => map.addLayer(layer));
-map.on('remove', () => threeDManager.destroy());
 ```
 
 **Load ordinary Three.js objects**
 
-The Three.JS scene expects **ECEF positions**. Helper functions convert to and from the more familiar longitude/latitude form. `height` is in meters above sea level.
+The Three.js scene expects **ECEF positions**. Helper functions convert to and from the more familiar longitude/latitude form. `height` is in meters above sea level.
 
 ```js
 import * as THREE from 'three';

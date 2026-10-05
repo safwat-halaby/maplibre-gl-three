@@ -1,6 +1,6 @@
 This is a minimal example project which depends on `maplibre-gl-three` and loads all dependencies from a CDN. It does not require a build step.
 
-The code loads a 3D Tiles model and a basic MapLibre Style Spec which contains a river and two streets derived from OpenStreetMap data.
+The code loads a 3D Tiles model and a basic MapLibre Style Spec which contains a river and some roads derived from OpenStreetMap data.
 
 To run the project all you need is to serve this directory from an http server.
 

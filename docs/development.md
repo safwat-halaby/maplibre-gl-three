@@ -39,3 +39,49 @@ To update the pinned Python documentation dependencies after editing `docs/requi
 python -m pip install uv
 python -m uv pip compile --python-version 3.12 --output-file docs/requirements.txt docs/requirements.in
 ```
+
+## Docs formatting rules
+
+Use ordinary text for library display names, geographic concepts, and measurements: Three.js, Web Mercator, 
+
+Use inline code (backticks) for exact identifiers and code: `ThreeDManager`, `height`, `true`, `layer.load3dTiles()`.
+
+Use inline code for EPSG codes, package names, paths, commands, and version strings: `EPSG:4326`, `maplibre-gl-three`, `docs/index.md`, `npm run build`, `2.0.0`.
+
+Write exact geographical numbers with backticks, e.g. `-20037508.3427892`.
+
+Write coordinates or vectors as `[34, 35]`, `[1, 2, 3]`.
+
+API links in markdown use backticks and link to `api/index.md`:
+
+```text
+See [`ThreeDManager`](api/index.md#threedmanager)
+```
+
+API links in TsDoc use `@link` e.g.
+
+```text
+{@link ThreeDManager}
+```
+
+Whether to use a link or not for classes/methods is context dependant. Apply judgement.
+
+## Exact formatting for specific concepts
+
+- Library display names
+  - maplibre-gl-three
+  - Three.js
+  - MapLibre GL JS ("MapLibre" if context is obvious)
+  - 3d-tiles-renderer
+  - GeoTIFF.js
+- Data formats
+  - 3D Tiles, GeoJSON, GeoTIFF, gLTF, GLB, KTX2
+- Runtime, development related stuff:
+  - npm, Node.js, Javascript, TypeScript, GitHub, Read the Docs, jsDelivr, WebGL
+- Coordinate systems and EPSG codes:
+  - WGS 84 (`EPSG:4326`)
+  - ECEF (`EPSG:4978`)
+  - Web Mercator (`EPSG:3857`)
+  - EGM96 height (`EPSG:5773`)
+  - WGS 84 + EGM96 height (`EPSG:9707`)
+  - One doesn't always have to specify both the display name and EPSG. apply common sense.

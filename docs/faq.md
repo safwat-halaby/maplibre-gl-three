@@ -53,7 +53,7 @@ This has consequences if you're using additional externally sourced ECEF coordin
 
 You're likely using a MapLibre terrain along with a transparent background. You have two options.
 
-A. put something opaque as a base layer, at the very least a opaque background color:
+A. put something opaque as a base layer, at the very least an opaque background color:
 
 ```json
 {
@@ -90,7 +90,7 @@ tilesAsset.getTilesRenderer().addEventListener('load-root-tileset', () => {
 });
 ```
 
-**If it's a misssing 3d tiles extension issue:**
+**If it's a missing 3D Tiles extension issue:**
 
 If the console reports a missing extension or loader, you should probably set [threeLayer.load3dTiles({autoLoaders: false})](api/index.md#load3dtilesoptions) and then add the proper loaders yourself. If I missed a very common loader, I should add it to the `autoLoaders` list. [Contact me](contact.md).
 

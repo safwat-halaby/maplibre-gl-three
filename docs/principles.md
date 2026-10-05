@@ -28,7 +28,7 @@ Within a layer itself, depth is ruled by distance from camera by default. Nearer
 
 *Before reading this, make sure you understand the difference between 3D Tiles and MapLibre's 3D terrain.*
 
-3D Tiles works in ECEF coordinates; a 3-number coordinate representing an offset from the Earth's core. (0,0,0) is the Earth's center. ECEF does not really care about sea level.
+Georeferenced 3D Tiles work in ECEF coordinates; a 3-number coordinate representing an offset from the Earth's core. (0,0,0) is the Earth's center. ECEF does not really care about sea level.
 
 On the other hand, MapLibre uses longitude/latitude, and MapLibre 3D terrain uses height above sea level (orthometric height).
 
@@ -54,7 +54,7 @@ You're out of luck. Your 3D Tiles have slopes, but MapLibre does not have any gr
 
 ### Network Dependencies
 
-3d-tiles-renderer has some network dependencies that are lazily fetched from `https://cdn.jsdelivr.net` when you call `layer.load3dTiles(...)`. You can fetch them from elsewhere by changing `ThreeDManager`'s `tilesRendererConfig` options (see below).
+3d-tiles-renderer has some network dependencies that are lazily fetched from `https://cdn.jsdelivr.net` when needed. You can fetch them from elsewhere by changing `ThreeDManager`'s `tilesRendererConfig` options (see below).
 
 By default a vertical datum is fetched from `https://cdn.proj.org` when `ThreeDManager.init()` is called. This can be modified or disabled via the constructor. Here are the default options:
 

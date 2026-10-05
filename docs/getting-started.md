@@ -15,7 +15,7 @@ await threeDManager.init();
 
 ## ThreeLayer
 
-Next, you'll probably want to call [ThreeDManager.createlayer](api/index.md#createlayer). It also has various [optional paramaters](api/index.md#createlayeroptions). It returns a [ThreeLayer](api/index.md#threelayer), which can be added directly to a MapLibre map.
+Next, you'll probably want to call [ThreeDManager.createLayer](api/index.md#createlayer). It also has various [optional parameters](api/index.md#createlayeroptions). It returns a [ThreeLayer](api/index.md#threelayer), which can be added directly to a MapLibre map.
 
 ```js
 const layer = threeDManager.createLayer();
@@ -38,13 +38,13 @@ const tilesAsset = await layer.load3dTiles({
 });
 ```
 
-## Coordinate system conversions / adding Three.JS objects
+## Coordinate system conversions / adding Three.js objects
 
-Suppose you want to load a regular Three.JS object.  
+Suppose you want to load a regular Three.js object.  
 
 [ThreeDManager](api/index.md#threedmanager) has various methods to help you with coordinate system conversions. In the following example, we use `getEcefMatrix` to convert from the typical longitude/latitude(`EPSG:4326`) coordinates to ECEF(`EPSG:4978`).
 
-Additionally, can use [ThreeLayer.three](api/index.md#three-1) to access the raw ThreeJS objects like the camera, scene, and so on. Putting it all together:
+Additionally, you can use [ThreeLayer.three](api/index.md#threelayergetters) to access the raw ThreeJS objects like the camera, scene, and so on. Putting it all together:
 
 ```js
 import * as THREE from 'three';
@@ -62,7 +62,7 @@ layer.three.getScene().add(sphere);
 Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [map.queryTerrainElevation()](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#queryterrainelevation) to determine an object's height rather than hardcoding a 130.
 
 
-## Acessing 3d-tiles-renderer / Centering the map on load
+## Accessing 3d-tiles-renderer / Centering the map on load
 
 You can use the Tile Asset's [getTilesRenderer()](api/index.md#gettilesrenderer) to get access to the underlying 3d-tiles-renderer object. In this example, we use an event listener to zoom into the 3D Tiles once they are loaded.
 
@@ -86,7 +86,7 @@ You can also add `{separatorAfter: false}` to the `createLayer` options. It mean
 
 **Multiple ThreeLayers**
 
-For ultimate depth control, feel free to use as many ThreeLayer instances as you want. You can put regular MapLibre layers in between them / before them / after them in any order. Note that each ThreeLayer has its own underlying Three.JS instance.
+For ultimate depth control, feel free to use as many ThreeLayer instances as you want. You can put regular MapLibre layers in between them / before them / after them in any order. Note that each ThreeLayer has its own underlying Three.js instance.
 
 ## End
 
