@@ -36,6 +36,7 @@ export class ThreeLayerImpl implements ThreeLayer {
     private assets = new Set<ThreeDTilesAssetImpl>();
     private separatorBefore: boolean;
     private separatorAfter: boolean;
+    private rendererOptions: THREE.WebGLRendererParameters;
     private renderer: THREE.WebGLRenderer | null = null;
     private mapInstance: MapLibreMap | null = null;
     private debugAxes: THREE.AxesHelper | null;
@@ -49,6 +50,7 @@ export class ThreeLayerImpl implements ThreeLayer {
         this.id = options.id || ThreeLayerImpl.autoGenerateId();
         this.separatorBefore = options.separatorBefore ?? true;
         this.separatorAfter = options.separatorAfter ?? true;
+        this.rendererOptions = options.three?.rendererOptions ?? {};
         this.scene.matrixAutoUpdate = false;
         this.camera.matrixAutoUpdate = false;
         this.debugAxes = services.debugMode ? new THREE.AxesHelper(400) : null;
@@ -80,7 +82,7 @@ export class ThreeLayerImpl implements ThreeLayer {
             this.requestRepaint();
         });
         this.assets.add(asset);
-        if (this.scene.children.length === 0) {
+        if (this.scene.children.length === 0 || (this.services.debugMode && this.scene.children.length === 1)) {
             this.scene.add(new THREE.AmbientLight(0xffffff, 3));
         }
         this.scene.add(asset.placementRoot);
@@ -108,7 +110,12 @@ export class ThreeLayerImpl implements ThreeLayer {
         try {
             this.services.notifyAttach(this, map);
             this.mapInstance = map;
-            this.renderer = new THREE.WebGLRenderer({ canvas: map.getCanvas(), context: gl, antialias: true });
+            this.renderer = new THREE.WebGLRenderer({
+                canvas: map.getCanvas(),
+                context: gl,
+                antialias: true,
+                ...this.rendererOptions,
+            });
             this.renderer.autoClear = false;
             for (const asset of this.assets) asset.attach(this.camera, this.renderer);
             this.requestRepaint();

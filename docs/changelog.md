@@ -5,7 +5,7 @@
     - `threeLayer.getRenderer()` => `threeLayer.three.getRenderer()`
     - `threeLayer.getCamera()` => `threeLayer.three.getCamera()`
 - Bugfix: A tile asset's `getReference()` function now takes tile offset into account.
-
+- Allow advanced users to pass raw Three.JS options when creating a `ThreeLayer`
 
 ## 2.0.0 - 2026-10-02
 

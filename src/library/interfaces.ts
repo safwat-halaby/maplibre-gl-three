@@ -1,5 +1,5 @@
 import type { CustomLayerInterface, Map as MapLibreMap } from 'maplibre-gl';
-import type { Object3D, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import type { Object3D, PerspectiveCamera, Scene, WebGLRenderer, WebGLRendererParameters } from 'three';
 import type { TilesRenderer } from '3d-tiles-renderer';
 
 export type LngLat = [longitude: number, latitude: number];
@@ -159,6 +159,16 @@ export interface CreateLayerOptions {
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#layer-order-and-depth | More info about depth and layer order} 
      */
     separatorAfter?: boolean;
+    /** Raw Three.js options passed to the Three.JS primitives internally created.  */
+    three?: {
+        /** Options to be passed to the constructed WebGL renderer when the layer is added to the map.
+         * By default "canvas" and "context" are MapLibre-provided, and antialias is set to true.
+         * Any supplied options will override the default options.
+         * 
+         * WARNING: touching "canvas" and "context" is not advised and might break the library.
+         */
+        rendererOptions?: WebGLRendererParameters;
+    };
 }
 
 /** An asset is something that is loaded to a ThreeLayer in addition to the raw Three.js primitives.
@@ -264,5 +274,4 @@ export interface ThreeLayer extends CustomLayerInterface {
     */
     destroy(): void;
 }
-
 

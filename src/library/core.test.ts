@@ -20,6 +20,7 @@ vi.mock('three', async importOriginal => {
         WebGLRenderer: class {
             autoClear = true;
             domElement: HTMLCanvasElement;
+            options: THREE.WebGLRendererParameters;
             extensions = { has: () => false };
             resetState = vi.fn();
             clearDepth = vi.fn();
@@ -28,7 +29,10 @@ vi.mock('three', async importOriginal => {
                 scene.updateMatrixWorld();
                 camera.updateMatrixWorld();
             });
-            constructor({ canvas }: { canvas: HTMLCanvasElement }) { this.domElement = canvas; }
+            constructor(options: THREE.WebGLRendererParameters) {
+                this.options = options;
+                this.domElement = options.canvas as HTMLCanvasElement;
+            }
             getSize(target: THREE.Vector2) { return target.set(this.domElement.width, this.domElement.height); }
         },
     };
@@ -173,6 +177,35 @@ test('loading tiles adds one ambient light only to an initially empty scene', as
     expect(layer.three.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(1);
     await layer.load3dTiles({ tilesetUrl: 'https://example.test/other.json' });
     expect(layer.three.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(1);
+});
+
+test('renderer options override defaults when the layer is mounted', async () => {
+    const manager = createManager();
+    await manager.init();
+    const defaultLayer = manager.createLayer({ id: 'renderer-defaults' });
+    const layer = manager.createLayer({
+        id: 'renderer-options',
+        three: { rendererOptions: { alpha: true, antialias: false } },
+    });
+    const { map, gl, canvas } = createMap();
+
+    map.addLayer(defaultLayer);
+    map.addLayer(layer);
+
+    const defaultRenderer = defaultLayer.three.getRenderer() as unknown as { options: THREE.WebGLRendererParameters };
+    expect(defaultRenderer.options).toMatchObject({
+        canvas,
+        context: gl,
+        antialias: true,
+    });
+
+    const renderer = layer.three.getRenderer() as unknown as { options: THREE.WebGLRendererParameters };
+    expect(renderer.options).toMatchObject({
+        canvas,
+        context: gl,
+        alpha: true,
+        antialias: false,
+    });
 });
 
 test('loading tiles does not add ambient light to a non-empty scene', async () => {
