@@ -16,11 +16,11 @@
 
 - It is now possible to pass raw Three.js options when calling [`ThreeDManager.createLayer()`](api/index.md#createlayer). Example:
     - `threeDManager.createLayer({three: {rendererOptions: {...}}})` 
-- `load3dTiles()` now has an [`autoLoaders`](api/index.md#autoloaders) boolean which can be set to `false` to control the loaders and extensions directly.
+- [`ThreeLayer.load3dTiles()`](api/index.md#load3dtiles) now has an [`autoLoaders`](api/index.md#autoloaders) boolean which can be set to `false` to control the loaders and extensions directly.
 
 **Bug fixes:**
 
-- A tile asset's `getReference()` function now takes tile offset into account.
+- [`TileAsset.getReference()`](api/index.md#getreference) now takes tile offset into account.
 - Local dev server now only binds to localhost.
 - Bilinear interpolation now works properly on the edges of the raster (wraps around longitude, clamps latitude).
 - Bilinear interpolation unit test does not make CDN network calls anymore.
