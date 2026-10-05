@@ -14,10 +14,10 @@
     - MapLibre 3D Terrain
     - MapLibre globe
 
-## Known limitations
+## Known issues / bugs
 
-- Except for camera and height synchronization, Three.js and MapLibre do not interact. MapLibre is not aware of the positioning of Three.js primitives (like 3D Tiles or models), and Three.js is not aware of the position of MapLibre features. Syncing those requires app-level code and depends on use case.
-- Lacking good demos. The current demos do not show the full power of the library!
-- Does not allow configuring the loaded 3D Tiles extensions. TODO: When time permits, investigate exposing more of 3d-tiles-renderer, including configurable extensions.
+- None.
 
+## Inherent limitations
 
+Except for camera and height synchronization, Three.js and MapLibre do not interact. MapLibre is not aware of the positioning of Three.js primitives (like 3D Tiles or models), and Three.js is not aware of the position of MapLibre features. Syncing those requires app-level code and depends on use case.

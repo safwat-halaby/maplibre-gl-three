@@ -22,8 +22,6 @@ const layer = threeDManager.createLayer();
 map.on('load', () => map.addLayer(layer));
 ```
 
-Now you can use ThreeLayer's various [methods](api/index.md#methods_3) to get access to ThreeJS primitives or to produce 3D tiles.
-
 MapLibre layer order is honored by default. [addLayer](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#addlayer) adds the layer last by default. You can control depth by adding the layer elsewhere.
 
 ## 3D Tiles Asset
@@ -44,7 +42,9 @@ const tilesAsset = await layer.load3dTiles({
 
 Suppose you want to load a regular Three.JS object.  
 
-[ThreeDManager](api/index.md#threedmanager) has various [methods](api/index.md#methods) to help you with coordinate system conversions. In the following example, we use `getEcefMatrix` to convert from the typical longitude/latitude(`EPSG:4326`) coordinates to ECEF(`EPSG:4978`): 
+[ThreeDManager](api/index.md#threedmanager) has various methods to help you with coordinate system conversions. In the following example, we use `getEcefMatrix` to convert from the typical longitude/latitude(`EPSG:4326`) coordinates to ECEF(`EPSG:4978`).
+
+Additionally, can use [ThreeLayer.three](api/index.md#three-1) to access the raw ThreeJS objects like the camera, scene, and so on. Putting it all together:
 
 ```js
 import * as THREE from 'three';

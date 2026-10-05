@@ -135,7 +135,7 @@ export interface ThreeDManagerOptions {
 
 /** Options for {@link ThreeLayer.load3dTiles}. Passed as `threeLayer.load3dTiles({...})`. */
 export interface Load3dTilesOptions {
-    tilesetUrl: string;
+    tilesetUrl?: string;
     /**
      * Offset in meters along east/up/south. Useful for correcting vertical errors.
      * 
@@ -150,7 +150,7 @@ export interface Load3dTilesOptions {
      * Setting this to true (default) is equivalent to this:
      * 
      * ```js
-     * const tilesAsset = threeLayer.load3dTiles();
+     * const tilesAsset = await threeLayer.load3dTiles();
      * const tilesRenderer = tilesAsset.getTilesRenderer();
      * const dracoLoader = new DRACOLoader(tilesRenderer.manager).setDecoderPath(dracoPath);
      * const ktx2Loader = new KTX2Loader(tilesRenderer.manager).setTranscoderPath(ktx2Path);
