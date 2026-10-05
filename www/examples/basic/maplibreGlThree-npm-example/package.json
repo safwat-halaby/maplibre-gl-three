@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "maplibre-gl": "^6.11.2",
-    "maplibre-gl-three": "2.0.0"
+    "maplibre-gl-three": "3.0.0"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^14.0.0",

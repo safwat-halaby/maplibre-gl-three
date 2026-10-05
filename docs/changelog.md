@@ -1,4 +1,4 @@
-## Next version
+## 3.0.0 - 2026-10-05
 
 **Breaking API changes:** The way raw parameters are passed to the underlying libraries was tweaked and namespaced.
 
