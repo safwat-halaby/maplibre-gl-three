@@ -60,6 +60,8 @@ const DEPENDENCIES = {
 		'examples/jsm/math/ColorSpaces.js',
 		'examples/jsm/libs/zstddec.module.js',
 		'examples/jsm/libs/ktx-parse.module.js',
+		'examples/jsm/libs/basis/basis_transcoder.js',
+		'examples/jsm/libs/basis/basis_transcoder.wasm',
 		'examples/jsm/libs/draco/draco_wasm_wrapper.js',
 		'examples/jsm/libs/draco/draco_decoder.wasm',
 	],
