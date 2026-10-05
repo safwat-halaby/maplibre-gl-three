@@ -18,6 +18,8 @@ import type {
     AffineTransformation,
     VerticalDatumOptions,
     calculateAnchorPoint,
+    CreateLayerThreeOptions,
+    ThreeLayerGetters
 } from './interfaces';
 
 export { PlateCarreeTools };
@@ -37,6 +39,8 @@ export type {
     AffineTransformation as TransformParameters,
     VerticalDatumOptions,
     calculateAnchorPoint,
+    CreateLayerThreeOptions,
+    ThreeLayerGetters
 };
 
 /** This class is the entry point of this library. It manages a MapLibre map's 3D layers.

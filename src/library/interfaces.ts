@@ -64,7 +64,7 @@ export interface VerticalDatumOptions {
     enabled?: boolean;
 }
 
-/** constructor options for {@link ThreeDManager}. Passed as `new ThreeDManager({tilesRendererConfig: {...}})` */
+/** constructor options for {@link ThreeDManager} that affect 3d-tiles-renderer. Passed as `new ThreeDManager({tilesRendererConfig: {...}})` */
 export interface TilesRendererConfig {
     /**
      * Path to the Draco loader to be lazy loaded if needed.
@@ -137,6 +137,7 @@ export interface ThreeDManagerOptions {
 export interface Load3dTilesOptions {
     /**
      * URL of the root tileset JSON to be fetched.
+     * 
      * If omitted, you should call {@link ThreeDTilesAsset.getTilesRenderer} and configure the 3D tiles manually,
      * for example by using some plugin which loads the tiles from a non-url source.
      * Preferably do this before adding the {@link ThreeLayer} to the map.
@@ -156,7 +157,7 @@ export interface Load3dTilesOptions {
      * Setting this to true (default) is equivalent to this:
      * 
      * ```js
-     * const tilesAsset = await threeLayer.load3dTiles();
+     * const tilesAsset = await threeLayer.load3dTiles({...});
      * const tilesRenderer = tilesAsset.getTilesRenderer();
      * const dracoLoader = new DRACOLoader(tilesRenderer.manager).setDecoderPath(dracoPath);
      * const ktx2Loader = new KTX2Loader(tilesRenderer.manager).setTranscoderPath(ktx2Path);
@@ -166,13 +167,14 @@ export interface Load3dTilesOptions {
      *  .register(() => new GLTFCesiumRTCExtension());
      * ```
      * 
-     * The `dracoPath` and `ktx2Path` parameters are obtained from `ThreeDManagerOptions.tilesRendererConfig`.
+     * The `dracoPath` and `ktx2Path` parameters are obtained from {@link TilesRendererConfig}.
      * 
      * @defaultValue true
      */
     autoLoaders?: boolean;
     /**
      * Common options applied to the underlying 3d-tiles-renderer instance.
+     * 
      * If you want more control you can call {@link ThreeDTilesAsset.getTilesRenderer} and manipulate the tiles renderer directly.
      * Depending on what you're doing, it may be better to do this manipulation before adding the {@link ThreeLayer} to the map.
      */
@@ -209,16 +211,21 @@ export interface CreateLayerOptions {
      */
     separatorAfter?: boolean;
     /** Raw Three.js options passed to the Three.JS primitives internally created.  */
-    three?: {
+    three?: CreateLayerThreeOptions
+}
+
+/** Options for {@link ThreeDManager.createLayer} that are passed to Three.JS. Passed as `threeDManager.createLayer({three: {...}})`. */
+export interface CreateLayerThreeOptions  {
         /** Options to be passed to the constructed WebGL renderer when the layer is added to the map.
-         * By default "canvas" and "context" are MapLibre-provided, and antialias is set to true.
-         * Any supplied options will override the default options.
+         * 
+         * By default "canvas" and "context" are MapLibre-provided, and antialias is set to true. Any supplied options will override the default options.
          * 
          * WARNING: touching "canvas" and "context" is not advised and might break the library.
+         * 
+         * @see {@link https://threejs.org/docs/?q=webglrenderer#WebGLRenderer | WebGLRenderer docs}
          */
         rendererOptions?: WebGLRendererParameters;
     };
-}
 
 /** An asset is something that is loaded to a ThreeLayer in addition to the raw Three.js primitives.
  * Currently the only supported asset type is {@link ThreeDTilesAsset}. */
@@ -285,29 +292,7 @@ export interface ThreeLayer extends CustomLayerInterface {
      * A layer may be manually destroyed with {@link ThreeLayer.destroy}, but is also automatically destroyed if its parent {@link ThreeDManager} is destroyed.
     */
     isDestroyed(): boolean;
-    readonly three: {
-        /** Returns the Three.js scene. Objects within the scene are expected to have ECEF Vector3 coordinates.
-         * The simplest way for achieving this is with {@link ThreeDManager.getEcefMatrix}
-         *
-         * ATTENTION: Do not touch the scene matrix because it is owned and manipulated by the library.
-         * Other than this, you may use the scene as you normally would use it in Three.js.
-         *
-         * @see {@link https://threejs.org/docs/ | Three.JS docs}
-         */
-        getScene(): Scene;
-        /** Returns the library-controlled Three.js camera in LocalSpace coordinates, updated during render.
-         * 
-         * ATTENTION: Updating the camera is not advised because it is library-controlled. But it can be used for querying. E.g. raycasting.
-         * 
-         * @see {@link https://threejs.org/docs/ | Three.JS docs}
-         */
-        getCamera(): PerspectiveCamera;
-        /** Returns the Three.js WebGLRenderer. Returns null while the layer is detached from a map.
-         *
-         * @see {@link https://threejs.org/docs/ | Three.JS docs}
-         */
-        getRenderer(): WebGLRenderer | null;
-    };
+    readonly three: ThreeLayerGetters;
     /** Adds 3D Tiles to the layer and returns the controlling asset. Resolves after asset setup (not after streaming finishes).
      * The asset is a thin wrapper around the 3d-tiles-renderer library. 
      * 
@@ -327,3 +312,28 @@ export interface ThreeLayer extends CustomLayerInterface {
     */
     destroy(): void;
 }
+
+/** Getters for obtaining raw Three.JS objects from a {@link ThreeLayer}, for example: `threeLayer.three.getCamera()`. */
+export interface ThreeLayerGetters {
+    /** Returns the Three.js scene. Objects within the scene are expected to have ECEF Vector3 coordinates.
+     * The simplest way for achieving this is with {@link ThreeDManager.getEcefMatrix}
+     *
+     * ATTENTION: Do not touch the scene matrix because it is owned and manipulated by the library.
+     * Other than this, you may use the scene as you normally would use it in Three.js.
+     *
+     * @see {@link https://threejs.org/docs/ | Three.JS docs}
+     */
+    getScene(): Scene;
+    /** Returns the library-controlled Three.js camera in LocalSpace coordinates, updated during render.
+     * 
+     * ATTENTION: Updating the camera is not advised because it is library-controlled. But it can be used for querying. E.g. raycasting.
+     * 
+     * @see {@link https://threejs.org/docs/ | Three.JS docs}
+     */
+    getCamera(): PerspectiveCamera;
+    /** Returns the Three.js WebGLRenderer. Returns null while the layer is detached from a map.
+     *
+     * @see {@link https://threejs.org/docs/ | Three.JS docs}
+     */
+    getRenderer(): WebGLRenderer | null;
+};
