@@ -135,6 +135,12 @@ export interface ThreeDManagerOptions {
 
 /** Options for {@link ThreeLayer.load3dTiles}. Passed as `threeLayer.load3dTiles({...})`. */
 export interface Load3dTilesOptions {
+    /**
+     * URL of the root tileset JSON to be fetched.
+     * If omitted, you should call {@link ThreeDTilesAsset.getTilesRenderer} and configure the 3D tiles manually,
+     * for example by using some plugin which loads the tiles from a non-url source.
+     * Preferably do this before adding the {@link ThreeLayer} to the map.
+     */
     tilesetUrl?: string;
     /**
      * Offset in meters along east/up/south. Useful for correcting vertical errors.
@@ -312,7 +318,7 @@ export interface ThreeLayer extends CustomLayerInterface {
      * 
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies and how to disable them}
      */
-    load3dTiles(options: Load3dTilesOptions): Promise<ThreeDTilesAsset>;
+    load3dTiles(options?: Load3dTilesOptions): Promise<ThreeDTilesAsset>;
     /** Calls MapLibre's triggerRepaint(). */
     requestRepaint(): void;
     /** Permanently removes the layer and destroys all child assets.

@@ -178,7 +178,6 @@ test('loading tiles adds one ambient light only to an initially empty scene', as
     await layer.load3dTiles({ tilesetUrl: 'https://example.test/other.json' });
     expect(layer.three.getScene().children.filter(object => object instanceof THREE.AmbientLight)).toHaveLength(1);
 });
-
 test('renderer options override defaults when the layer is mounted', async () => {
     const manager = createManager();
     await manager.init();

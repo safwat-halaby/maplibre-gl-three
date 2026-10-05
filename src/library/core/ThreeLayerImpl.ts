@@ -69,7 +69,7 @@ export class ThreeLayerImpl implements ThreeLayer {
 
     isDestroyed(): boolean { return this.destroyed; }
 
-    async load3dTiles(options: Load3dTilesOptions): Promise<ThreeDTilesAsset> {
+    async load3dTiles(options: Load3dTilesOptions = {}): Promise<ThreeDTilesAsset> {
         this.assertAlive();
         const assetServices: AssetServices = {
             dracoPath: this.services.dracoPath,
