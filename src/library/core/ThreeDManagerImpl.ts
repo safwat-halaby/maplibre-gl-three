@@ -119,12 +119,15 @@ export class ThreeDManagerImpl {
         return layer;
     }
 
-    /** Convert longitude/latitude (degrees) and altitude above sea level (meters) to ECEF.
+    /** Convert longitude/latitude (degrees) and height to ECEF.
      * 
      * Consider {@link ThreeDManager.getEcefMatrix} as an alternative.
+     *
+     * If the vertical datum is enabled via {@link VerticalDatumOptions} (default yes), the input height is expected to be orthometric above sea level. 
+     * Otherwise, the height is expected to be ellipsoidal. 
      * 
-     * 
-     * - Source coordinates: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
+     * - Source coordinates with vertical datum enabled: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
+     * - Source coordinates with vertical datum disabled: `EPSG:4979` (which is a `WGS84 (EPSG:4326)` point with ellipsoidal height)
      * - Used vertical datum: `EGM96 EPSG:5773`
      * - Output coordinates: `EPSG:4978`
      * 
@@ -139,13 +142,15 @@ export class ThreeDManagerImpl {
         });
     }
 
-    /** Convert ECEF to longitude/latitude and height above sea level.
+    /** Convert ECEF to longitude/latitude and height.
      * 
+     * If the vertical datum is enabled via {@link VerticalDatumOptions} (default yes), the output height is orthometric above sea level. 
+     * Otherwise, the height is ellipsoidal.
      * 
      * - Source coordinates: `EPSG:4978`
      * - Used vertical datum: `EGM96 EPSG:5773`
-     * - Output coordinates: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
-     * 
+     * - Output coordinates with vertical datum enabled: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
+     * - Output coordinates with vertical datum disabled: `EPSG:4979` (which is a `WGS84 (EPSG:4326)` point with ellipsoidal height)
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
      */
     ecefToLngLatAlt(point: THREE.Vector3): LngLatAlt {
@@ -194,13 +199,17 @@ export class ThreeDManagerImpl {
         return point.clone().applyMatrix4(this.anchorMatrices.ecefToLocal);
     }
 
-    /** Convert a LocalSpace point (e.g. a Three.js raycast hit) to a longitude, latitude, and height above sea level.
+    /** Convert a LocalSpace point (e.g. a Three.js raycast hit) to a longitude, latitude, and height.
      * 
      * ATTENTION: LocalSpace is camera-dependant. If you convert something to LocalSpace, and convert it back after camera move, the point will not land on its original spot.
      * The best way to avoid trouble is to immediately convert any calculated LocalSpace point to something else.
      * 
+     * If the vertical datum is enabled via {@link VerticalDatumOptions} (default yes), the output height is orthometric above sea level. 
+     * Otherwise, the height is ellipsoidal.
+     * 
      * - Source coordinates: `LocalSpace`
-     * - Output coordinates:  `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
+     * - Output coordinates with vertical datum enabled: `EPSG:9707` (which is a `WGS84 (EPSG:4326)` point with orthometric height (`EGM96 EPSG:5773`))
+     * - Output coordinates with vertical datum disabled: `EPSG:4979` (which is a `WGS84 (EPSG:4326)` point with ellipsoidal height)
      * 
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/ | More info about the coordinate systems}
      */
@@ -208,7 +217,7 @@ export class ThreeDManagerImpl {
         return this.ecefToLngLatAlt(this.localSpaceToEcef(point));
     }
     
-    /** The inverse of {Three} */
+    /** The inverse of {@link localSpaceToLngLatAlt} */
     lngLatAltToLocalSpace(point: LngLatAlt): THREE.Vector3 {
         return this.ecefToLocalSpace(this.lngLatAltToEcef(point))
     }
