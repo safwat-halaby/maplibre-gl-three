@@ -61,8 +61,8 @@ By default a vertical datum is fetched from `https://cdn.proj.org` when `ThreeDM
 ```js
 const threeDManager = new ThreeDManager({
     tilesRendererConfig: {
-        dracoPath: 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/',
-        ktx2Path: 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/',
+        dracoPath: 'https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/draco/',
+        ktx2Path: 'https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/basis/',
     },
     verticalDatum: {
         enabled: true,

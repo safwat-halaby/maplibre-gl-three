@@ -8,8 +8,8 @@ import type {
     LngLat, LngLatAlt, ThreeDManagerOptions, ThreeLayer, AffineTransformation, calculateAnchorPoint,
 } from '../interfaces';
 
-const DEFAULT_DRACO_PATH = 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/';
-const DEFAULT_KTX2_PATH = 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/';
+const DEFAULT_DRACO_PATH = 'https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/draco/';
+const DEFAULT_KTX2_PATH = 'https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/basis/';
 
 
 export class ThreeDManagerImpl {

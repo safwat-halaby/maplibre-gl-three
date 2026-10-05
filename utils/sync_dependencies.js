@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /* This script does 3 things:
 - Copy some assets from node_modules into www/dependencies, enabling the self-host examples to work.
-- Update some hardcoded dependency paths in the self-host examples to point to the proper files.
-- Update the hardcoded path in maplibre-gl-three.ts
+- Update some hardcoded dependency paths in examples.
+- Update hardcoded dependency paths in the codebase and docs.
 */
 import { mkdir, copyFile, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -29,6 +29,8 @@ const FILES_TO_UPDATE_ALL_VERSIONS = [
 
 	'src/library/maplibre-gl-three.ts',
 	'src/library/interfaces.ts',
+	'src/library/core/ThreeDManagerImpl.ts',
+	'docs/principles.md',
 	'README.md'
 ];
 
@@ -151,7 +153,7 @@ async function copyLibraryFiles(packageName, version, files) {
 		const destinationPath = path.join(destinationDir, relativeFile);
 		await mkdir(path.dirname(destinationPath), { recursive: true });
 		await copyFile(sourcePath, destinationPath);
-		console.log(`Copied ${path.join(relativeNodeModulesRoot, relativeFile)} -> ${path.join(relativeDestinationDir, relativeFile)}`);
+		console.log(`Copied ${path.join(relativeNodeModulesRoot, packageName, relativeFile)} -> ${path.join(relativeDestinationDir, relativeFile)}`);
 	}
 }
 
@@ -188,7 +190,7 @@ async function updateAllDependenciesInFiles(versions) {
 			text = replaceVersionPin(text, '3d-tiles-renderer', versions['3d-tiles-renderer']);
 			text = replaceVersionPin(text, 'proj4', versions['proj4']);
 			text = replaceVersionPin(text, 'geotiff', versions['geotiff']);
-			text = replaceVersionPin(text, 'maplibre-gl-three', versions['maplibre-gl-three']);
+			text = replaceVersionPin(text, 'maplibre-gl-three', versions['maplibre-gl-three']); // this has to happen AFTER three because "three" also matcches "maplibre-gl-three"
 			return text;
 		});
 	}
