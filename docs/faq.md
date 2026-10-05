@@ -36,7 +36,9 @@ const tilesAsset = await layer.load3dTiles({
 });
 ```
 
-This library automatically applies vertical datum corrections for 3D Tiles. In some cases your dataset may have already pre-corrected vertical datums and so the library might be double-correcting. Strictly speaking this is a dataset error, as all the ECEF coordinates in your dataset are incorrect, but you might be able to get away with it by turning off vertical datum corrections:
+**D. The dataset has orthometric ECEF coordinates**
+
+`maplibre-gl-three` automatically applies vertical datum corrections for 3D Tiles. In some cases your dataset may have already pre-corrected vertical datums and so we might be double-correcting heights. Strictly speaking this is a dataset error, because ECEF coordinates are not supposed to be orthometric, but you might be able to get away with it by turning off vertical datum corrections:
 
 ```js
 const threeDManager = new ThreeDManager({
@@ -47,7 +49,7 @@ const threeDManager = new ThreeDManager({
 ```
 This has consequences if you're using additional externally sourced ECEF coordinates; they will not sit correctly on your 3D tiles or MapLibre map.
 
-## I am seeing weird vertical artifacts
+## I am seeing weird vertical lines on the edges of terrain tiles
 
 You're likely using a MapLibre terrain along with a transparent background. You have two options.
 
@@ -72,7 +74,7 @@ const map = new Map({
     terrainSkirtLength: 'none',
     // ...
 });
-```
+``` 
 
 ## I loaded some 3D Tiles and I see nothing. What do I do? 
 
@@ -81,16 +83,16 @@ const map = new Map({
 
 ```js
 // map is the MapLibre map
-// tiles3d is the object returned from `load3dTiles`
-tiles3d.getTilesRenderer().addEventListener('load-root-tileset', () => {
-    const tilesPosition = tiles3d.getReference();
+// tilesAsset is the object returned from `load3dTiles`
+tilesAsset.getTilesRenderer().addEventListener('load-root-tileset', () => {
+    const tilesPosition = tilesAsset.getReference();
     map.flyTo({center: tilesPosition.point, zoom: 16});
 });
 ```
 
 **If it's a misssing 3d tiles extension issue:**
 
-If the console reports a missing extension or loader, you should probably set [threeLayer.load3dTiles({autoLoaders: false})](api/index.md#load3dtilesoptions) and then add the proper loaders yourself.
+If the console reports a missing extension or loader, you should probably set [threeLayer.load3dTiles({autoLoaders: false})](api/index.md#load3dtilesoptions) and then add the proper loaders yourself. If I missed a very common loader, I should add it to the `autoLoaders` list. [Contact me](contact.md).
 
 ## How do I center the map on the 3D Tiles?
 

@@ -30,8 +30,8 @@ nav:
   - Usage Guide:
     - Getting started: getting-started.md
     - Frequently Asked Questions: faq.md
-  - Examples and demos:
-    - Live Demos: examples/live.md
+  - Examples:
+    - Live examples: examples/live.md
     - Repository Examples: examples/repo.md
   - Principles:
     - Core principles: principles.md 
@@ -40,6 +40,7 @@ nav:
     - Changelog: changelog.md
     - Development: development.md
     - License: license.md
+    - Contact me: contact.md
   - API:
     - API Reference: api/index.md
     - External API references: external.md

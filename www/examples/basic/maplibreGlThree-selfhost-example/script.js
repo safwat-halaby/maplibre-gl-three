@@ -28,14 +28,15 @@ map.on('load', async () => {
     });
     await threeDManager.init();
     const layer = threeDManager.createLayer();
-    await layer.load3dTiles({
-        tilesetUrl: '/datasets/agi-hq/tileset.json',
+    const tilesAsset = await layer.load3dTiles({
+        tilesetUrl: 'https://tiles.arcgis.com/tiles/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Utrecht_3D_Tiles_Integrated_Mesh/3DTilesServer/tileset.json',
         offset: { east: 0, up: -234, south: 0 },
         tilesRendererOptions: { maxDepth: 5 }
     });
     // You can also try the following open datasets, without any vertical offsets:
     // https://tiles.arcgis.com/tiles/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Utrecht_3D_Tiles_Integrated_Mesh/3DTilesServer/tileset.json
     // https://s3.eu-west-2.wasabisys.com/ems-sgct-photomaillage/ODACIT/EMS_PM2022/tileset.json
+    // To center on them, see https://maplibre-gl-three.readthedocs.io/latest/faq/#i-loaded-some-3d-tiles-and-i-see-nothing-what-do-i-do
 
     // an individual pink sphere.
     const marker = new THREE.Mesh(

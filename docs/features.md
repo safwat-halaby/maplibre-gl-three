@@ -16,7 +16,7 @@
 
 ## Known issues / bugs
 
-- None.
+- On extreme zoom-outs from a 3d tile or Three.JS scene, once the map center leaves the scene boundaries, the scene will become progressively more misaligned with MapLibre the more you pan away from it.
 
 ## Inherent limitations
 

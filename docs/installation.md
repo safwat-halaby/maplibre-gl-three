@@ -2,7 +2,7 @@
 
 ## NPM installation
 
-The npm method is described in the [introduction](index.md).
+The NPM method is described in the [introduction](index.md).
 
 ## CDNs and direct browser import
 

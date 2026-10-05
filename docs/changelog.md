@@ -1,7 +1,5 @@
 ## Next version
 
-
-
 **Breaking API changes:** The way raw parameters are passed to the underlying libraries was tweaked and namespaced.
 
 - The Three.JS raw getters are now grouped under [ThreeLayer.three](api/index.md#three-1):
@@ -25,6 +23,7 @@
 - A tile asset's `getReference()` function now takes tile offset into account.
 - Local dev server now only binds to localhost.
 - Bilinear interpolation now works properly on the edges of the raster (wraps around longitude, clamps latitude).
+- Bilenear interpolation unit test does not make CDN network calls anymore.
 
 ## 2.0.0 - 2026-10-02
 

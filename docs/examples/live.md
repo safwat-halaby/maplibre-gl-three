@@ -1,3 +1,3 @@
-# Live demos
+# Live examples
 
 Coming soon.
