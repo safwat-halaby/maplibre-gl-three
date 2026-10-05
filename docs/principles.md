@@ -54,14 +54,16 @@ You're out of luck. Your 3D Tiles have slopes, but MapLibre does not have any gr
 
 ### Network Dependencies
 
-3d-tiles-renderer has some network dependencies that are lazily fetched from `https://cdn.jsdelivr.net` when you call `layer.load3dTiles(...)`. You can fetch them from elsewhere by changing `ThreeDManager`'s `dracoPath` and `ktx2Path` options.
+3d-tiles-renderer has some network dependencies that are lazily fetched from `https://cdn.jsdelivr.net` when you call `layer.load3dTiles(...)`. You can fetch them from elsewhere by changing `ThreeDManager`'s `tilesRendererConfig` options (see below).
 
 By default a vertical datum is fetched from `https://cdn.proj.org` when `ThreeDManager.init()` is called. This can be modified or disabled via the constructor. Here are the default options:
 
 ```js
 const threeDManager = new ThreeDManager({
-    dracoPath: 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/',
-    ktx2Path: 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/',
+    tilesRendererConfig: {
+        dracoPath: 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/draco/',
+        ktx2Path: 'https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/libs/basis/',
+    },
     verticalDatum: {
         enabled: true,
         path: 'https://cdn.proj.org/us_nga_egm96_15.tif'

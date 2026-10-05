@@ -12,7 +12,7 @@
 - The `3d-tiles-renderer` options `maxDepth` and `preprocessURL` were namespaced for making it clear what's passed directly to 3d-tiles-renderer and what's library owned, when calling [ThreeLayer.load3dTiles()](api/index.md#load3dtiles). Example:
     - `threeLayer.load3dTiles({tileSetUrl, offset, autoLoaders, tilesRendererOptions: {maxDepth, preprocessURL}})`
     - `tilesetUrl` is so basic and typical that it was kept outside `tilesRendererOptions` despite being a tile renderer option. In many cases you'd still call `threeLayer.load3dTiles({tileSetUrl})` without additional parameters.
-
+- `ThreeDTilesOffset` renamed to `MetersOffset`.
 
 **Nonbreaking API additions:**
 

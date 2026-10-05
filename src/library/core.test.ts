@@ -256,6 +256,22 @@ test('multiple assets share one scene, renderer, camera and depth pass', async (
     expect(updateA.mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(renderer.render).mock.invocationCallOrder[0]);
 });
 
+test('tiles renderer config controls automatic loader paths', async () => {
+    const dracoPath = 'https://example.test/draco/';
+    const ktx2Path = 'https://example.test/ktx2/';
+    const manager = createManager(createRaster(), { tilesRendererConfig: { dracoPath, ktx2Path } });
+    await manager.init();
+    const layer = manager.createLayer({ id: 'loader-config' });
+    const asset = await layer.load3dTiles({ tilesetUrl: 'https://example.test/tiles.json' });
+    const { map } = createMap();
+    map.addLayer(layer);
+
+    const loader = asset.getTilesRenderer().manager.getHandler('model.glb') as GLTFLoader;
+    const decoderPaths = (loader.dracoLoader as unknown as { decoderPaths: { js: string } }).decoderPaths;
+    expect(decoderPaths.js).toBe(`${dracoPath}draco_wasm_wrapper.js`);
+    expect(loader.ktx2Loader!.transcoderPath).toBe(ktx2Path);
+});
+
 test('tiles renderer options are applied without automatic loaders', async () => {
     const manager = createManager();
     await manager.init();

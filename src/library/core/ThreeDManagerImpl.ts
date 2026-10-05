@@ -52,8 +52,10 @@ export class ThreeDManagerImpl {
         verticalDatum: GeographicRaster,
         {
             debugMode = false,
-            dracoPath = DEFAULT_DRACO_PATH,
-            ktx2Path = DEFAULT_KTX2_PATH,
+            tilesRendererConfig: {
+                dracoPath = DEFAULT_DRACO_PATH,
+                ktx2Path = DEFAULT_KTX2_PATH,
+            } = {},
             calculateAnchorPoint = calculateWebMercatorAnchorPoint,
             getTransformParameters = getWebMercatorTransformParameters,
         }: ThreeDManagerOptions = {},

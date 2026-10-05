@@ -40,6 +40,7 @@ export type calculateAnchorPoint = (mapInstance: MapLibreMap) => LngLat;
 /** See {@link ThreeDManagerOptions} for an explanation. */
 export type GetTransformParameters = (anchor4326: LngLat) => AffineTransformation;
 
+/** Vertical datum constructor options for {@link ThreeDManager}. Passed as `new ThreeDManager({verticalDatum: {...}})` */
 export interface VerticalDatumOptions {
     /**
      * Optional URL of the GeoTIFF vertical datum file.
@@ -63,16 +64,13 @@ export interface VerticalDatumOptions {
     enabled?: boolean;
 }
 
-/** Constructor options for {@link ThreeDManager} */
-export interface ThreeDManagerOptions {
-    /**
-     * If true, renders the Three.js anchor point for debugging.
-     * @defaultValue false
-     */
-    debugMode?: boolean;
+/** constructor options for {@link ThreeDManager}. Passed as `new ThreeDManager({tilesRendererConfig: {...}})` */
+export interface TilesRendererConfig {
     /**
      * Path to the Draco loader to be lazy loaded if needed.
      * This is used internally by 3d-tiles-renderer to decompress Draco-compressed 3D Tiles.
+     * This is ignored if {@link Load3dTilesOptions.autoLoaders} is set to false when calling {@link ThreeLayer.load3dTiles}.
+     * 
      * @defaultValue https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/draco/
      * 
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies}
@@ -80,12 +78,27 @@ export interface ThreeDManagerOptions {
     dracoPath?: string;
     /**
      * Path to the KTX2 loader to be lazy loaded if needed.
-     * This is used internally by 3d-tiles-rendrer.
+     * This is used internally by 3d-tiles-renderer.
+     * This is ignored if {@link Load3dTilesOptions.autoLoaders} is set to false when calling {@link ThreeLayer.load3dTiles}.
+     * 
      * @defaultValue https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/libs/basis/
      * 
      * @see {@link https://maplibre-gl-three.readthedocs.io/latest/principles/#network-dependencies | More info about network dependencies}
      */
     ktx2Path?: string;
+}
+
+/** Constructor options for {@link ThreeDManager}. Passed as `new ThreeDManager({...})`. */
+export interface ThreeDManagerOptions {
+    /**
+     * If true, renders the Three.js anchor point for debugging.
+     * @defaultValue false
+     */
+    debugMode?: boolean;
+    /**
+     * Configuration that is passed to 3d-tiles-renderer
+     */
+    tilesRendererConfig?: TilesRendererConfig;
     /**
      * Configuration for loading and applying a vertical datum, necessary for accurate above-sea-level calculations.
      * 
@@ -120,7 +133,7 @@ export interface ThreeDManagerOptions {
     getTransformParameters?: GetTransformParameters;
 }
 
-/** Options for {@link ThreeLayer.load3dTiles} */
+/** Options for {@link ThreeLayer.load3dTiles}. Passed as `threeLayer.load3dTiles({...})`. */
 export interface Load3dTilesOptions {
     tilesetUrl: string;
     /**
@@ -130,7 +143,7 @@ export interface Load3dTilesOptions {
      */
     offset?: MetersOffset;
     /**
-     * Whether to automatically add DRACOLoader, KTX2Loader, GLTFLoader, and GLTFCesiumRTCExtension to the tiles renderer.
+     * Whether to automatically add `DRACOLoader`, `KTX2Loader`, `GLTFLoader`, and `GLTFCesiumRTCExtension` to the tiles renderer.
      * 
      * If set to false, you should probably add them yourself by calling {@link ThreeDTilesAsset.getTilesRenderer} and manipulating the renderer before adding the {@link ThreeLayer} to the map.
      * 
@@ -147,7 +160,7 @@ export interface Load3dTilesOptions {
      *  .register(() => new GLTFCesiumRTCExtension());
      * ```
      * 
-     * The `dractPath` and `ktx2Path` parameters are obtained from TODO TODO TODO
+     * The `dracoPath` and `ktx2Path` parameters are obtained from `ThreeDManagerOptions.tilesRendererConfig`.
      * 
      * @defaultValue true
      */
@@ -169,7 +182,7 @@ export interface Load3dTilesOptions {
     };
 }
 
-/** Options for {@link ThreeDManager.createLayer} */
+/** Options for {@link ThreeDManager.createLayer}. Passed as `threeDManager.createLayer({...})`. */
 export interface CreateLayerOptions {
     /** The layer id as it would appear in MapLibre. If no id is supplied, an id will be auto-generated. */
     id?: string;
@@ -202,7 +215,7 @@ export interface CreateLayerOptions {
 }
 
 /** An asset is something that is loaded to a ThreeLayer in addition to the raw Three.js primitives.
- * Currently the only supported asset type is ThreeDTilesAsset. */
+ * Currently the only supported asset type is {@link ThreeDTilesAsset}. */
 export interface Asset {
     /** Returns whether or not the asset has been destroyed. 
      * An asset may be manually destroyed with {@link Asset.destroy}, but is also automatically destroyed if its parent ThreeLayer is destroyed.
@@ -223,7 +236,7 @@ export interface Asset {
 /** A 3D Tiles asset that is loaded to a layer and rendered on the map.
  * The asset is a thin wrapper around the 3d-tiles-renderer library.
  * 
- * You can create a ThreeDTilesAsset via {@link ThreeLayer.load3dTiles}
+ * You can create a `ThreeDTilesAsset` via {@link ThreeLayer.load3dTiles}
 */
 export interface ThreeDTilesAsset extends Asset {
     /** Returns the underlying TilesRenderer object of the 3d-tiles-renderer library.
