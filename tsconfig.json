@@ -10,7 +10,7 @@
     "sourceMap": true,
     "rootDir": "src/library",
     "outDir": "dist",
-    "types": [],
+    "types": ["node"],
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "ignoreDeprecations": "6.0"

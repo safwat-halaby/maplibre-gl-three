@@ -1,6 +1,6 @@
 ## Next version
 
-- Bugfix: A tile asset's `getReference()` function now takes tile offset into account.
+
 
 **Breaking API changes:** The way raw parameters are passed to the underlying libraries was tweaked and namespaced.
 
@@ -16,13 +16,15 @@
 
 **Nonbreaking API additions:**
 
-- Allow users to pass raw Three.JS options when calling [ThreeDManager.createLayer()](api/index.md#createlayer). Example:
+- It is now possible to pass raw Three.JS options when calling [ThreeDManager.createLayer()](api/index.md#createlayer). Example:
     - `threeDmanager.createLayer({three: {rendererOptions: WebGLRendererParameters}})` 
 - `load3dTiles` now has an [autoLoaders](api/index.md#autoloaders) boolean which can be set to false to control the loaders and extensions directly.
 
-**Security:**
+**Bufixes:**
 
+- A tile asset's `getReference()` function now takes tile offset into account.
 - Local dev server now only binds to localhost.
+- Bilinear interpolation now works properly on the edges of the raster (wraps around longitude, clamps latitude).
 
 ## 2.0.0 - 2026-10-02
 

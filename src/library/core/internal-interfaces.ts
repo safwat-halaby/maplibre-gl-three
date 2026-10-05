@@ -7,6 +7,10 @@ export interface AnchorMatrices {
     localToMap: Matrix4;
 }
 
+export interface Fetcher {
+    fetch(url: string): Promise<Response>;
+}
+
 /** Represents a raster that has geographic awareness. */
 export interface GeographicRaster {
     init(): Promise<void>;

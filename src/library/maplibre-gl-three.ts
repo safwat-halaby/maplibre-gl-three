@@ -1,6 +1,7 @@
 import { ThreeDManagerImpl } from './core/ThreeDManagerImpl';
 import { PlateCarreeTools } from './helpers/plateCarreeTools';
 import { GeoTiffGeographicRaster } from './adapters/GeoTiffGeographicRaster';
+import { HttpFetcher } from './adapters/HttpFetcher';
 import { BilinearGeographicRaster } from './helpers/BilinearGeographicRaster';
 import type {
     Asset,
@@ -46,7 +47,7 @@ export class ThreeDManager extends ThreeDManagerImpl {
     constructor(options: ThreeDManagerOptions = {}) {
         super(
             new BilinearGeographicRaster(
-                new GeoTiffGeographicRaster(options.verticalDatum),
+                new GeoTiffGeographicRaster(new HttpFetcher(), options.verticalDatum),
             ),
             options,
         );
