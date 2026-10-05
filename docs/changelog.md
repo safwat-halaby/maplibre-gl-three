@@ -2,7 +2,7 @@
 
 **Breaking API changes:** The way raw parameters are passed to the underlying libraries was tweaked and namespaced.
 
-- The Three.js raw getters are now grouped under [`ThreeLayer.three`](api/index.md#three-1):
+- The Three.js raw getters are now grouped under [`ThreeLayer.three`](api/index.md#threelayergetters):
     - `threeLayer.getScene()` => `threeLayer.three.getScene()`
     - `threeLayer.getRenderer()` => `threeLayer.three.getRenderer()`
     - `threeLayer.getCamera()` => `threeLayer.three.getCamera()`

@@ -22,7 +22,7 @@ const layer = threeDManager.createLayer();
 map.on('load', () => map.addLayer(layer));
 ```
 
-MapLibre layer order is honored by default. [`addLayer()`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#addlayer) adds the layer last by default. You can control depth by adding the layer elsewhere.
+MapLibre layer order is honored by default. Maplibre's [`map.addLayer()`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#addlayer) adds the layer last by default. You can control depth by adding the layer elsewhere.
 
 ## 3D Tiles Asset
 
@@ -42,7 +42,8 @@ const tilesAsset = await layer.load3dTiles({
 
 Suppose you want to load a regular Three.js object.  
 
-[`ThreeDManager`](api/index.md#threedmanager) has various methods to help you with coordinate system conversions. In the following example, we use `getEcefMatrix()` to convert from the typical longitude/latitude (`EPSG:4326`) coordinates to ECEF (`EPSG:4978`).
+[`ThreeDManager`](api/index.md#threedmanager) has various methods to help you with coordinate system conversions. In the following example, we use [`getEcefMatrix()`](api/index.md#getecefmatrix) to convert from the typical longitude/latitude (`EPSG:4326`) coordinates to ECEF (`EPSG:4978`).
+
 
 Additionally, you can use [`ThreeLayer.three`](api/index.md#threelayergetters) to access the raw Three.js objects like the camera, scene, and so on. Putting it all together:
 
@@ -59,12 +60,12 @@ layer.three.getScene().add(sphere);
 
 ### Programmatically calculating terrain height
 
-Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [`map.queryTerrainElevation()`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#queryterrainelevation) to determine an object's height rather than hardcoding a `130`.
+Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [`map.queryTerrainElevation()`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#queryterrainelevation) to determine an object's height rather than hardcoding a specific height.
 
 
 ## Accessing 3d-tiles-renderer / Centering the map on load
 
-You can use the Tile Asset's [`getTilesRenderer()`](api/index.md#gettilesrenderer) to get access to the underlying 3d-tiles-renderer object. In this example, we use an event listener to zoom into the 3D Tiles once they are loaded.
+You can use the Tile Asset's [`getTilesRenderer()`](api/index.md#gettilesrenderer) to get access to the underlying 3d-tiles-renderer object. In this example, we use an event listener to zoom into the 3D Tiles once they are loaded. Other events [can be found](https://github.com/NASA-AMMOS/3DTilesRendererJS/blob/master/src/core/renderer/API.md#events) at the 3d-tile-renderer docs.
 
 ```js
 tilesAsset.getTilesRenderer().addEventListener('load-root-tileset', () => {
@@ -84,7 +85,7 @@ You can also add `{separatorAfter: false}` to the [`ThreeDManager.createLayer()`
 
 `{separatorBefore: false}` performs the same logic for the layers before. Both options can be disabled at once. By default, both options are `true`.
 
-**Multiple `ThreeLayer` instances**
+**Multiple ThreeLayer instances**
 
 For ultimate depth control, feel free to use as many `ThreeLayer` instances as you want. You can put regular MapLibre layers in between them / before them / after them in any order. Note that each `ThreeLayer` has its own underlying Three.js instance.
 

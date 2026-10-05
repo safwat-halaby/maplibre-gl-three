@@ -44,7 +44,7 @@ python -m uv pip compile --python-version 3.12 --output-file docs/requirements.t
 
 Use ordinary text for library display names, geographic concepts, and measurements: Three.js, Web Mercator, 
 
-Use inline code (backticks) for exact identifiers and code: `ThreeDManager`, `height`, `true`, `layer.load3dTiles()`. If it's a function call, always have `()`.
+Use inline code (backticks) for exact identifiers and code: `ThreeDManager`, `height`, `true`, `layer.load3dTiles()`. If it's a function call, always have `()`. Do not use backticks in titles.
 
 Use inline code for EPSG codes, package names, paths, commands, and version strings: `EPSG:4326`, `maplibre-gl-three`, `docs/index.md`, `npm run build`, `2.0.0`. Exceptions: Version numbers in the changelog titles. Version numbers not involving semantic versioning e.g. "MapLibre 6" in prose.
 

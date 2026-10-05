@@ -38,7 +38,7 @@ const tilesAsset = await layer.load3dTiles({
 
 **D. The dataset has orthometric ECEF coordinates**
 
-`maplibre-gl-three` automatically applies vertical datum corrections for 3D Tiles. In some cases your dataset may have already pre-corrected vertical datums and so we might be double-correcting heights. Strictly speaking this is a dataset error, because ECEF coordinates are not supposed to be orthometric, but you might be able to get away with it by turning off vertical datum corrections:
+maplibre-gl-three automatically applies vertical datum corrections for 3D Tiles. In some cases your dataset may have already pre-corrected vertical datums and so we might be double-correcting heights. Strictly speaking this is a dataset error, because ECEF coordinates are not supposed to be orthometric, but you might be able to get away with it by turning off vertical datum corrections:
 
 ```js
 const threeDManager = new ThreeDManager({
@@ -92,7 +92,7 @@ tilesAsset.getTilesRenderer().addEventListener('load-root-tileset', () => {
 
 **If it's a missing 3D Tiles extension issue:**
 
-If the console reports a missing extension or loader, you should probably set [`threeLayer.load3dTiles({autoLoaders: false})`](api/index.md#load3dtilesoptions) and then add the proper loaders yourself. If I missed a very common loader, I should add it to the `autoLoaders` list. [Contact me](contact.md).
+If the console reports a missing extension or loader, you should probably set [`threeLayer.load3dTiles({autoLoaders: false})`](api/index.md#load3dtilesoptions) and then add the proper loaders yourself. If I missed a very common loader, I should add it to the autoLoaders list. [Contact me](contact.md).
 
 ## How do I center the map on the 3D Tiles?
 

@@ -2,7 +2,7 @@
 
 ### Object hierarchy and lifecycle
 
-A `ThreeDManager` owns layers. Each layer owns "assets" and Three.js primitives (scene, camera, etc.). The primitives allow direct Three.js access, while the "assets" are convenience wrappers, and they ultimately manipulate the same primitives. Currently the only asset type is the 3D Tiles asset, created with `tilesAsset = await layer.load3dTiles(...)`.
+A `ThreeDManager` owns layers. Each layer owns "assets" and Three.js primitives (scene, camera, etc.). The primitives allow direct Three.js access, while the "assets" are convenience wrappers, and they ultimately manipulate the same primitives. Currently the only asset type is the 3D Tiles asset, created with [`tilesAsset = await layer.load3dTiles()`](api/index.md#load3dtiles).
 
 A `ThreeDManager` is associated with one MapLibre map. On the rare occasion of using multiple MapLibre maps, you should use multiple `ThreeDManager` objects, one for each map.
 
@@ -11,10 +11,10 @@ A `ThreeDManager` is associated with one MapLibre map. On the rare occasion of u
 - `threeDManager.destroy()` Destroys all managed layers, and all assets managed by those layers.
 - `layer.destroy()` Destroys the layer and destroys all its assets.
 - `asset.destroy()` Destroys a specific asset. If it's a 3D Tiles asset, frees all internal data associated with the 3D Tiles model.
-- `map.removeLayer(layer.id)` Detaches the layer and disposes its renderer; preserves the scene and assets for reattachment.
-- `map.addLayer(layer)` Creates a new renderer and (re)attaches the existing content.
+- MapLibre's [`map.removeLayer(layer.id)`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#removelayer) Detaches the layer and disposes its renderer; preserves the scene and assets for reattachment.
+- MapLibre's  [`map.addLayer(layer)`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#addlayer) Creates a new renderer and (re)attaches the existing content.
 
-A destroyed layer will call `scene.clear();`. Any additional disposals are caller-owned. You should take care of disposing any materials, textures, meshes etc that you created yourself.
+A destroyed layer will call Three.js's [`scene.clear()`](https://threejs.org/docs/#api/en/core/Object3D.clear). Any additional disposals are caller-owned. You should take care of disposing any materials, textures, meshes etc that you created yourself.
 
 ### Layer order and depth
 
@@ -56,7 +56,7 @@ You're out of luck. Your 3D Tiles have slopes, but MapLibre does not have any gr
 
 3d-tiles-renderer has some network dependencies that are lazily fetched from `https://cdn.jsdelivr.net` when needed. You can fetch them from elsewhere by changing `ThreeDManager`'s `tilesRendererConfig` options (see below).
 
-By default a vertical datum is fetched from `https://cdn.proj.org` when `ThreeDManager.init()` is called. This can be modified or disabled via the constructor. Here are the default options:
+By default a vertical datum is fetched from `https://cdn.proj.org` when [`ThreeDManager.init()`](api/index.md#init) is called. This can be modified or disabled via [`VericalDatumOptions`](./api/index.md#verticaldatumoptions). Here are the default options:
 
 ```js
 const threeDManager = new ThreeDManager({
