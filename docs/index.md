@@ -76,15 +76,24 @@ layer.three.getScene().add(sphere);
 
 ## Quick links
 
+**Live examples** from [maplibre.org](https://maplibre.org/):
+
+- [Basic example](https://maplibre.org/maplibre-gl-js/docs/examples/add-3d-tiles-3d-objects-and-models-using-threejs/)
+- [Raycast example](https://maplibre.org/maplibre-gl-js/docs/examples/raycast-3d-tiles-using-threejs/)
+
+Links from these docs:
+
 - [Getting started guide](getting-started.md)
 - [Core principles](principles.md)
 
 ## Design philosophy
 
-- **Thin wrapper only:** The library glues between Three.js and MapLibre, then gets out of the way and lets the developer use the two libraries as natively as possible.
-- **Sane defaults:** Minimal mandatory configuration.
-- **Great DX:** Strive to keep the API elegant, simple, and well documented.
-- **Maintainable code:** Keep the internal tech debt low and aim to minimize accidental complexity. Try to make the tricky math functions approachable by adding commentary where appropriate.
+The library is designed with the following mindset.
+
+- **Thin wrapper only:** Glues between Three.js and MapLibre, then gets out of the way and lets the developer use the two libraries as natively as possible.
+- **Sane defaults:** Imposes minimal mandatory configuration.
+- **Great DX:** Strives to keep the API elegant, simple, and well documented.
+- **Maintainable code:** Maintains low internal tech debt and aims to minimize accidental complexity. Also tries to make the tricky math functions approachable by adding commentary where appropriate.
 
 ## License
 
