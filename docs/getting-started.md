@@ -74,8 +74,7 @@ const height = map.queryTerrainElevation(point);
 sphere.applyMatrix4(threeDManager.getEcefMatrix({ point, height }));
 layer.three.getScene().add(sphere);
 ```
-
-
+<!-- This section has an incoming link from the MapLibre TSDoc. Careful with modifying the title. -->
 
 ## Accessing 3d-tiles-renderer / Centering the map on load
 
