@@ -62,6 +62,20 @@ layer.three.getScene().add(sphere);
 
 Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [`map.queryTerrainElevation()`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#queryterrainelevation) to determine an object's height rather than hardcoding a specific height.
 
+```js
+import * as THREE from 'three';
+
+const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(10, 32, 16),
+    new THREE.MeshStandardMaterial({ color: 0xff00ff }),
+);
+const point = [-75.598, 40.040];
+const height = map.queryTerrainElevation(point);
+sphere.applyMatrix4(threeDManager.getEcefMatrix({ point, height }));
+layer.three.getScene().add(sphere);
+```
+
+
 
 ## Accessing 3d-tiles-renderer / Centering the map on load
 
