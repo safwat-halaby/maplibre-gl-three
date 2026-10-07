@@ -17,14 +17,15 @@ const map = await (async () => {
     const style = await fetchJson('./style.json');
     alignGeoJSONWithPlateCarree(style.sources['osm-vectors'].data);
     const mapInstance = new maplibregl.Map({
-        terrainSkirtLength: 'none',
         container: 'map',
         zoom: 12,
         center: PlateCarreeTools.alignWithEquirectangularProjection([-75.596, 40.038]),
         pitch: 55,
         bearing: -20,
         maxPitch: 85,
-        style
+        style,
+        terrainSkirtLength: 'none',
+	    canvasContextAttributes: { antialias: true }
     });
 
     mapInstance.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));

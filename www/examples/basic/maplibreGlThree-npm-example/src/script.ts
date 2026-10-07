@@ -10,14 +10,15 @@ setWorkerUrl('dist/maplibre-gl-worker.mjs');
 const mapStyle = style as StyleSpecification;
 
 const map = new Map({
-    terrainSkirtLength: 'none',
     container: 'map',
     zoom: 16,
     center: [-75.596, 40.038],
     pitch: 55,
     bearing: -20,
     maxPitch: 85,
-    style: mapStyle
+    style: mapStyle,
+    terrainSkirtLength: 'none',
+    canvasContextAttributes: { antialias: true }
 });
 
 map.addControl(new NavigationControl({ visualizePitch: true }));

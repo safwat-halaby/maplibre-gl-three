@@ -4,14 +4,15 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { ThreeDManager } from 'maplibre-gl-three';
 
 const map = new maplibregl.Map({
-    terrainSkirtLength: 'none',
     container: 'map',
     zoom: 16,
     center: [-75.596, 40.038],
     pitch: 55,
     bearing: -20,
     maxPitch: 60,
-    style: '../../basic/maplibreGlThree-selfhost-example/style.json'
+    style: '../../basic/maplibreGlThree-selfhost-example/style.json',
+    terrainSkirtLength: 'none',
+	canvasContextAttributes: { antialias: true }
 });
 
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));

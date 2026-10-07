@@ -43,7 +43,9 @@ const map = new Map({
                 "url": "https://tiles.mapterhorn.com/tilejson.json"
             }
         }
-    }
+    },
+    terrainSkirtLength: 'none',
+	canvasContextAttributes: { antialias: true }
 });
 const threeDManager = new ThreeDManager();
 await threeDManager.init();

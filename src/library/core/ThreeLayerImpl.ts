@@ -113,7 +113,7 @@ export class ThreeLayerImpl implements ThreeLayer {
             this.renderer = new THREE.WebGLRenderer({
                 canvas: map.getCanvas(),
                 context: gl,
-                antialias: true,
+                antialias: true, // TODO I suspect this redundant not when a "context" is provided.
                 ...this.rendererOptions,
             });
             this.renderer.autoClear = false;
