@@ -1,6 +1,9 @@
 This library brings [Three.js](https://threejs.org/) capabilities into [MapLibre GL JS](https://maplibre.org/). It allows you to treat Three.js as a MapLibre custom layer, rendering anything Three.js can render (including [3D Tiles](https://cesium.com/why-cesium/3d-tiles/)) along with the MapLibre Style Spec. For 3D Tiles, the library internally relies on [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
-**This project is not officially affiliated with MapLibre**
+**Live examples** from the MapLibre docs:
+
+- [Basic example](https://maplibre.org/maplibre-gl-js/docs/examples/add-3d-tiles-3d-objects-and-models-using-threejs/)
+- [Raycast example](https://maplibre.org/maplibre-gl-js/docs/examples/raycast-3d-tiles-using-threejs/)
 
 ## Installation and basic usage
 
@@ -74,12 +77,7 @@ sphere.applyMatrix4(threeDManager.getEcefMatrix({ point: [-75.598, 40.040], heig
 layer.three.getScene().add(sphere);
 ```
 
-## Quick links
-
-**Live examples** from [maplibre.org](https://maplibre.org/):
-
-- [Basic example](https://maplibre.org/maplibre-gl-js/docs/examples/add-3d-tiles-3d-objects-and-models-using-threejs/)
-- [Raycast example](https://maplibre.org/maplibre-gl-js/docs/examples/raycast-3d-tiles-using-threejs/)
+## Learn more
 
 Links from the maplibre-gl-three [docs website](https://maplibre-gl-three.readthedocs.io/):
 
@@ -95,14 +93,10 @@ The library is designed with the following mindset.
 - **Great DX:** Strives to keep the API elegant, simple, and well documented.
 - **Maintainable code:** Maintains low internal tech debt and aims to minimize accidental complexity. Also tries to make the tricky math functions approachable by adding commentary where appropriate.
 
-## License
+## About
 
-MIT license. Full license is in [`LICENSE.txt`](LICENSE.txt).
+- **License**: MIT license. See the full license [here](license.md).
+- **Source code**: [https://github.com/safwat-halaby/maplibre-gl-three](https://github.com/safwat-halaby/maplibre-gl-three).
+- **Contact**: See the [contact page](contact.md).
 
-## Source code
-
-[https://github.com/safwat-halaby/maplibre-gl-three](https://github.com/safwat-halaby/maplibre-gl-three)
-
-## Contact
-
-See the [contact page](https://maplibre-gl-three.readthedocs.io/latest/contact/).
+**This project is not officially affiliated with MapLibre**
