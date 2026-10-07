@@ -5,18 +5,68 @@ import { ThreeDManager } from 'maplibre-gl-three';
 
 const map = new maplibregl.Map({
 	container: 'map',
-	zoom: 16,
-	center: [-75.596, 40.038],
+	zoom: 18,
+	center: [-75.5967, 40.0387],
 	pitch: 55,
 	bearing: -20,
 	maxPitch: 60,
 	style: './style.json',
-	terrainSkirtLength: 'none'
+	terrainSkirtLength: 'none',
+	canvasContextAttributes: { antialias: true },
 });
 
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
 
 map.on('load', async () => {
+
+	// RAYCASTING FUNCTIONS
+	function raycastFromOriginAndDestination(ecef_origin, ecef_destination) {
+		const direction = ecef_destination.clone().sub(ecef_origin);
+		return raycastFromOriginAndDirection(ecef_origin, direction);
+	}
+	function raycastFromOriginAndDirection(ecef_origin, ecef_direction) {
+		ecef_direction = ecef_direction.clone();
+		if (ecef_direction.lengthSq() === 0) {
+			statusElement.textContent = 'Cannot cast a ray with a zero direction.';
+			return;
+		}
+		ecef_direction.normalize();
+		raycaster.set(ecef_origin, ecef_direction);
+		// The raycaster works internally in LocalSpace; this converts ECEF to LocalSpace.
+		raycaster.ray.applyMatrix4(threeDManager.getAnchorEcefToLocalMatrix());
+        const intersections = raycaster.intersectObject(tilesAsset.getObject3D(), true);
+        const hit = intersections.length === 0 ? null : intersections[0];
+
+		if (!hit) return null;
+		// Convert LocalSpace back to ECEF.
+		hit.point.applyMatrix4(threeDManager.getAnchorLocalToEcefMatrix());
+		return hit.point;
+	}
+	function raycastFromClick(event) {
+		const bounds = renderer.domElement.getBoundingClientRect();
+
+		// From pixels (MapLibre) to normalized device coordinates as expected by Three.js.
+		pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+		pointer.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+
+		raycaster.setFromCamera(pointer, camera);
+
+		// The camera ray is in LocalSpace, so we change it to ECEF space.
+		// This is a bit of a redundant calculation and we could have implemented a separate LocalSpace raycaster. But this is less code.
+		raycaster.ray.applyMatrix4(threeDManager.getAnchorLocalToEcefMatrix());
+
+		const ecef_cameraOrigin = raycaster.ray.origin.clone();
+		const ecef_impactPoint = raycastFromOriginAndDirection(raycaster.ray.origin, raycaster.ray.direction);
+		if (!ecef_impactPoint) {
+			return null;
+		}
+		return {
+			ecef_cameraOrigin,
+			ecef_impactPoint
+		}
+    }
+
+	// SETUP
 	const threeDManager = new ThreeDManager({
 		tilesRendererConfig: {
 			dracoPath: "/dependencies/three@0.186.1/examples/jsm/libs/draco/",
@@ -35,7 +85,6 @@ map.on('load', async () => {
 	});
 	map.addLayer(layer, 'rivers');
 
-	// #### Setup raycasting
 	const scene = layer.three.getScene();
 	const raycaster = new THREE.Raycaster();
 	const pointer = new THREE.Vector2();
@@ -59,7 +108,7 @@ map.on('load', async () => {
 	rayImpact.visible = false;
 	scene.add(rayImpact);
 	
-	// #### raycast!
+	// ACTUAL RAYCASTING
 	// keep raycasting on each tile load, until we hit something.
 	tilesAsset.getTilesRenderer().addEventListener('load-model', topDownRayCast);
 	function topDownRayCast() {
@@ -76,7 +125,7 @@ map.on('load', async () => {
 		// Convert to the ECEF coordinate system.
 		const ecef_origin = threeDManager.lngLatAltToEcef(origin);
 		const ecef_destination = threeDManager.lngLatAltToEcef(destination);
-		const ecef_impactPoint = raycast_originDestination(ecef_origin, ecef_destination);
+		const ecef_impactPoint = raycastFromOriginAndDestination(ecef_origin, ecef_destination);
 		if (ecef_impactPoint) {
 			// we hit something. Render it...
 			renderHit(ecef_origin, ecef_impactPoint);
@@ -84,7 +133,7 @@ map.on('load', async () => {
 			tilesAsset.getTilesRenderer().removeEventListener('load-model', topDownRayCast);
 			// Enable raycasting via mouse click
 			renderer.domElement.addEventListener('click', function (event) {
-				const result = raycast_pointer(event);
+				const result = raycastFromClick(event);
 				if (result) {
 					const {ecef_cameraOrigin, ecef_impactPoint} = result;
 					renderHit(ecef_cameraOrigin, ecef_impactPoint);
@@ -93,6 +142,7 @@ map.on('load', async () => {
 		}
 	}
 
+	// DRAW FUNCTIONS
 	function renderHit(ecef_origin, ecef_impactPoint) {
 		const ecef_direction = ecef_impactPoint.clone().sub(ecef_origin);
 		const ecef_rayLength = ecef_direction.length();
@@ -105,55 +155,6 @@ map.on('load', async () => {
 		const lngLatAlt_impactPoint = threeDManager.ecefToLngLatAlt(ecef_impactPoint);
         updateHtmlImpactText(lngLatAlt_impactPoint, ecef_impactPoint);
 	}
-
-	// RAYCASTING FUNCTIONS
-	function raycast_originDestination(ecef_origin, ecef_destination) {
-		const direction = ecef_destination.clone().sub(ecef_origin);
-		return raycast_originDirection(ecef_origin, direction);
-	}
-	function raycast_originDirection(ecef_origin, ecef_direction) {
-		ecef_direction = ecef_direction.clone();
-		if (ecef_direction.lengthSq() === 0) {
-			statusElement.textContent = 'Cannot cast a ray with a zero direction.';
-			return;
-		}
-		ecef_direction.normalize();
-		raycaster.set(ecef_origin, ecef_direction);
-		// The raycaster works internally in LocalSpace; this converts ECEF to LocalSpace.
-		raycaster.ray.applyMatrix4(threeDManager.getAnchorEcefToLocalMatrix());
-        const intersections = raycaster.intersectObject(tilesAsset.getObject3D(), true);
-        const hit = intersections.length === 0 ? null : intersections[0];
-
-		if (!hit) return null;
-		// Convert LocalSpace back to ECEF.
-		hit.point.applyMatrix4(threeDManager.getAnchorLocalToEcefMatrix());
-		return hit.point;
-	}
-	function raycast_pointer(event) {
-        const bounds = renderer.domElement.getBoundingClientRect();
-
-        // From pixels (MapLibre) to normalized device coordinates as expected by Three.js.
-        pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
-        pointer.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
-
-        raycaster.setFromCamera(pointer, camera);
-
-		// The camera ray is in LocalSpace, so we change it to ECEF space.
-		// This is a bit of a redundant calculation and we could have implemented a separate LocalSpace raycaster. But this is less code.
-		raycaster.ray.applyMatrix4(threeDManager.getAnchorLocalToEcefMatrix());
-
-		const ecef_cameraOrigin = raycaster.ray.origin.clone();
-        const ecef_impactPoint = raycast_originDirection(raycaster.ray.origin, raycaster.ray.direction);
-		if (!ecef_impactPoint) {
-			return null;
-		}
-		return {
-			ecef_cameraOrigin,
-			ecef_impactPoint
-		}
-      }
-	
-	// DRAW FUNCTIONS
 	function drawArrow(origin, direction, length) {
 		rayArrow.position.copy(origin);
 		rayArrow.setDirection(direction);
