@@ -49,11 +49,13 @@ map.on('load', async () => {
     const mixer = new THREE.AnimationMixer(model.scene);
     const clip = model.animations.find(({ name }) => name === 'Walk') ?? model.animations[0];
     let animationFrame;
+    let timer;
     if (clip) {
         mixer.clipAction(clip).play();
-        const clock = new THREE.Clock();
-        const animate = () => {
-            mixer.update(clock.getDelta());
+        timer = new THREE.Timer();
+        const animate = (timestamp) => {
+            timer.update(timestamp);
+            mixer.update(timer.getDelta());
             layer.requestRepaint();
             animationFrame = requestAnimationFrame(animate);
         };
@@ -63,6 +65,7 @@ map.on('load', async () => {
     map.addLayer(layer, 'rivers');
     map.on('remove', () => {
         cancelAnimationFrame(animationFrame);
+        timer?.dispose();
         mixer.stopAllAction();
         threeDManager.destroy();
         model.scene.traverse((object) => {
