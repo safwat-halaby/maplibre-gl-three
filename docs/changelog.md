@@ -1,4 +1,4 @@
-## Next version
+## 3.0.1 - 2026-10-07
 
 **No behavioural changes.** Documentation and readme updates only.
 
