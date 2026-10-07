@@ -1,4 +1,4 @@
-This library brings [Three.js](https://threejs.org/) capabilities into [MapLibre GL JS](https://maplibre.org/projects/gl-js/). It allows you to render a Three.js scene on a geographical map. [3D Tiles](https://cesium.com/why-cesium/3d-tiles/) are also supported via [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
+This library brings [Three.js](https://threejs.org/) capabilities into [MapLibre GL JS](https://maplibre.org/projects/gl-js/), allowing you to render a 3D scene on a geographical map. [3D Tiles](https://cesium.com/why-cesium/3d-tiles/) are also supported via [3d-tiles-renderer](https://github.com/NASA-AMMOS/3DTilesRendererJS).
 
 **Live examples** from the MapLibre docs:
 
