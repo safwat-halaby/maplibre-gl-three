@@ -1,6 +1,6 @@
 # Changelog
 
-## Next version
+## 3.0.2 - 2026-10-07
 
 **No behavioural changes.** Documentation and readme updates only. Fixed broken readme links.
 
