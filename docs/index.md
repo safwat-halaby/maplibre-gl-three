@@ -83,7 +83,7 @@ layer.three.getScene().add(sphere);
 - [Basic example](https://maplibre.org/maplibre-gl-js/docs/examples/add-3d-tiles-3d-objects-and-models-using-threejs/)
 - [Raycast example](https://maplibre.org/maplibre-gl-js/docs/examples/raycast-3d-tiles-using-threejs/)
 
-Links from these docs:
+Links from the docs:
 
 - [Getting started guide](getting-started.md)
 - [Core principles](principles.md)
