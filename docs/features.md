@@ -23,3 +23,5 @@
 ## Inherent limitations
 
 Except for camera and height synchronization, Three.js and MapLibre do not interact. MapLibre is not aware of the positioning of Three.js primitives (like 3D Tiles or models), and Three.js is not aware of the position of MapLibre features. Syncing those requires app-level code and depends on use case.
+
+The camera is MapLibre-controlled by design. Overriding camera control is currently not planned, but you might be able to directly manipulate MapLibre's camera to some extent, regardless of this library.
