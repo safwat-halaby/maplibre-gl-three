@@ -88,7 +88,7 @@ Links from the maplibre-gl-three [docs website](https://maplibre-gl-three.readth
 
 The library is designed with the following mindset.
 
-- **Thin wrapper only:** Glues between Three.js and MapLibre, then gets out of the way and lets the developer use the two libraries as natively as possible.
+- **Thin wrapper only:** Glues between the underlying libraries and then gets out of the way, letting the developer use them as natively as possible.
 - **Sane defaults:** Imposes minimal mandatory configuration.
 - **Great DX:** Strives to keep the API elegant, simple, and well documented.
 - **Maintainable code:** Maintains low internal tech debt and aims to minimize accidental complexity. Also tries to make the tricky math functions approachable by adding commentary where appropriate.
