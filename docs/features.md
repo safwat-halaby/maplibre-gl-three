@@ -18,7 +18,7 @@
 
 - On extreme zoom-outs from a 3D Tiles model or Three.js scene, once the map center leaves the scene boundaries, the scene will become progressively more misaligned with MapLibre the more you pan away from it.
 - Globe projections are supported partially. The `ThreeLayer` is hidden on low zoom levels but is shown correctly on high zoom.
-- The EGM96 resolution currently used is 15 arcminutes The <3MiB dataset is fetched in one go. The 2.5 arc minute dataset is more precise but is 76MiB big. Using it requires improving `GeoTiffGeographicRaster` such that it loads individual chunks. A cloud-optimized tiff allows this and the data at `https://github.com/OSGeo/PROJ-data/tree/master` is cloud optimized so this is doable. It's just currently low priority for me.
+- ECEF-to-lonLatAlt vertical height precision could improved. The EGM96 resolution currently used is 15 arcminutes. The <3MiB dataset is fetched in one go. The 2.5 arc minute dataset is more precise but is 76MiB big. Using it requires improving `GeoTiffGeographicRaster` such that it loads individual chunks. A cloud-optimized tiff allows this and the data at `https://github.com/OSGeo/PROJ-data/tree/master` is cloud optimized so this is doable.
 
 ## Inherent limitations
 
