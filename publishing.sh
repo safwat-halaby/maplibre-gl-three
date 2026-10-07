@@ -75,10 +75,10 @@ fi
 
 echoBold "Updating changelog header"
 release_date="$(date +%F)"
-if [ "$(head -n 1 "$changelog_file")" = "## Next version" ]; then
-    sed -i "1s/^## Next version$/## $published_version - $release_date/" "$changelog_file"
+if [ "$(sed -n '3p' "$changelog_file")" = "## Next version" ]; then
+    sed -i "3s/^## Next version$/## $published_version - $release_date/" "$changelog_file"
 else
-    echo "Expected $changelog_file to start with '## Next version'."
+    echo "Expected line 3 of $changelog_file to be '## Next version'."
     exit 1
 fi
 

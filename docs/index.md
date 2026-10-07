@@ -81,12 +81,13 @@ layer.three.getScene().add(sphere);
 
 ## Learn more
 
-- [Getting started guide](getting-started.md)
-- [Core principles](principles.md)
+- [Getting Started](getting-started.md)
+- [Core Principles](principles.md)
+- [Frequently Asked Questions](faq.md)
+- [Coordinate Systems and Projections](coordinate-systems.md)
+- [Features and Limitations](features.md)
 
 ## Design philosophy
-
-The library is designed with the following mindset.
 
 - **Thin wrapper only:** Glues between the underlying libraries and then gets out of the way, letting the developer use them as natively as possible.
 - **Sane defaults:** Imposes minimal mandatory configuration.
@@ -96,7 +97,7 @@ The library is designed with the following mindset.
 ## About
 
 - **License**: MIT license. See the full license [here](license.md).
-- **Source code**: [https://github.com/safwat-halaby/maplibre-gl-three](https://github.com/safwat-halaby/maplibre-gl-three).
+- **Source code**: [https://github.com/safwat-halaby/maplibre-gl-three](https://github.com/safwat-halaby/maplibre-gl-three)
 - **Contact**: See the [contact page](contact.md).
 
 **This project is not officially affiliated with MapLibre**

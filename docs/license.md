@@ -1,3 +1,5 @@
+# License
+
 (The MIT License)
 
 Copyright 2026 maplibre-gl-three contributors

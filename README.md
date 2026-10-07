@@ -81,12 +81,13 @@ layer.three.getScene().add(sphere);
 
 Links from the maplibre-gl-three [docs website](https://maplibre-gl-three.readthedocs.io/):
 
-- [Getting started guide](getting-started.md)
-- [Core principles](principles.md)
+- [Getting Started](https://maplibre-gl-three.readthedocs.io/latest/getting-started/)
+- [Core Principles](https://maplibre-gl-three.readthedocs.io/latest/principles/)
+- [Frequently Asked Questions](https://maplibre-gl-three.readthedocs.io/latest/faq/)
+- [Coordinate Systems and Projections](https://maplibre-gl-three.readthedocs.io/latest/coordinate-systems/)
+- [Features and Limitations](https://maplibre-gl-three.readthedocs.io/latest/features/)
 
 ## Design philosophy
-
-The library is designed with the following mindset.
 
 - **Thin wrapper only:** Glues between the underlying libraries and then gets out of the way, letting the developer use them as natively as possible.
 - **Sane defaults:** Imposes minimal mandatory configuration.
@@ -96,7 +97,7 @@ The library is designed with the following mindset.
 ## About
 
 - **License**: MIT license. See the full license [here](license.md).
-- **Source code**: [https://github.com/safwat-halaby/maplibre-gl-three](https://github.com/safwat-halaby/maplibre-gl-three).
-- **Contact**: See the [contact page](contact.md).
+- **Source code**: [https://github.com/safwat-halaby/maplibre-gl-three](https://github.com/safwat-halaby/maplibre-gl-three)
+- **Contact**: See the [contact page](https://maplibre-gl-three.readthedocs.io/latest/contact/).
 
 **This project is not officially affiliated with MapLibre**

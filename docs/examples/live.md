@@ -1,4 +1,4 @@
-# Live examples
+# Live Examples
 
 **Live examples** from the MapLibre docs:
 

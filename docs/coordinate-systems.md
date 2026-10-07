@@ -1,4 +1,4 @@
-# Coordinate systems and projections
+# Coordinate Systems and Projections
 
 To glue MapLibre and Three.js's cameras, we play around with 4 different coordinate systems. This document explains what each coordinate system is and then explains the gluing process.
 

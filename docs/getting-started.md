@@ -45,7 +45,9 @@ Suppose you want to load a regular Three.js object.
 [`ThreeDManager`](api/index.md#threedmanager) has various methods to help you with coordinate system conversions. In the following example, we use [`getEcefMatrix()`](api/index.md#getecefmatrix) to convert from the typical longitude/latitude (`EPSG:4326`) coordinates to ECEF (`EPSG:4978`).
 
 
-Additionally, you can use [`ThreeLayer.three`](api/index.md#threelayergetters) to access the raw Three.js objects like the camera, scene, and so on. Putting it all together:
+Additionally, you can use [`ThreeLayer.three`](api/index.md#threelayergetters) to access the raw Three.js objects like the camera, scene, and so on.
+
+Let's add a sphere to the scene:
 
 ```js
 import * as THREE from 'three';
@@ -60,7 +62,7 @@ layer.three.getScene().add(sphere);
 
 ### Programmatically calculating terrain height
 
-Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [`map.queryTerrainElevation()`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#queryterrainelevation) to determine an object's height rather than hardcoding a specific height.
+Assuming you have loaded a 3D terrain into MapLibre, you can use MapLibre's [`map.queryTerrainElevation()`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#queryterrainelevation) to determine an object's height rather than hardcoding a specific height:
 
 ```js
 import * as THREE from 'three';
@@ -78,7 +80,7 @@ layer.three.getScene().add(sphere);
 
 ## Accessing 3d-tiles-renderer / Centering the map on load
 
-You can use the Tile Asset's [`getTilesRenderer()`](api/index.md#gettilesrenderer) to get access to the underlying 3d-tiles-renderer object. In this example, we use an event listener to zoom into the 3D Tiles once they are loaded. Other events [can be found](https://github.com/NASA-AMMOS/3DTilesRendererJS/blob/master/src/core/renderer/API.md#events) at the 3d-tile-renderer docs.
+You can use [`getTilesRenderer()`](api/index.md#gettilesrenderer) to get access to the underlying 3d-tiles-renderer object. In this example, we use an event listener to zoom into the 3D Tiles once they are loaded. Other events [can be found](https://github.com/NASA-AMMOS/3DTilesRendererJS/blob/master/src/core/renderer/API.md#events) at the 3d-tile-renderer docs.
 
 ```js
 tilesAsset.getTilesRenderer().addEventListener('load-root-tileset', () => {
@@ -105,3 +107,7 @@ For ultimate depth control, feel free to use as many `ThreeLayer` instances as y
 ## End
 
 This concludes the getting started guide!
+
+The docs website also has [Frequently asked questions](faq.md) page, an explanation of [core principles](principles.md) and [coordinate systems](coordinate-systems.md), and more.
+
+Pick a page from the menu or browse sequentially with the "Next" button.

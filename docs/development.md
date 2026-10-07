@@ -66,22 +66,35 @@ API links in TSDoc use `@link` e.g.
 
 Whether to use a link or not for classes/methods is context dependant. Apply judgement.
 
-## Exact formatting for specific concepts
+## Exact formatting for specific phrases
 
-- Library display names
-  - maplibre-gl-three
-  - Three.js
-  - MapLibre GL JS ("MapLibre" if context is obvious)
-  - 3d-tiles-renderer
-  - GeoTIFF.js
-- Data formats
-  - 3D Tiles, GeoJSON, GeoTIFF, glTF, GLB, KTX2
-- Runtime, development related stuff:
-  - npm, Node.js, JavaScript, TypeScript, GitHub, Read the Docs, jsDelivr, WebGL
-- Coordinate systems and EPSG codes:
-  - WGS84 (`EPSG:4326`)
-  - ECEF (`EPSG:4978`)
-  - Web Mercator (`EPSG:3857`)
-  - EGM96 height (`EPSG:5773`)
-  - WGS84 + EGM96 height (`EPSG:9707`)
-  - One doesn't always have to specify both the display name and EPSG. apply common sense.
+**Library display names:**
+
+```
+maplibre-gl-three, Three.js, 3d-tiles-renderer, GeoTIFF.js,
+MapLibre GL JS ("MapLibre" if context is obvious),
+```
+**Data formats:**
+
+```
+3D Tiles, GeoJSON, GeoTIFF, glTF, GLB, KTX2
+```
+
+**Runtime, development related stuff**:
+
+```
+npm, Node.js, JavaScript, TypeScript,
+GitHub, Read the Docs, jsDelivr, WebGL
+```
+
+**Coordinate systems and EPSG codes:**
+
+```
+WGS84 (`EPSG:4326`)
+ECEF (`EPSG:4978`)
+Web Mercator (`EPSG:3857`)
+EGM96 height (`EPSG:5773`)
+WGS84 + EGM96 height (`EPSG:9707`)
+```
+
+One doesn't always have to specify both the display name and EPSG. apply common sense.

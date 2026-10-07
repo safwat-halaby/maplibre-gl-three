@@ -28,19 +28,19 @@ nav:
   - Installation: installation.md
   - Features & Limitations: features.md
   - Usage Guide:
-    - Getting started: getting-started.md
+    - Getting Started: getting-started.md
     - Frequently Asked Questions: faq.md
   - Examples:
-    - Live examples: examples/live.md
+    - Live Examples: examples/live.md
     - Repository Examples: examples/repo.md
   - Principles:
-    - Core principles: principles.md 
+    - Core Principles: principles.md 
     - Coordinate Systems and Projections: coordinate-systems.md
   - Other:
     - Changelog: changelog.md
     - Development: development.md
     - License: license.md
-    - Contact me: contact.md
+    - Contact Me: contact.md
   - API:
     - API Reference: api/index.md
-    - External API references: external.md
+    - External Documentation: external.md

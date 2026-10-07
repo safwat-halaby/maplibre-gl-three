@@ -1,4 +1,4 @@
-## Principles
+## Core Principles
 
 ### Object hierarchy and lifecycle
 

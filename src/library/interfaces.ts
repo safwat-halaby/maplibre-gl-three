@@ -292,7 +292,7 @@ export interface ThreeDTilesAsset extends Asset {
  * It exposes convenience functions for creating common assets such as 3D Tiles, as well as lower-level Three.js primitives for rendering
  * anything Three.js can render on a MapLibre custom layer. The camera is auto-synced with MapLibre's camera.
  * 
- * You can create a `ThreeLayer` via {@link ThreeDManager.createLayer} 
+ * You can create a `ThreeLayer` via {@link ThreeDManager.createLayer}. You can access the raw Three.js primitives via {@link ThreeLayerGetters}.
  * */
 export interface ThreeLayer extends CustomLayerInterface {
     id: string;
@@ -303,6 +303,7 @@ export interface ThreeLayer extends CustomLayerInterface {
      * A layer may be manually destroyed with {@link ThreeLayer.destroy}, but is also automatically destroyed if its parent {@link ThreeDManager} is destroyed.
     */
     isDestroyed(): boolean;
+    /** A readonly namespace allowing access to the Three.js primitives. See {@link ThreeLayerGetters} */
     readonly three: ThreeLayerGetters;
     /** Adds 3D Tiles to the layer and returns the controlling asset. Resolves after asset setup (not after streaming finishes).
      * The asset is a thin wrapper around the 3d-tiles-renderer library. 

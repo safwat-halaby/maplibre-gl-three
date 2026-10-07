@@ -1,4 +1,4 @@
-# Frequently asked questions
+# Frequently Asked Questions
 
 ## My 3D Tiles dataset is vertically misaligned with MapLibre. What do I do?
 

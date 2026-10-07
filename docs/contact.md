@@ -1,3 +1,5 @@
+# Contact Me
+
 Created & maintained by Safwat Halaby.
 
 - [Email & contact details](https://safwat-halaby.com/contact)
