@@ -104,3 +104,7 @@ MIT license. See the full license [here](license.md).
 ## Source code
 
 [https://github.com/safwat-halaby/maplibre-gl-three](https://github.com/safwat-halaby/maplibre-gl-three)
+
+## Contact
+
+See the [contact page](contact.md).

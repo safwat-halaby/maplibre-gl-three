@@ -102,3 +102,7 @@ MIT license. Full license is in [`LICENSE.txt`](LICENSE.txt).
 ## Source code
 
 [https://github.com/safwat-halaby/maplibre-gl-three](https://github.com/safwat-halaby/maplibre-gl-three)
+
+## Contact
+
+See the [contact page](https://maplibre-gl-three.readthedocs.io/latest/contact/).
